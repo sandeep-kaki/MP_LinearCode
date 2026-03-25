@@ -1,0 +1,170 @@
+package main;
+
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.*;
+
+public class HotelAvailability {
+    public static void main(String[] args) throws InterruptedException, IOException {
+        // Driver Creation
+        WebDriver driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+        WebDriverWait mywait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        // opening the url in chrome and maximizing the tab
+        Properties propertiesObj = new Properties();
+        FileInputStream propertiesFile = new FileInputStream(System.getProperty("user.dir") + "\\testdata\\config.properties"); //to read the data from config.properties file
+        propertiesObj.load(propertiesFile); //loads that file
+        String url = propertiesObj.getProperty("appurl"); // getting the key of the 'appurl'
+        driver.get(url);
+        driver.manage().window().maximize();
+
+        // To close the login dialog box (may not needed)
+        // driver.findElement(By.xpath("//*[@id='login-modal']/div/div[1]/div/button/span")).click();
+
+        // Getting data from the Excel sheet "data.xlsx"
+        String filePath = System.getProperty("user.dir") + "\\testdata\\data.xlsx";
+        int rows = ExcelUtils.getRowCount(filePath, "Sheet1"); // getting the last row of the excel sheet
+
+        // Iterating through the Excel file rows to get the data
+        for (int i = 1; i <= rows; i++) {
+            String destination = ExcelUtils.getCellData(filePath,    "Sheet1", i, 0);
+            int checkInOffset = Integer.parseInt(ExcelUtils.getCellData(filePath, "Sheet1", i, 1));
+            int checkOutOffset = Integer.parseInt(ExcelUtils.getCellData(filePath, "Sheet1", i, 2));
+            int adults = Integer.parseInt(ExcelUtils.getCellData(filePath, "Sheet1", i, 3));
+            int rooms = Integer.parseInt(ExcelUtils.getCellData(filePath, "Sheet1", i, 4));
+
+
+            WebElement destinationBox = driver.findElement(By.xpath("//input[@id='input-auto-complete']"));
+            destinationBox.sendKeys(destination);
+            driver.findElement(By.xpath("(//ul[@data-testid='auto-complete-suggestion-list']/li)[1]")).click(); // clicking 1st one
+
+            // Date Setup
+            LocalDate today = LocalDate.now();
+            LocalDate checkInDate = today.plusDays(checkInOffset);
+            LocalDate checkOutDate = today.plusDays(checkOutOffset);
+            // From Date (7+ days from today)
+            mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@data-testid='valid-calendar-day-"+checkInDate+"']"))).click();
+
+            //mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class='hybkbP' and @datetime='" + checkInDate + "']"))).click();
+
+
+            // To Date (+1 day from checkIn date)
+            mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@data-testid='valid-calendar-day-"+checkOutDate+"']"))).click();
+
+            //mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class='hybkbP' and @datetime='" + checkOutDate + "']"))).click();
+
+            // Guests and rooms selection button
+            mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-testid='guest-selector-popover']")));
+
+            // Guests count selection
+            int currValOfAdultCount = Integer.parseInt(mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='adults']"))).getAttribute("aria-valuenow"));
+            int diffOfAdults = adults - currValOfAdultCount;
+
+            if (diffOfAdults > 0) {
+                // Need to increase adults, click plus button
+                By plusButton = By.xpath("//button[@data-testid='adults-amount-plus-button']");
+                for (int j = 0; j < diffOfAdults; j++) {
+                    mywait.until(ExpectedConditions.elementToBeClickable(plusButton)).click();
+
+                }
+            } else if (diffOfAdults < 0) {
+                // Need to decrease adults, click minus button
+                By minusButton = By.xpath("//button[@data-testid='adults-amount-minus-button']");
+                for (int j = 0; j < Math.abs(diffOfAdults); j++) {
+                    mywait.until(ExpectedConditions.elementToBeClickable(minusButton)).click();
+                }
+            }
+
+            // Rooms count selection
+            int currValOfRoomsCount = Integer.parseInt(mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='rooms']"))).getAttribute("aria-valuenow"));
+            if (rooms > 6) {
+                System.out.println("If you need more than 6 rooms, navigate to this url : hotelplanner.com");
+                driver.quit(); // if the rooms count is more than 6, the driver should close.
+            }
+            int diffOfRooms = rooms - currValOfRoomsCount;
+
+            if (diffOfRooms > 0) {
+                // Need to increase adults, click plus button
+                By plusButton = By.xpath("//button[@data-testid='rooms-amount-plus-button']");
+                for (int j = 0; j < diffOfRooms; j++) {
+                    mywait.until(ExpectedConditions.elementToBeClickable(plusButton)).click();
+
+                }
+            } else if (diffOfRooms < 0) {
+                // Need to decrease adults, click minus button
+                By minusButton = By.xpath("//button[@data-testid='rooms-amount-minus-button']");
+                mywait.until(ExpectedConditions.elementToBeClickable(minusButton)).click();
+            }
+        }
+        driver.findElement(By.xpath("//*[@data-testid='guest-selector-apply']")).click(); // clicking on "Apply" button
+
+        // Taking the screenshot of the options choosen for the hotel search
+        TakesScreenshot ts = (TakesScreenshot) driver;
+        File optionsScreenshotTaken = ts.getScreenshotAs(OutputType.FILE); // storing that full screenshot in the file type of variable
+        File optionsScreenshotPath= new File(System.getProperty("user.dir")+"\\screenshots\\optionsPage.png");
+        optionsScreenshotTaken.renameTo(optionsScreenshotPath);
+
+
+        // Clicking Search button
+        driver.findElement(By.xpath("//*[@data-testid='search-button-with-loader' and @class='_3tjlp_']")).click();
+
+        // clicking on "Sort by" button
+        mywait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@name='sorting_selector']"))).click();
+
+        // Rating and recommended radio button
+        driver.findElement(By.xpath("//*[@data-testid='sorting-index-6']")).click();
+        driver.findElement(By.xpath("//*[@data-testid='filters-popover-apply-button']")).click(); // Apply button
+
+        // Taking the screenshot of the results page
+        Thread.sleep(10000); // waiting for the hotels list to load
+        File hotelsListScreenshotTaken = ts.getScreenshotAs(OutputType.FILE); // storing that full screenshot in the file type of variable
+        File hotelsListScreenshotPath = new File(System.getProperty("user.dir")+"\\screenshots\\hotelsListPage.png");
+        hotelsListScreenshotTaken.renameTo(hotelsListScreenshotPath);
+
+
+        // List to capture all the hotels as a whole which internally contains the webelements of each details of each hotel such as rating, price...
+        List<WebElement> hotelsList = mywait.until(
+                ExpectedConditions.presenceOfAllElementsLocatedBy(
+                        By.xpath("//li[@data-testid='accommodation-list-element']")
+                )
+        );
+        int totalHotelsListSize = hotelsList.size(); // finding out the size of the list to iterate
+        int count = 0;
+
+
+        // Capturing all ratings into a list
+        List<WebElement> ratingElements = mywait.until(
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(".//span[@itemprop='ratingValue']"))
+        );
+        List<Double> ratings = new ArrayList<>();
+        for (WebElement element : ratingElements) {
+            ratings.add(Double.parseDouble(element.getText()));
+        }
+
+        // duplicate sortedRatings list to compare with what we got after applying filter in the website
+        List<Double> sortedRatings = new ArrayList<>(ratings);
+        Collections.sort(sortedRatings, Collections.reverseOrder());
+
+        System.out.println("Actual ratings list got from the website : " + ratings);
+        System.out.println("Sorted ratings : " + sortedRatings);
+
+        // Comparing both Lists
+        if (ratings.equals(sortedRatings)) {
+            System.out.println("Ratings are correctly sorted in descending order");
+        } else {
+            System.out.println("Sorting is incorrect");
+        }
+    }
+}
+
