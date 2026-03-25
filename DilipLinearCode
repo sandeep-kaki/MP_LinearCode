@@ -1,0 +1,149 @@
+package learnSelenium;
+
+import java.nio.file.*;
+import java.io.File;
+import java.io.IOException;
+//import java.nio.file.Files;
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class SampleLinearCode {
+	
+    public static void main(String[] args) throws InterruptedException, IOException {
+
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+
+        
+//      EXPLICIT WAIT
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+        
+        driver.get("https://google.com/");
+        
+        WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        searchBox.sendKeys("Orange HRM demo", Keys.ENTER);
+        System.out.println("Search Result displayed");
+
+       
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("search")));
+        
+        
+        driver.navigate().back();
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        driver.navigate().back();
+        System.out.println("After clicking on back arrow button "+ driver.getCurrentUrl());
+        Thread.sleep(2000);
+        
+        driver.navigate().forward();
+        System.out.println("After clicking on forward arrow button "+ driver.getCurrentUrl());
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("search")));
+        System.out.println("After clicking on forward arrow button "+ driver.getCurrentUrl());
+
+        
+        driver.switchTo().newWindow(WindowType.TAB);
+        driver.navigate().to("https://www.orangehrm.com/");
+        
+        WebElement contactSales =wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Contact Sales")));
+        contactSales.click();
+        
+        
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("FullName"))).sendKeys("Vikram Rathode");
+        
+        driver.findElement(By.name("Contact")).sendKeys("1234567890");
+        driver.findElement(By.name("JobTitle")).sendKeys("Fresher");
+        
+        WebElement countryDropdown = driver.findElement(By.name("Country"));
+        Select country = new Select(countryDropdown);
+        country.selectByVisibleText("India");
+        
+        WebElement noOfEmployees = driver.findElement(By.name("NoOfEmployees"));
+        Select employee = new Select(noOfEmployees);
+        employee.selectByVisibleText("11 - 50");
+        
+        driver.findElement(By.name("Email")).sendKeys("rathodeitsolutions.test@test.com");
+        
+        
+        driver.findElement(By.className("textarea")).click();
+        driver.findElement(By.name("CompanyName")).sendKeys("Test Company");
+        
+        
+        Thread.sleep(5000);
+        driver.findElement(By.id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll")).click();
+
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(
+        By.cssSelector("iframe[title='reCAPTCHA']")));
+        
+
+		WebElement captcha = wait.until(ExpectedConditions.elementToBeClickable(
+		        By.id("recaptcha-anchor")));
+		
+		// click the checkbox
+		captcha.click();
+		
+		// switch back to main page
+		driver.switchTo().defaultContent();
+		
+		Thread.sleep(80000);
+		WebElement submission = driver.findElement(By.id("Form_getForm_action_submitForm"));
+		submission.submit();
+		
+//		TakesScreenshot ts = (TakesScreenshot) driver;
+//		File src =ts.getScreenshotAs(OutputType.FILE);
+//		Files.copy(src.toPath(), new File("screenshot.png").toPath());
+		
+
+		TakesScreenshot ts = (TakesScreenshot) driver;
+		File src = ts.getScreenshotAs(OutputType.FILE);
+		
+		Path dir = Paths.get("screenshots");
+		Files.createDirectories(dir); // ensure folder exists
+		
+		Path target = dir.resolve("screenshot.png");
+		Files.copy(src.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+
+
+		
+        driver.findElement(By.name("Comment")).sendKeys("This is a test data");
+
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(
+		        By.cssSelector("iframe[title='reCAPTCHA']")));
+		        
+
+		WebElement captchaa = wait.until(ExpectedConditions.elementToBeClickable(By.id("recaptcha-anchor")));
+				
+		// click the checkbox
+		captchaa.click();
+				
+		// switch back to main page
+		driver.switchTo().defaultContent();
+				
+	    Thread.sleep(40000);
+		WebElement submissionn = driver.findElement(By.name("action_submitForm"));
+		submissionn.submit();
+		
+		
+		Thread.sleep(2000);
+		driver.close();
+		
+		Thread.sleep(2000);
+		driver.quit();
+		
+		
+	
+
+
+           }
+    
+}
