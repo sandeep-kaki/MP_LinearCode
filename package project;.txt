@@ -1,0 +1,81 @@
+package project;
+
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+public class EmployeeDetails {
+
+	public static void main(String[] args)  {
+		WebDriver driver = new ChromeDriver();
+		driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));	
+
+		
+		// Login page
+		driver.findElement(By.name("username")).sendKeys("Admin",Keys.TAB);
+        
+        driver.findElement(By.name("password")).sendKeys("admin123",Keys.TAB);
+        
+        
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button")).click();
+        
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[1]/aside/nav/div[2]/ul/li[1]/a")).click();
+        
+        
+        //navigate to PMI
+        
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[1]/aside/nav/div[2]/ul/li[2]/a")).click();
+        
+        
+        //Add Employee page
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[1]/header/div[2]/nav/ul/li[3]/a")).click();
+        
+        //Enter First Name, Middle Name and Last Name.
+        driver.findElement(By.name("firstName")).sendKeys("Yazh");
+        driver.findElement(By.name("middleName")).sendKeys("Mozhi");
+        driver.findElement(By.name("lastName")).sendKeys("Nila");
+        
+        //Click on “Create Login Details” slider.
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[1]/div[2]/div[2]/div/label/span")).click();
+        
+        //Enter username, password and confirm password.
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[1]/div[2]/div[3]/div/div[1]/div/div[2]/input")).sendKeys("Ad143");
+        
+        driver.findElement(By.xpath("//input[@type=\"password\"]")).sendKeys("Ad@1234");
+        
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[1]/div[2]/div[4]/div/div[2]/div/div[2]/input")).sendKeys("Ad@1234");
+        
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[2]/button[2]")).click();
+        
+        //  Select Nationality   //span[normalize-space()='Indian']          
+        
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[3]/div[1]/div[1]/div/div[2]/div/div/div[1]")).click();
+        driver.findElement(By.xpath("//span[normalize-space()='Indian']  ")).click();
+        
+        //Select Marriage status //span[normalize-space()='Married']
+        driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[3]/div[1]/div[2]/div/div[2]/div/div")).click();
+        driver.findElement(By.xpath("//span[normalize-space()='Married']"));
+        
+        driver.findElement(By.xpath("//div[@class='orangehrm-horizontal-padding orangehrm-vertical-padding']//button[@type='submit'][normalize-space()='Save']")).click();
+        
+        //logout
+        driver.findElement(By.xpath("//i[@class='oxd-icon bi-caret-down-fill oxd-userdropdown-icon']")).click();
+        
+        driver.findElement(By.linkText("Logout")).click();
+        
+        driver.close();
+        
+	}
+
+}
