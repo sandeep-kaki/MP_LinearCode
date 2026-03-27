@@ -1,0 +1,92 @@
+package CreateAccount;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class CreatForm {
+
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		WebDriver driver=new ChromeDriver();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+		driver.get("https://www.facebook.com/");
+		driver.manage().window().maximize();
+		//id="_R_1cl2p4jikacppb6amH1_"
+		
+	
+		
+		// Login page
+		driver.findElement(By.xpath("//*[@id=\"login_form\"]/div/div[1]/div/div[5]/div/a/div/div[1]")).click();
+		
+		//FirstName
+		driver.findElement(By.id("_R_1cl2p4jikacppb6amH1_")).sendKeys("Nitika");
+		
+		//Surname
+		driver.findElement(By.id("_R_1kl2p4jikacppb6amH1_")).sendKeys("Rai");
+
+		driver.findElement(By.xpath("//div[@role='combobox']")).click();
+		 Thread.sleep(2000);
+		 driver.findElement(By.xpath("//div[text()='30']")).click();
+		 
+		 driver.findElement(By.xpath("//div[@id='_r_9_']")).click();
+		 try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 driver.findElement(By.xpath("//div[text()='August']")).click();
+		 
+		 driver.findElement(By.xpath("//div[@aria-activedescendant='_r_h_']")).click();
+		 //Thread.sleep(2000);
+		 driver.findElement(By.xpath("//div[text()='2003']")).click();
+		 
+		 driver.findElement(By.xpath("//div[@id='_R_mad6p4jikacppb6amH2_']")).click();
+		 //Thread.sleep(2000);
+		 driver.findElement(By.xpath("//div[text()='Female']")).click();
+		
+		//MobileNumber
+		driver.findElement(By.id("_R_6ad8p4jikacppb6amH1_")).sendKeys("987654321");	    
+		
+		//mobile number
+        Boolean ele=driver.findElement(By.className("x1lliihq")).isDisplayed();
+        System.out.println("Please enter a valid mobile number or email address: "+ele);
+        
+        //password
+        driver.findElement(By.id("_R_clap4jikacppb6amH1_")).sendKeys("987654321");	    
+        Boolean el=driver.findElement(By.className("x10d0gm4")).isDisplayed();
+        System.out.println("Please enter a valid Passward :"+el);    
+        
+        //close browser
+        WebElement Submit = driver.findElement(By.className("x9f619"));
+        Submit.click();
+        
+        
+        //driver.quit();
+       
+		}
+}
+		
+		
+		
+		
+		
+	
+		
+		
+		
+		
+		
+		
+         
+	
+
+
