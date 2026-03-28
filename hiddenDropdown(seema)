@@ -1,0 +1,101 @@
+package main;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+//import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+public class Main {
+
+    public static void main(String[] args) throws InterruptedException {
+        WebDriver driver=new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+        driver.manage().window().maximize();
+        driver.get("https://www.flipkart.com/");
+        driver.findElement(By.xpath("//*[@class='q7ywiQ']/span[@role='button']")).click();
+        WebElement search = driver.findElement(By.name("q"));
+        search.sendKeys("mobile ");
+        //Thread.sleep(1000);
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(10));
+        List<WebElement> suggests = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                By.cssSelector("ul.VCplLH div.VDtK0l"))
+        );
+
+        for(WebElement x : suggests) {
+            if(x.getText().toLowerCase().contains("mobile under 15000")) {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();",x);
+                break;
+            }
+        }
+
+        Actions slider = new Actions(driver);
+        WebDriverWait mywait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement max = mywait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='container']//div[@class='lPYKVv jVLYlZ']")));
+        slider.dragAndDropBy(max, -175, 0).perform();
+
+
+       JavascriptExecutor js=(JavascriptExecutor) driver;
+       js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+       Thread.sleep(500);
+        WebElement ele = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[text()='Operating System Version Name']/parent::div")));
+        ele.click();
+
+        // to click "__ More"
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[text()='Operating System Version Name']/parent::*/following-sibling::*//span"))).click();
+
+        // selecting pieOS checkbox
+        WebElement pieOS = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[text()='Pie']/preceding-sibling::div")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();",pieOS);
+
+
+        // clicking on Newest First filter
+        WebElement newestFirst = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[text()='Newest First']")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();",newestFirst);
+        Thread.sleep(2000);
+
+
+        for(int i=1;i<=5;i++) {
+            String name = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("(//*[@class='col col-7-12']/div[@class='RG5Slk'])["+i+"]"))).getText();
+            String price = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("(//*[@class='oFEPlD']//*[@class='hZ3P6w DeU9vF'])["+i+"]"))).getText();
+
+            System.out.println(name);
+            System.out.println(price);
+
+
+            price = price.replaceAll("[^0-9]","");
+            int priceInInteger = Integer.parseInt(price);
+
+            if(i==1) {
+                if (priceInInteger < 30000) {
+                    System.out.println("Validation Passed: First mobile price is less than 30000");
+                } else {
+                    System.out.println("Validation Failed: First mobile price is " + price);
+                }
+            }
+
+
+
+
+
+
+        }
+
+
+    }
+
+}
