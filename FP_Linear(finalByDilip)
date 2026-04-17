@@ -1,0 +1,196 @@
+package projectLinerCode;
+ 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.File;
+import org.openqa.selenium.io.FileHandler;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+ 
+//import utilities.ExcelUtility;
+ 
+public class LinearCodeTC1 {
+ 
+    public static void main(String[] args) throws InterruptedException, FileNotFoundException, IOException {
+ 
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
+ 
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+ 
+        driver.get("https://www.indiamart.com/");
+        driver.manage().window().maximize();
+
+//        ======SEARCHING FOR TOP 3 CAR WASH SERVICES AND EXTRACTING NAME AND PHONE NUMBER (TC__01)======
+        WebElement selectedCity = driver.findElement(By.id("hd_usercity"));
+        String city = selectedCity.getText().trim();
+ 
+        // Select city
+        if(!city.equalsIgnoreCase("chennai")) {
+	        selectedCity.click();
+	        driver.findElement(By.id("hd_city_sugg")).sendKeys("Chennai");
+	        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"anchor\"]"))).click();
+        }
+ 
+        //  Search
+        driver.findElement(By.name("ss"))
+              .sendKeys("car wash services", Keys.ENTER);
+ 
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@class='cardlinks']")));
+ 
+        //  Collect names & URLs ONCE
+        List<WebElement> cards =
+                driver.findElements(By.xpath("//a[@class='cardlinks']"));
+ 
+        List<String> urls = new ArrayList<>();
+        List<String> serviceNames = new ArrayList<>();
+ 
+        for (int i = 0; i < Math.min(3, cards.size()); i++) {
+            serviceNames.add(cards.get(i).getText());
+            urls.add(cards.get(i).getAttribute("href"));
+        }
+ 
+        String mainWindow = driver.getWindowHandle();
+ 
+        System.out.println("\n====== INDIA MART – TOP 3 CAR WASH SERVICES ======");
+        System.out.println("---------------------------------------------");
+ 
+        //  Open each service in new tab
+        for (int i = 0; i < urls.size(); i++) {
+ 
+            ((JavascriptExecutor) driver).executeScript("window.open(arguments[0], '_blank');", urls.get(i));
+ 
+            // Switch to new tab
+            for (String win : driver.getWindowHandles()) {
+                if (!win.equals(mainWindow)) {
+                    driver.switchTo().window(win);
+                    break;
+                }
+            }
+ 
+            // Close unlock popup if present
+            List<WebElement> skipBtns = driver.findElements(By.id("idfpclose"));
+            if (!skipBtns.isEmpty()) {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", skipBtns.get(0));
+                Thread.sleep(500);
+            }
+ 
+            // Extract phone number
+         // Extract phone number
+            String phone = "Hidden (Unlock required)";
+ 
+            try {
+                WebElement phoneElement = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//*[@id='pns_no2']//a[contains(@href,'tel')]")
+                    )
+                );
+                phone = phoneElement.getAttribute("href").replace("tel:", "");
+            } catch (Exception e) {
+                // Do nothing – phone not visible
+            }
+ 
+            System.out.println((i + 1) + ". " + serviceNames.get(i));
+            System.out.println("   Phone : " + phone);
+
+ 
+            driver.close();
+            driver.switchTo().window(mainWindow);
+        }
+//        ExcelUtility.save();
+        driver.navigate().back();
+
+//		====== GETTING TITLES FROM FOOD, AGRICULTURE & FARMING (TC__02)=======
+		WebElement  af = driver.findElement(By.linkText("Food, Agriculture & Farming"));
+
+ 
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[normalize-space()=\"Food, Agriculture & Farming\"]")));
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].scrollIntoView()", af);
+
+ 
+		try {
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("idfpclose")));
+        WebElement skip = driver.findElement(By.id("idfpclose"));
+        js.executeScript("arguments[0].click()", skip);
+		}
+		catch(Exception e) {
+		}
+        List<WebElement> subAgri= driver.findElements(By.xpath("//h2[normalize-space()='Food, Agriculture & Farming'] /following-sibling::div //div[contains(@class,'product-item')]//h3"));
+        System.out.println("");
+        System.out.println("======Food, Agriculture & Farming======");   
+        System.out.println("---------------------------------------------");
+ 
+        for(WebElement titles: subAgri) {      	
+        	System.out.println(titles.getText());
+        }
+        js.executeScript("window.scrollBy(0,-document.body.scrollHeight)");
+
+//      ====== INVALID PHONE NUMBER (TC__03)=======
+        driver.findElement(By.id("user_sign_in")).click();
+ 
+        WebElement mobile = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("mobile"))
+        );
+ 
+        String mobileNumber = "5476543218";
+        mobile.sendKeys(mobileNumber);
+        mobile.submit();
+        WebElement errMsg = driver.findElement(By.id("mobile_err"));
+
+ 
+        if (!mobileNumber.matches("^[6-9][0-9]{9}$")) {
+ 
+            File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            FileHandler.copy(
+                    scrFile,
+                    new File("./Screenshots/invalid_number_error.png"));
+            System.out.println("");
+            System.out.println("======INVALID PHONE NUMBER======");
+            System.out.println("---------------------------------------------");
+            System.out.println("Screenshot captured: invalid_number_error.png");
+            System.out.println(errMsg.getText());
+ 
+        } else {
+            mobile.submit();
+            System.out.println("Valid mobile number, login attempted");
+        }
+        driver.findElement(By.id("close_s")).click();
+
+//        ======EXTRACTING TOP PRODUTS FROM EXPORTERS (TC__04)======
+        driver.findElement(By.id("exporters")).click();
+        WebElement topProd =driver.findElement(By.xpath("//h2[@class=\"text-center font-normal text-gray-800 mb-6 text-[20px] md:text-[28px] leading-[28px]\"]"));
+        System.out.println("");
+        System.out.println("======"+topProd.getText()+"======");
+        System.out.println("---------------------------------------------");
+
+ 
+		List<WebElement> topCat = driver.findElements(
+		        By.xpath("//a[contains(@class,'text-base') and contains(@class,'font-semibold')]")
+		);
+		for (int i = 0; i < Math.min(5, topCat.size()); i++) {
+		    System.out.println(topCat.get(i).getText());
+		}
+		WebElement visibilityOfProd = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.px-4.py-8.bg-gray-50")));
+		js.executeScript("arguments[0].scrollIntoView()", visibilityOfProd);
+		 File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+         FileHandler.copy(
+                 scrFile,
+                 new File("./Screenshots/top_poduct_catergories_india.png"));
+         System.out.println("Screenshot captured: top_poduct_categories_india.png");
+         driver.quit();	
+	}
+}
