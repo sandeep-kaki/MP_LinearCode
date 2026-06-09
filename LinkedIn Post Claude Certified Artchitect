@@ -1,0 +1,129 @@
+Just cleared the Claude Certified Architect – Foundations exam.
+
+
+
+Not going to just post the certificate and move on.
+
+
+
+Here's what I actually learned — and what I think every developer
+
+entering the AI space should understand before they write a single line
+
+of agentic code:
+
+
+
+1. Claude doesn't run anything. It just talks.
+
+  Every interaction is an API call — you send text, it replies.
+
+  When it wants to use a tool, it asks YOU to run it and bring
+
+  back the result. The model has no hands. You are the hands.
+
+
+
+2. An AI agent is just a loop.
+
+  Claude thinks → requests a tool → you run it → return the result
+
+  → Claude thinks again. This repeats until the job is done.
+
+  That's it. That's the whole architecture everyone is building on.
+
+
+
+3. Prompts fail. Code doesn't.
+
+  If a step must ALWAYS happen, enforce it programmatically —
+
+  not with instructions. A well-written prompt works 88% of the time.
+
+  In production, that other 12% is real money, real errors, real users.
+
+
+
+4. In multi-agent systems, agents are strangers to each other.
+
+  They share zero memory. If Agent B needs what Agent A found,
+
+  you copy it into Agent B's prompt yourself. Every time. No exceptions.
+
+  Forgetting this is the #1 reason multi-agent systems produce
+
+  incomplete, incoherent output.
+
+
+
+5. The quality of a tool's description decides everything.
+
+  Claude picks tools based on how they're described — not magic.
+
+  A vague description means wrong tool calls. A precise one means
+
+  reliable behaviour. This is where most production bugs actually live.
+
+
+
+6. When you want structured output — force it, don't ask for it.
+
+  Give Claude a JSON schema and make it fill the form. Mark fields
+
+  nullable when data might be missing. Otherwise it'll hallucinate
+
+  values to fill the gaps — confidently and silently.
+
+
+
+7. Not all tasks deserve real-time processing.
+
+  The Batch API is 50% cheaper and handles thousands of requests
+
+  asynchronously. For nightly reports, weekly audits, bulk analysis —
+
+  you're wasting money doing it any other way.
+
+
+
+8. One misplaced config file can make your whole team invisible.
+
+  Instructions stored at the user level stay on your machine.
+
+  Your teammates are working completely blind and don't know it.
+
+
+
+The deeper I went, the clearer it became — AI engineering isn't
+
+about clever prompting. It's about building systems that fail
+
+loudly, recover gracefully, and never silently do the wrong thing.
+
+
+
+---
+
+
+
+If you want to go deeper, these are the best free resources I'd
+
+point anyone to — no courses, no paywalls:
+
+
+
+→ Anthropic's "Building Effective Agents" (the original, by the people
+
+ who built Claude) — anthropic.com/research/building-effective-agents
+
+
+
+→ Andrej Karpathy's "Intro to Large Language Models" on YouTube
+
+ (1 hour, free, the best technical foundation video that exists) —
+
+ youtube.com/watch?v=zjkBMFhNj_g
+
+
+
+#Anthropic #AIEngineering #GenerativeAI #ClaudeCertified #AIAgents
