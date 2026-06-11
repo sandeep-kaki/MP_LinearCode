@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML & AI — Beginner Learning Path</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root {
+  --bg:       #0e1016;
+  --bg2:      #14171f;
+  --bg3:      #1c2030;
+  --bg4:      #232840;
+  --border:   rgba(255,255,255,0.10);
+  --border2:  rgba(255,255,255,0.16);
+  --border3:  rgba(255,255,255,0.26);
+  --text:     #edf0fa;
+  --text2:    #b0b8d0;
+  --text3:    #7a84a0;
+  --mono:     'IBM Plex Mono', monospace;
+  --serif:    'Fraunces', serif;
+  --sans:     'Inter', sans-serif;
+
+  /* block colours */
+  --py:   #34d399;  --py-bg:  rgba(52,211,153,0.10);  --py-bd:  rgba(52,211,153,0.28);
+  --ml:   #60a5fa;  --ml-bg:  rgba(96,165,250,0.10);  --ml-bd:  rgba(96,165,250,0.28);
+  --nn:   #a78bfa;  --nn-bg:  rgba(167,139,250,0.10); --nn-bd:  rgba(167,139,250,0.28);
+  --nlp:  #fb923c;  --nlp-bg: rgba(251,146,60,0.10);  --nlp-bd: rgba(251,146,60,0.28);
+  --tr:   #f472b6;  --tr-bg:  rgba(244,114,182,0.10); --tr-bd:  rgba(244,114,182,0.28);
+  --lm:   #fbbf24;  --lm-bg:  rgba(251,191,36,0.10);  --lm-bd:  rgba(251,191,36,0.28);
+  --emb:  #2dd4bf;  --emb-bg: rgba(45,212,191,0.10);  --emb-bd: rgba(45,212,191,0.28);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* ─── HEADER ─────────────────────────────────── */
+.site-header{
+  text-align:center;
+  padding:56px 24px 40px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.site-header::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(96,165,250,0.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--text2);
+  margin-bottom:14px;
+}
+.site-header h1{
+  font-family:var(--serif);
+  font-size:clamp(1.9rem,4vw,3rem);
+  font-weight:500;
+  color:#fff;
+  margin-bottom:10px;
+  letter-spacing:-0.01em;
+}
+.site-header h1 em{
+  font-style:italic;
+  font-weight:300;
+  color:var(--ml);
+}
+.site-header p{
+  font-size:14px;
+  color:var(--text);
+  max-width:520px;
+  margin:0 auto 24px;
+}
+
+/* nav pills */
+.nav-pills{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+}
+.nav-pill{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.06em;
+  padding:5px 12px;
+  border-radius:20px;
+  border:1px solid var(--border2);
+  color:var(--text2);
+  text-decoration:none;
+  transition:all 0.2s;
+  cursor:pointer;
+}
+.nav-pill:hover{color:#fff;border-color:var(--border3);}
+.nav-pill.py{border-color:var(--py-bd);color:var(--py);}
+.nav-pill.ml{border-color:var(--ml-bd);color:var(--ml);}
+.nav-pill.nn{border-color:var(--nn-bd);color:var(--nn);}
+.nav-pill.nlp{border-color:var(--nlp-bd);color:var(--nlp);}
+.nav-pill.tr{border-color:var(--tr-bd);color:var(--tr);}
+.nav-pill.lm{border-color:var(--lm-bd);color:var(--lm);}
+
+/* ─── MAIN LAYOUT ────────────────────────────── */
+.flow{
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 20px 80px;
+}
+
+/* ─── CONNECTOR ──────────────────────────────── */
+.connector{
+  display:flex;flex-direction:column;align-items:center;
+  padding:6px 0;gap:0;
+}
+.conn-line{width:2px;height:24px;background:var(--border2);}
+.conn-label{
+  font-family:var(--mono);
+  font-size:9.5px;
+  color:var(--text2);
+  letter-spacing:0.05em;
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  padding:3px 12px;
+  white-space:nowrap;
+  margin:2px 0;
+}
+
+/* ─── BLOCK (section) ────────────────────────── */
+.block{
+  margin:0;
+  scroll-margin-top:20px;
+}
+.block-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+}
+
+/* top accent line */
+.block-card.py  {border-top:2.5px solid var(--py);}
+.block-card.ml  {border-top:2.5px solid var(--ml);}
+.block-card.nn  {border-top:2.5px solid var(--nn);}
+.block-card.nlp {border-top:2.5px solid var(--nlp);}
+.block-card.tr  {border-top:2.5px solid var(--tr);}
+.block-card.lm  {border-top:2.5px solid var(--lm);}
+.block-card.emb {border-top:2.5px solid var(--emb);}
+
+/* block header */
+.bh{
+  padding:20px 26px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:16px;
+}
+.bh-left{flex:1;}
+.bh-num{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.14em;
+  padding:3px 8px;
+  border-radius:6px;
+  margin-bottom:7px;
+  display:inline-block;
+}
+.py  .bh-num{background:var(--py-bg);color:var(--py);}
+.ml  .bh-num{background:var(--ml-bg);color:var(--ml);}
+.nn  .bh-num{background:var(--nn-bg);color:var(--nn);}
+.nlp .bh-num{background:var(--nlp-bg);color:var(--nlp);}
+.tr  .bh-num{background:var(--tr-bg);color:var(--tr);}
+.lm  .bh-num{background:var(--lm-bg);color:var(--lm);}
+.emb .bh-num{background:var(--emb-bg);color:var(--emb);}
+
+.bh-title{
+  font-family:var(--serif);
+  font-size:1.25rem;
+  font-weight:500;
+  color:#fff;
+  margin-bottom:5px;
+  letter-spacing:-0.01em;
+}
+.bh-intro{
+  font-size:13px;
+  color:var(--text);
+  line-height:1.6;
+  max-width:680px;
+}
+.bh-tag{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--text2);
+  white-space:nowrap;
+  margin-top:4px;
+  text-align:right;
+}
+
+/* block body */
+.bb{padding:22px 26px 24px;}
+
+/* ─── GRID HELPERS ───────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:11px;}
+.g2h{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;}
+
+/* ─── SECTION inside block ───────────────────── */
+.section-label{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text2);
+  margin-bottom:10px;
+}
+.section-intro{
+  font-size:12px;
+  color:var(--text);
+  margin-bottom:10px;
+  line-height:1.6;
+  font-style:italic;
+}
+.divider{height:1px;background:var(--border);margin:18px 0;}
+
+/* ─── PANEL (sub-card) ───────────────────────── */
+.panel{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.panel-hd{
+  padding:10px 14px 9px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.panel-title{font-size:12.5px;font-weight:600;color:var(--text);}
+.panel-sub{font-size:10px;color:var(--text2);font-family:var(--mono);margin-left:auto;}
+.panel-intro{
+  font-size:12px;
+  color:var(--text);
+  padding:8px 14px 0;
+  line-height:1.5;
+  font-style:italic;
+}
+.panel-bd{padding:10px 14px 12px;}
+
+/* ─── CHIPS ──────────────────────────────────── */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.chip{
+  font-size:11px;
+  padding:3px 9px;
+  border-radius:6px;
+  border:1px solid var(--border2);
+  color:var(--text2);
+  background:rgba(255,255,255,0.05);
+  line-height:1.5;
+}
+.chip.hi{color:#ffffff;border-color:var(--border3);background:rgba(255,255,255,0.10);}
+
+/* ─── TABLE ──────────────────────────────────── */
+.mini-table{width:100%;border-collapse:collapse;margin-top:6px;}
+.mini-table th{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text2);
+  text-align:left;
+  padding:0 0 5px;
+  border-bottom:1px solid var(--border2);
+}
+.mini-table td{
+  font-size:12px;
+  color:var(--text2);
+  padding:5px 0 4px;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+  line-height:1.5;
+}
+.mini-table td:first-child{color:#ffffff;font-weight:600;padding-right:10px;white-space:nowrap;}
+.mini-table tr:last-child td{border-bottom:none;}
+
+/* lib badge */
+.lib-badge{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:9.5px;
+  padding:2px 8px;
+  border-radius:4px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid var(--border2);
+  color:var(--text2);
+  margin-top:8px;
+}
+.lib-badge span{color:#c8d0e8;}
+
+/* purpose strip */
+.purpose{
+  font-size:12px;
+  color:var(--text2);
+  background:var(--bg4);
+  border-radius:6px;
+  padding:6px 10px;
+  margin-top:8px;
+  line-height:1.5;
+}
+.purpose strong{color:#ffffff;font-weight:600;}
+
+/* group label inside panel */
+.grp-label{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text2);
+  margin:9px 0 5px;
+}
+.grp-label:first-child{margin-top:0;}
+
+/* ─── FULL-WIDTH PANEL ───────────────────────── */
+.panel-full{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+
+/* ─── PARALLEL SPLIT ─────────────────────────── */
+.parallel-wrap{position:relative;}
+.parallel-label{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text2);
+  text-align:center;
+  margin-bottom:10px;
+}
+
+/* ─── BEYOND BOX ─────────────────────────────── */
+.beyond-card{
+  background:transparent;
+  border:1.5px dashed var(--border2);
+  border-radius:18px;
+  overflow:hidden;
+}
+.beyond-card .bh{border-bottom:1px dashed var(--border2);}
+.beyond-panel{
+  background:transparent;
+  border:1px dashed var(--border2);
+  border-radius:12px;
+  overflow:hidden;
+}
+.beyond-panel .panel-hd{border-bottom:1px dashed var(--border);}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media(max-width:780px){
+  .g2,.g3,.g4,.g2h{grid-template-columns:1fr;}
+  .bh{flex-direction:column;gap:8px;}
+  .bh-tag{text-align:left;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="eyebrow">Beginner Learning Path · ML &amp; AI</div>
+  <h1>Python to <em>Language Models</em></h1>
+  <p>Every core concept, type, purpose, and library — from Python foundations through to Agentic AI. No advanced topics. 13 blocks, one clear path.</p>
+  <div class="nav-pills">
+    <a class="nav-pill py" href="#py">01 Python</a>
+    <a class="nav-pill ml" href="#ml">02 Machine Learning</a>
+    <a class="nav-pill nn" href="#nn">03 Neural Networks</a>
+    <a class="nav-pill nlp" href="#nlp">04 NLP</a>
+    <a class="nav-pill tr" href="#tr">05 Transformer</a>
+    <a class="nav-pill lm" href="#lm">06 Language Models</a>
+    <a class="nav-pill" style="border-color:rgba(232,121,249,0.35);color:#e879f9;" href="#genai">07 Generative AI</a>
+    <a class="nav-pill" style="border-color:rgba(251,146,60,0.35);color:#fb923c;" href="#prompt">08 Prompt Eng.</a>
+    <a class="nav-pill" style="border-color:rgba(52,211,153,0.35);color:#34d399;" href="#agentic">09 Agentic AI</a>
+    <a class="nav-pill" style="border-color:rgba(96,165,250,0.35);color:#60a5fa;" href="#rag">10 RAG</a>
+    <a class="nav-pill" style="border-color:rgba(45,212,191,0.35);color:#2dd4bf;" href="#context">11 Context Eng.</a>
+    <a class="nav-pill" style="border-color:rgba(167,139,250,0.35);color:#a78bfa;" href="#frameworks">12 Frameworks</a>
+    <a class="nav-pill" style="border-color:rgba(251,191,36,0.35);color:#fbbf24;" href="#platforms">13 Platforms</a>
+  </div>
+</header>
+
+<div class="flow">
+
+<!-- ════════════════════════════════════════════
+     BLOCK 01 · PYTHON
+════════════════════════════════════════════ -->
+<div style="height:32px;"></div>
+<div class="block" id="py">
+<div class="block-card py">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num">BLOCK 01</div>
+      <div class="bh-title">Python Foundations</div>
+      <div class="bh-intro">The programming language of AI/ML — readable syntax, fast to prototype, and a massive ecosystem of scientific libraries. Every concept in this entire path is coded in Python.</div>
+    </div>
+    <div class="bh-tag">Start here</div>
+  </div>
+  <div class="bb">
+    <div class="g2">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:var(--py)"></div><span class="panel-title">Core Language</span></div>
+        <div class="panel-bd">
+          <div class="grp-label">Basics</div>
+          <div class="chips">
+            <span class="chip hi">Variables &amp; data types</span>
+            <span class="chip hi">int · float · str · bool</span>
+            <span class="chip hi">list · dict · tuple · set</span>
+            <span class="chip">Loops — for / while</span>
+            <span class="chip">Conditionals — if/elif/else</span>
+            <span class="chip">Functions &amp; scope</span>
+            <span class="chip">Lambda &amp; map/filter</span>
+          </div>
+          <div class="grp-label">OOP</div>
+          <div class="chips">
+            <span class="chip">Classes &amp; objects</span>
+            <span class="chip">Inheritance</span>
+            <span class="chip">Dunder methods (__init__)</span>
+            <span class="chip">Decorators</span>
+          </div>
+          <div class="grp-label">File &amp; Error handling</div>
+          <div class="chips">
+            <span class="chip">Reading / writing CSV files</span>
+            <span class="chip">try / except</span>
+            <span class="chip">List comprehensions</span>
+          </div>
+          <div class="purpose"><strong>Purpose:</strong> Build the mental model of programming before touching any ML library</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#a3e635"></div><span class="panel-title">Data Science Stack</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Library</th><th>What it does</th></tr>
+            <tr><td>NumPy</td><td>Fast array &amp; matrix math — the base of all ML computation</td></tr>
+            <tr><td>Pandas</td><td>Load, clean, explore tabular data (DataFrames)</td></tr>
+            <tr><td>Matplotlib</td><td>Plot graphs &amp; visualise results</td></tr>
+            <tr><td>Seaborn</td><td>Statistical plots built on Matplotlib</td></tr>
+            <tr><td>Scikit-learn</td><td>One-stop ML library — all classical algorithms</td></tr>
+            <tr><td>Jupyter / Colab</td><td>Interactive notebook — write code + see output together</td></tr>
+          </table>
+          <div class="purpose" style="margin-top:10px"><strong>Purpose:</strong> These libraries are the hands-on tools — nearly every tutorial and course uses them</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">Python ready → now learn how machines learn from data</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 02 · MACHINE LEARNING
+════════════════════════════════════════════ -->
+<div class="block" id="ml">
+<div class="block-card ml">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num">BLOCK 02</div>
+      <div class="bh-title">Machine Learning</div>
+      <div class="bh-intro">Teaching machines to learn patterns from data without being explicitly programmed. You feed data in → the model finds the mapping → it makes predictions on new data. Three major types: Supervised, Unsupervised, and Reinforcement.</div>
+    </div>
+    <div class="bh-tag">Library: scikit-learn</div>
+  </div>
+  <div class="bb">
+
+    <!-- Core concepts -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:var(--ml)"></div><span class="panel-title">Core Concepts — apply to all ML</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Training fundamentals</div>
+            <div class="chips">
+              <span class="chip hi">Train / Validation / Test split</span>
+              <span class="chip hi">Loss function — measures error</span>
+              <span class="chip hi">Gradient Descent (BGD · SGD · Mini-batch)</span>
+              <span class="chip">Learning rate</span>
+              <span class="chip">Overfitting vs Underfitting</span>
+              <span class="chip">Bias–Variance tradeoff</span>
+            </div>
+          </div>
+          <div>
+            <div class="grp-label">Improving the model</div>
+            <div class="chips">
+              <span class="chip hi">Feature scaling — Normalisation &amp; Standardisation</span>
+              <span class="chip">Cross-validation (k-fold)</span>
+              <span class="chip">Regularisation — L1 (Lasso) · L2 (Ridge)</span>
+              <span class="chip">Hyperparameter tuning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Three types of Machine Learning</div>
+    <div class="g3" style="margin-bottom:14px;">
+      <div style="background:var(--ml-bg);border:1px solid var(--ml-bd);border-radius:8px;padding:10px 12px;text-align:center;">
+        <div style="font-weight:600;color:var(--ml);font-size:12px;margin-bottom:3px;">Supervised</div>
+        <div style="font-size:11px;color:var(--text);">Learn from labelled data</div>
+      </div>
+      <div style="background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.22);border-radius:8px;padding:10px 12px;text-align:center;">
+        <div style="font-weight:600;color:#93c5fd;font-size:12px;margin-bottom:3px;">Unsupervised</div>
+        <div style="font-size:11px;color:var(--text);">Find structure — no labels</div>
+      </div>
+      <div style="background:rgba(45,212,191,0.07);border:1px solid rgba(45,212,191,0.24);border-radius:8px;padding:10px 12px;text-align:center;">
+        <div style="font-weight:600;color:#2dd4bf;font-size:12px;margin-bottom:3px;">Reinforcement</div>
+        <div style="font-size:11px;color:var(--text);">Learn from rewards &amp; penalties</div>
+      </div>
+    </div>
+
+    <!-- Supervised -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:var(--ml)"></div><span class="panel-title">Supervised Learning</span><span class="panel-sub">labelled data</span></div>
+      <div class="panel-intro">The most common type — you provide input + correct output pairs and the model learns the mapping. Used for prediction and classification tasks.</div>
+      <div class="panel-bd">
+        <div class="g2">
+
+          <div>
+            <div class="grp-label">Regression — predict a number</div>
+            <div class="section-intro">When the output is a continuous value: price, temperature, score</div>
+            <table class="mini-table">
+              <tr><th>Algorithm</th><th>Purpose</th></tr>
+              <tr><td>Linear Regression</td><td>Straight-line relationship between input and output</td></tr>
+              <tr><td>Polynomial Regression</td><td>Handles curved / non-linear relationships</td></tr>
+              <tr><td>Ridge Regression</td><td>Linear + L2 penalty, handles many features</td></tr>
+              <tr><td>Lasso Regression</td><td>Linear + L1 penalty, auto-selects important features</td></tr>
+            </table>
+            <div class="lib-badge">Library: <span>sklearn.linear_model</span></div>
+          </div>
+
+          <div>
+            <div class="grp-label">Classification — predict a category</div>
+            <div class="section-intro">When output is a class: spam/not spam, cat/dog, disease/healthy</div>
+            <table class="mini-table">
+              <tr><th>Algorithm</th><th>Purpose</th></tr>
+              <tr><td>Logistic Regression</td><td>Probability-based — binary or multi-class</td></tr>
+              <tr><td>Decision Tree</td><td>Rule-based splits — very interpretable</td></tr>
+              <tr><td>Random Forest</td><td>Many trees voted together — more accurate</td></tr>
+              <tr><td>K-Nearest Neighbours</td><td>Classify by similarity to nearest neighbours</td></tr>
+              <tr><td>Naive Bayes</td><td>Probabilistic — excellent for text classification</td></tr>
+              <tr><td>SVM</td><td>Find the best boundary between classes</td></tr>
+            </table>
+            <div class="lib-badge">Library: <span>sklearn.tree · sklearn.ensemble · sklearn.svm</span></div>
+          </div>
+
+        </div>
+
+        <div class="divider"></div>
+        <div class="grp-label">Evaluation Metrics — how do you know if the model is good?</div>
+        <div class="g2">
+          <div>
+            <div class="chips">
+              <span class="chip hi">Accuracy</span>
+              <span class="chip hi">Precision &amp; Recall</span>
+              <span class="chip hi">F1 Score</span>
+              <span class="chip hi">Confusion Matrix</span>
+              <span class="chip">ROC-AUC curve</span>
+            </div>
+            <div class="purpose" style="margin-top:8px"><strong>For classification</strong></div>
+          </div>
+          <div>
+            <div class="chips">
+              <span class="chip hi">MSE — Mean Squared Error</span>
+              <span class="chip hi">RMSE</span>
+              <span class="chip hi">MAE — Mean Absolute Error</span>
+              <span class="chip">R² score</span>
+            </div>
+            <div class="purpose" style="margin-top:8px"><strong>For regression</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="g2">
+
+      <!-- Unsupervised -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#93c5fd"></div><span class="panel-title">Unsupervised Learning</span><span class="panel-sub">no labels</span></div>
+        <div class="panel-intro">Find hidden structure in raw data without any labels. Used for grouping, compression, and pattern discovery.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Clustering — group similar things</div>
+          <table class="mini-table">
+            <tr><th>Algorithm</th><th>Purpose</th></tr>
+            <tr><td>K-Means</td><td>Partition data into K groups by distance</td></tr>
+            <tr><td>Hierarchical</td><td>Build a tree of nested clusters</td></tr>
+            <tr><td>Apriori (Association Rules)</td><td>"If X then Y" pattern mining — market basket</td></tr>
+          </table>
+          <div class="grp-label">Dimensionality Reduction — compress data</div>
+          <table class="mini-table">
+            <tr><th>Method</th><th>Purpose</th></tr>
+            <tr><td>PCA</td><td>Linear compression — keeps max variance</td></tr>
+            <tr><td>Autoencoder (intro)</td><td>Neural network-based compression</td></tr>
+          </table>
+          <div class="lib-badge">Library: <span>sklearn.cluster · sklearn.decomposition</span></div>
+        </div>
+      </div>
+
+      <!-- Reinforcement -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#2dd4bf"></div><span class="panel-title">Reinforcement Learning</span><span class="panel-sub">intro concept</span></div>
+        <div class="panel-intro">An agent learns by trial and error — it takes actions, receives rewards or penalties, and gradually learns the best strategy. No labelled data needed.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Meaning</th></tr>
+            <tr><td>Agent</td><td>The learner that takes actions</td></tr>
+            <tr><td>Environment</td><td>The world the agent acts in</td></tr>
+            <tr><td>State</td><td>What the agent currently sees</td></tr>
+            <tr><td>Action</td><td>What the agent can do</td></tr>
+            <tr><td>Reward</td><td>Feedback signal — good or bad action?</td></tr>
+            <tr><td>Q-Learning</td><td>Basic RL algorithm — learn value of actions</td></tr>
+          </table>
+          <div class="purpose" style="margin-top:10px"><strong>Connects to LLMs →</strong> RLHF (Reinforcement Learning from Human Feedback) is used to make LLMs like ChatGPT helpful and safe</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">shallow models can't learn from raw images or text → need to go deeper</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 03 · NEURAL NETWORKS
+════════════════════════════════════════════ -->
+<div class="block" id="nn">
+<div class="block-card nn">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num">BLOCK 03</div>
+      <div class="bh-title">Neural Networks &amp; Deep Learning</div>
+      <div class="bh-intro">Instead of manually engineering features, neural networks learn them automatically from raw data. Stack layers → each layer transforms data into more abstract representations. Inspired loosely by how neurons in the brain connect.</div>
+    </div>
+    <div class="bh-tag">Library: PyTorch · TensorFlow/Keras</div>
+  </div>
+  <div class="bb">
+
+    <!-- How learning works -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:var(--nn)"></div><span class="panel-title">How a Neural Network Learns</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Structure</div>
+            <div class="chips">
+              <span class="chip hi">Neuron — weighted sum + activation</span>
+              <span class="chip hi">Input Layer → Hidden Layers → Output Layer</span>
+              <span class="chip">Weights &amp; Biases — learned parameters</span>
+            </div>
+            <div class="grp-label">Training loop</div>
+            <div class="chips">
+              <span class="chip hi">1. Forward pass — compute prediction</span>
+              <span class="chip hi">2. Loss computation — how wrong?</span>
+              <span class="chip hi">3. Backpropagation — chain rule for gradients</span>
+              <span class="chip hi">4. Optimiser updates weights</span>
+              <span class="chip">5. Repeat for N Epochs</span>
+            </div>
+          </div>
+          <div>
+            <div class="grp-label">Activation Functions — add non-linearity</div>
+            <table class="mini-table">
+              <tr><th>Function</th><th>Where used</th></tr>
+              <tr><td>Sigmoid</td><td>Binary output, gates in LSTM</td></tr>
+              <tr><td>Tanh</td><td>Centered output, RNNs</td></tr>
+              <tr><td>ReLU</td><td>Most common hidden layer</td></tr>
+              <tr><td>Leaky ReLU</td><td>Fixes dying ReLU problem</td></tr>
+              <tr><td>Softmax</td><td>Multi-class output layer</td></tr>
+              <tr><td>GELU</td><td>Used in Transformers</td></tr>
+            </table>
+            <div class="grp-label">Optimisers — update the weights</div>
+            <div class="chips">
+              <span class="chip hi">SGD + Momentum</span>
+              <span class="chip hi">Adam (most commonly used)</span>
+              <span class="chip">RMSprop</span>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="grp-label">Regularisation — prevent overfitting</div>
+        <div class="chips">
+          <span class="chip hi">Dropout — randomly turn off neurons during training</span>
+          <span class="chip hi">Batch Normalisation — stabilise &amp; speed up training</span>
+          <span class="chip">Layer Normalisation — used in Transformers</span>
+          <span class="chip">Early Stopping — stop before overfitting</span>
+          <span class="chip">Data Augmentation — artificially expand dataset</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Neural Network Types</div>
+
+    <!-- ANN + CNN row -->
+    <div class="g2" style="margin-bottom:12px;">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:var(--nn)"></div><span class="panel-title">ANN — Artificial Neural Network</span></div>
+        <div class="panel-intro">The base type — fully connected layers where every neuron connects to every neuron in the next layer. Learns any pattern in structured/tabular data.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Key concepts</div>
+          <div class="chips">
+            <span class="chip hi">Perceptron (single-layer — origin)</span>
+            <span class="chip hi">MLP — Multi-Layer Perceptron</span>
+            <span class="chip">Dense / Fully connected layer</span>
+            <span class="chip">Universal approximation theorem</span>
+          </div>
+          <div class="purpose"><strong>Use for:</strong> Tabular data, classification, regression, any structured input</div>
+          <div class="lib-badge">Library: <span>PyTorch nn.Linear · Keras Dense</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#818cf8"></div><span class="panel-title">CNN — Convolutional Neural Network</span></div>
+        <div class="panel-intro">Uses small filters that slide across images detecting local patterns — edges → textures → shapes → objects. Exploits spatial structure in data.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Key concepts</div>
+          <div class="chips">
+            <span class="chip hi">Convolutional layer (filters / kernels)</span>
+            <span class="chip hi">Feature maps</span>
+            <span class="chip hi">Max Pooling — downsample</span>
+            <span class="chip">Stride &amp; Padding</span>
+            <span class="chip">Flatten → Fully connected</span>
+            <span class="chip">ResNet — skip connections (intro)</span>
+          </div>
+          <div class="purpose"><strong>Use for:</strong> Image classification, object detection, image segmentation</div>
+          <div class="lib-badge">Library: <span>torchvision · keras.layers.Conv2D</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RNN + LSTM row -->
+    <div class="g2" style="margin-bottom:12px;">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fb923c"></div><span class="panel-title">RNN — Recurrent</span></div>
+        <div class="panel-intro">Has memory — passes a hidden state from one step to the next so it can process sequences where order matters.</div>
+        <div class="panel-bd">
+          <div class="chips">
+            <span class="chip hi">Hidden state — carries memory</span>
+            <span class="chip">Processes one token at a time</span>
+            <span class="chip">Vanishing gradient ⚠ (long sequences)</span>
+          </div>
+          <div class="purpose"><strong>Use for:</strong> Sequential text, time series, basic NLP</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#f87171"></div><span class="panel-title">LSTM — Long Short-Term Memory</span></div>
+        <div class="panel-intro">Upgraded RNN with gates that explicitly control what to remember and what to forget over long sequences.</div>
+        <div class="panel-bd">
+          <div class="chips">
+            <span class="chip hi">Cell state — long-term memory</span>
+            <span class="chip hi">Forget gate</span>
+            <span class="chip hi">Input gate</span>
+            <span class="chip hi">Output gate</span>
+            <span class="chip">Fixes vanishing gradient ✓</span>
+          </div>
+          <div class="purpose"><strong>Use for:</strong> Long text sequences, speech, translation</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">text is a sequence — words have order and meaning → enter NLP</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 04 · NLP
+════════════════════════════════════════════ -->
+<div class="block" id="nlp">
+<div class="block-card nlp">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num">BLOCK 04</div>
+      <div class="bh-title">Natural Language Processing (NLP)</div>
+      <div class="bh-intro">Teaching machines to understand, process, and generate human language. Text must first be cleaned, then converted into numbers before any model can work with it. NLP is layered — from individual words up to meaning and intent.</div>
+    </div>
+    <div class="bh-tag">Library: NLTK · spaCy · HuggingFace</div>
+  </div>
+  <div class="bb">
+
+    <!-- Preprocessing -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:var(--nlp)"></div><span class="panel-title">Text Preprocessing Pipeline</span><span class="panel-sub">clean text first</span></div>
+      <div class="panel-intro">Raw text is messy — before any analysis, clean and normalise it. This is always step 1 in any NLP pipeline.</div>
+      <div class="panel-bd">
+        <div class="chips">
+          <span class="chip hi">Lowercasing — consistency</span>
+          <span class="chip hi">Punctuation &amp; noise removal</span>
+          <span class="chip hi">Stop word removal — remove "the", "is", "a"</span>
+          <span class="chip hi">Tokenisation — split into words or sentences</span>
+          <span class="chip hi">Stemming — cut to root form (running → run)</span>
+          <span class="chip hi">Lemmatisation — proper root form (better → good)</span>
+          <span class="chip">Sentence segmentation</span>
+          <span class="chip">Spell correction</span>
+        </div>
+        <div class="lib-badge">Library: <span>NLTK · spaCy · re (regex)</span></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Four Levels of NLP Analysis</div>
+    <div class="section-intro">NLP understands language in layers — from individual words, to sentence structure, to meaning, to intent. Each level builds on the previous.</div>
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <!-- Lexical -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:var(--nlp)"></div><span class="panel-title">1 · Lexical Analysis</span><span class="panel-sub">what are the words?</span></div>
+        <div class="panel-intro">First level — identify and classify individual words, their forms, and basic properties.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>Tokenisation</td><td>Split text into word / sentence / subword units</td></tr>
+            <tr><td>POS Tagging</td><td>Label each word: noun, verb, adjective, adverb…</td></tr>
+            <tr><td>Morphological Analysis</td><td>Study word structure — prefix, suffix, root form</td></tr>
+            <tr><td>Named Entity Recognition</td><td>Find names, places, organisations, dates in text</td></tr>
+          </table>
+          <div class="lib-badge">Library: <span>spaCy · NLTK</span></div>
+        </div>
+      </div>
+
+      <!-- Syntactic -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fdba74"></div><span class="panel-title">2 · Syntactic Analysis</span><span class="panel-sub">how do words relate structurally?</span></div>
+        <div class="panel-intro">Understand grammatical structure — how words combine to form valid phrases and sentences.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>Parsing</td><td>Analyse the grammatical structure of a sentence</td></tr>
+            <tr><td>Dependency Parsing</td><td>Which word modifies or depends on which other word</td></tr>
+            <tr><td>Constituency Parsing</td><td>Break sentence into nested phrase groups (NP, VP…)</td></tr>
+            <tr><td>Context-Free Grammar (CFG)</td><td>Rule system defining valid sentence structures</td></tr>
+          </table>
+          <div class="lib-badge">Library: <span>spaCy · NLTK</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="g2" style="margin-bottom:14px;">
+
+      <!-- Semantic -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#f87171"></div><span class="panel-title">3 · Semantic Analysis</span><span class="panel-sub">what does it mean?</span></div>
+        <div class="panel-intro">Extract actual meaning and relationships from text — the core of most real-world NLP applications.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>Word Sense Disambiguation</td><td>"bank" = river bank or financial bank?</td></tr>
+            <tr><td>Semantic Similarity</td><td>How close in meaning are two texts?</td></tr>
+            <tr><td>Sentiment Analysis</td><td>Positive / Negative / Neutral opinion detection</td></tr>
+            <tr><td>Named Entity Recognition</td><td>Find &amp; classify real-world entities</td></tr>
+            <tr><td>Coreference Resolution</td><td>"John said he…" — who is "he"?</td></tr>
+            <tr><td>Relation Extraction</td><td>Find relationships between entities</td></tr>
+          </table>
+          <div class="lib-badge">Library: <span>spaCy · transformers (HuggingFace)</span></div>
+        </div>
+      </div>
+
+      <!-- Pragmatic -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#a78bfa"></div><span class="panel-title">4 · Pragmatic Analysis</span><span class="panel-sub">what is the intent?</span></div>
+        <div class="panel-intro">Understand language in context — what the speaker actually means beyond the literal words. Used in chatbots and dialogue systems.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>Discourse Analysis</td><td>Meaning across multiple connected sentences</td></tr>
+            <tr><td>Intent Detection</td><td>What does the user actually want? (chatbots)</td></tr>
+            <tr><td>Context Understanding</td><td>Resolve ambiguity using surrounding context</td></tr>
+            <tr><td>Speech Acts</td><td>Promise, question, command — type of communication</td></tr>
+          </table>
+          <div class="purpose"><strong>Use for:</strong> Chatbots, virtual assistants, dialogue management</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NLP Tasks -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:var(--nlp)"></div><span class="panel-title">Common NLP Tasks — what you can actually build</span></div>
+      <div class="panel-bd">
+        <div class="g3">
+          <div>
+            <div class="grp-label">Text Understanding</div>
+            <div class="chips">
+              <span class="chip hi">Text Classification</span>
+              <span class="chip hi">Sentiment Analysis</span>
+              <span class="chip">Spam detection</span>
+              <span class="chip">Topic modelling</span>
+            </div>
+          </div>
+          <div>
+            <div class="grp-label">Text Generation</div>
+            <div class="chips">
+              <span class="chip hi">Machine Translation</span>
+              <span class="chip hi">Text Summarisation</span>
+              <span class="chip">Question Answering</span>
+              <span class="chip">Chatbot / Dialogue</span>
+            </div>
+          </div>
+          <div>
+            <div class="grp-label">Information Extraction</div>
+            <div class="chips">
+              <span class="chip hi">Named Entity Recognition</span>
+              <span class="chip hi">Relation Extraction</span>
+              <span class="chip">Event detection</span>
+              <span class="chip">Keyword extraction</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- VECTORIZATION & EMBEDDINGS -->
+    <div class="section-label" style="color:var(--emb);">Vectorization &amp; Embeddings — text must become numbers</div>
+    <div class="section-intro">Models can't read words — text must be converted into vectors (lists of numbers). This is the bridge between raw text and neural networks. Three levels of quality.</div>
+
+    <div class="g3" style="margin-bottom:14px;">
+
+      <div class="panel" style="border-color:var(--emb-bd);">
+        <div class="panel-hd"><div class="dot" style="background:var(--emb)"></div><span class="panel-title">Traditional Vectorization</span><span class="panel-sub">rule-based</span></div>
+        <div class="panel-intro">Convert text to numbers using statistical counting rules — no learning involved.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Method</th><th>How it works</th></tr>
+            <tr><td>One-Hot Encoding</td><td>Binary vector — word present or not</td></tr>
+            <tr><td>Bag of Words (BoW)</td><td>Count word occurrences — ignores order</td></tr>
+            <tr><td>TF-IDF</td><td>Weight rare, important words higher</td></tr>
+          </table>
+          <div class="purpose"><strong>Limitation:</strong> No semantic meaning — "king" and "queen" are equally distant</div>
+          <div class="lib-badge">Library: <span>sklearn.feature_extraction.text</span></div>
+        </div>
+      </div>
+
+      <div class="panel" style="border-color:var(--emb-bd);">
+        <div class="panel-hd"><div class="dot" style="background:#5eead4"></div><span class="panel-title">Word Embeddings</span><span class="panel-sub">learned vectors</span></div>
+        <div class="panel-intro">Words mapped to dense vectors where meaning is encoded by position. Similar words are close together in vector space.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Method</th><th>How it works</th></tr>
+            <tr><td>Word2Vec</td><td>CBOW: predict word from context. Skip-gram: predict context from word</td></tr>
+            <tr><td>GloVe</td><td>Global co-occurrence statistics across corpus</td></tr>
+            <tr><td>FastText</td><td>Subword embeddings — handles misspellings</td></tr>
+          </table>
+          <div class="purpose"><strong>Key insight:</strong> king − man + woman ≈ queen (vector arithmetic!)</div>
+          <div class="lib-badge">Library: <span>gensim · spaCy</span></div>
+        </div>
+      </div>
+
+      <div class="panel" style="border-color:var(--emb-bd);">
+        <div class="panel-hd"><div class="dot" style="background:#99f6e4"></div><span class="panel-title">Contextual Embeddings</span><span class="panel-sub">transformer-powered</span></div>
+        <div class="panel-intro">Same word gets a different vector depending on context — "I went to the bank" vs "river bank" — powered by Transformers.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Method</th><th>Purpose</th></tr>
+            <tr><td>BERT Embeddings</td><td>Context-aware — reads full sentence both ways</td></tr>
+            <tr><td>Sentence-BERT</td><td>Sentence-level semantic embeddings</td></tr>
+            <tr><td>API Embeddings</td><td>OpenAI / Gemini — ready-to-use vectors</td></tr>
+          </table>
+          <div class="purpose"><strong>Connects to →</strong> Transformers &amp; LLMs produce these embeddings</div>
+          <div class="lib-badge">Library: <span>sentence-transformers · HuggingFace</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sequence models -->
+    <div class="divider"></div>
+    <div class="section-label">Sequence Models — NLP with Neural Networks</div>
+    <div class="section-intro">How neural networks were applied to NLP before Transformers, and the breakthrough that changed everything.</div>
+
+    <div class="g3">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fb923c"></div><span class="panel-title">RNN for NLP</span></div>
+        <div class="panel-bd">
+          <div class="chips">
+            <span class="chip hi">Reads text word by word</span>
+            <span class="chip">Hidden state carries context</span>
+            <span class="chip">Bidirectional RNN (reads both ways)</span>
+            <span class="chip">Problem: forgets distant words</span>
+          </div>
+          <div class="purpose"><strong>Use for:</strong> Sentiment, basic classification, POS tagging</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fbbf24"></div><span class="panel-title">Seq2Seq — Encoder–Decoder</span></div>
+        <div class="panel-bd">
+          <div class="chips">
+            <span class="chip hi">Encoder compresses full input into one vector</span>
+            <span class="chip hi">Decoder generates output from that vector</span>
+            <span class="chip">Machine translation (English → French)</span>
+            <span class="chip">Problem: one vector loses information</span>
+          </div>
+          <div class="purpose"><strong>Use for:</strong> Translation, summarisation (pre-Transformer)</div>
+        </div>
+      </div>
+
+      <div class="panel" style="border-color:var(--tr-bd);">
+        <div class="panel-hd"><div class="dot" style="background:var(--tr)"></div><span class="panel-title">Attention Mechanism — the breakthrough</span></div>
+        <div class="panel-bd">
+          <div class="chips">
+            <span class="chip hi">Decoder looks at ALL encoder states</span>
+            <span class="chip hi">Query (Q) — what am I looking for?</span>
+            <span class="chip hi">Key (K) — what does each word offer?</span>
+            <span class="chip hi">Value (V) — what to actually retrieve</span>
+            <span class="chip">Score = Q · Kᵀ / √d → Softmax</span>
+            <span class="chip">Output = weighted sum of Values</span>
+          </div>
+          <div class="purpose"><strong>"Attention is all you need" (2017) →</strong> Led to Transformers</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">drop the RNN entirely — build everything with attention — 2017 paper</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 05 · TRANSFORMER
+════════════════════════════════════════════ -->
+<div class="block" id="tr">
+<div class="block-card tr">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num">BLOCK 05</div>
+      <div class="bh-title">Transformer Architecture</div>
+      <div class="bh-intro">"Attention Is All You Need" (2017, Google) — replaced RNNs entirely with self-attention. Fully parallelisable so it scales to billions of parameters on GPUs. Became the backbone of every modern AI model.</div>
+    </div>
+    <div class="bh-tag">Foundation of all modern LLMs</div>
+  </div>
+  <div class="bb">
+
+    <!-- Anatomy -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:var(--tr)"></div><span class="panel-title">One Transformer Block — repeated N times to create depth</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Input preparation</div>
+            <div class="chips">
+              <span class="chip hi">Token → Input Embedding (word to vector)</span>
+              <span class="chip hi">Positional Encoding — inject word order (sin/cos or learned)</span>
+            </div>
+            <div class="grp-label">Attention sublayer</div>
+            <div class="chips">
+              <span class="chip hi">Multi-Head Self-Attention — each token attends to every other</span>
+              <span class="chip">Multiple heads = multiple relationship perspectives</span>
+              <span class="chip">Add &amp; LayerNorm — residual connection stabilises training</span>
+            </div>
+          </div>
+          <div>
+            <div class="grp-label">Feed-forward sublayer</div>
+            <div class="chips">
+              <span class="chip hi">Feed-Forward Network (FFN) — processes each token independently</span>
+              <span class="chip">Add &amp; LayerNorm — second residual connection</span>
+              <span class="chip">Repeat this whole block × N layers</span>
+            </div>
+            <div class="grp-label">Why residual connections?</div>
+            <div class="chips">
+              <span class="chip">Add input back to output at each sublayer</span>
+              <span class="chip">Gradients flow cleanly through deep networks</span>
+              <span class="chip">Enables very deep stacking (24–96+ layers)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Three Transformer Variants</div>
+
+    <div class="g3">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:var(--tr)"></div><span class="panel-title">Encoder (BERT-style)</span></div>
+        <div class="panel-intro">Reads the full sentence in both directions simultaneously — builds deep contextual understanding.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Structure</div>
+          <div class="chips">
+            <span class="chip hi">Bidirectional — sees full input</span>
+            <span class="chip">N stacked encoder blocks</span>
+            <span class="chip">No causal mask</span>
+          </div>
+          <div class="grp-label">Pre-training task</div>
+          <div class="chips">
+            <span class="chip hi">Masked LM — predict masked words</span>
+            <span class="chip">Next Sentence Prediction</span>
+          </div>
+          <div class="grp-label">Use for</div>
+          <div class="chips">
+            <span class="chip">Text classification</span>
+            <span class="chip">NER &amp; tagging</span>
+            <span class="chip">Question answering</span>
+            <span class="chip">Sentence embeddings</span>
+          </div>
+          <div class="purpose"><strong>Models:</strong> BERT, RoBERTa</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#e879f9"></div><span class="panel-title">Decoder (GPT-style)</span></div>
+        <div class="panel-intro">Generates text left-to-right, one token at a time. Can only see previous tokens — never future ones.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Structure</div>
+          <div class="chips">
+            <span class="chip hi">Autoregressive — generates left to right</span>
+            <span class="chip">Causal mask — can't see future tokens</span>
+            <span class="chip">N stacked decoder blocks</span>
+          </div>
+          <div class="grp-label">Pre-training task</div>
+          <div class="chips">
+            <span class="chip hi">Next token prediction (CLM)</span>
+          </div>
+          <div class="grp-label">Use for</div>
+          <div class="chips">
+            <span class="chip">Text generation</span>
+            <span class="chip">Chatbots</span>
+            <span class="chip">Code generation</span>
+            <span class="chip">Creative writing</span>
+          </div>
+          <div class="purpose"><strong>Models:</strong> GPT-2/3/4, LLaMA, Claude</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#a78bfa"></div><span class="panel-title">Encoder–Decoder (T5-style)</span></div>
+        <div class="panel-intro">Encoder reads and understands the input; Decoder generates the output. Best for tasks that transform one sequence into another.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Structure</div>
+          <div class="chips">
+            <span class="chip hi">Encoder reads full input</span>
+            <span class="chip">Cross-attention connects encoder ↔ decoder</span>
+            <span class="chip">Decoder generates output</span>
+          </div>
+          <div class="grp-label">Use for</div>
+          <div class="chips">
+            <span class="chip">Machine translation</span>
+            <span class="chip">Text summarisation</span>
+            <span class="chip">Question answering</span>
+            <span class="chip">Any sequence-to-sequence task</span>
+          </div>
+          <div class="purpose"><strong>Models:</strong> T5, BART</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">scale a decoder Transformer on trillions of tokens → LLM</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 06 · LANGUAGE MODELS
+════════════════════════════════════════════ -->
+<div class="block" id="lm">
+<div class="block-card lm">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num">BLOCK 06</div>
+      <div class="bh-title">Language Models — SLMs &amp; LLMs</div>
+      <div class="bh-intro">Train a Transformer on trillions of tokens of text with one simple goal: predict the next word. As a side effect, the model learns grammar, facts, coding, reasoning, and world knowledge. Scale it up further — emergent abilities appear.</div>
+    </div>
+    <div class="bh-tag">GPT · Claude · Gemini · LLaMA</div>
+  </div>
+  <div class="bb">
+
+    <div class="g2" style="margin-bottom:14px;">
+
+      <!-- Pre-training -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:var(--lm)"></div><span class="panel-title">Pre-training</span></div>
+        <div class="panel-intro">Train on massive text corpus — no human labels needed. The model learns everything as a side effect of next-token prediction.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>What it means</th></tr>
+            <tr><td>Next Token Prediction</td><td>Self-supervised — predict the next word given previous words</td></tr>
+            <tr><td>Tokenisation (BPE)</td><td>Break text into subword tokens — the model's alphabet</td></tr>
+            <tr><td>WordPiece</td><td>Alternative tokenisation used by BERT</td></tr>
+            <tr><td>Vocabulary</td><td>32K–128K unique tokens the model knows</td></tr>
+            <tr><td>Scaling Laws</td><td>More data + more params = predictably better model</td></tr>
+            <tr><td>Emergent Abilities</td><td>Capabilities that appear only at large scale</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Fine-tuning -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fde68a"></div><span class="panel-title">Fine-tuning &amp; Alignment</span></div>
+        <div class="panel-intro">Pre-trained models complete text but aren't helpful. Fine-tuning teaches them to follow instructions and be safe.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Method</th><th>What it does</th></tr>
+            <tr><td>Supervised Fine-Tuning (SFT)</td><td>Train on instruction → response pairs</td></tr>
+            <tr><td>Instruction Tuning</td><td>Makes model follow diverse instructions reliably</td></tr>
+            <tr><td>RLHF (intro concept)</td><td>Humans rank outputs → reward model → model improves</td></tr>
+          </table>
+          <div class="purpose"><strong>Result:</strong> A helpful, harmless, honest assistant model</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SLM vs LLM -->
+    <div class="panel-full" style="margin-bottom:14px;">
+      <div class="panel-hd"><div class="dot" style="background:var(--lm)"></div><span class="panel-title">SLM vs LLM — what's the difference?</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Small Language Models (SLMs)</div>
+            <div class="chips">
+              <span class="chip hi">1B – 7B parameters</span>
+              <span class="chip">Runs on consumer GPU or laptop</span>
+              <span class="chip">Fast &amp; cheap to run</span>
+              <span class="chip">Good for focused tasks</span>
+            </div>
+            <div class="purpose"><strong>Examples:</strong> Phi-3, Gemma 2B, Mistral 7B</div>
+          </div>
+          <div>
+            <div class="grp-label">Large Language Models (LLMs)</div>
+            <div class="chips">
+              <span class="chip hi">70B – 1T+ parameters</span>
+              <span class="chip">Requires GPU clusters / cloud</span>
+              <span class="chip">Broad general capability</span>
+              <span class="chip">Emergent abilities</span>
+            </div>
+            <div class="purpose"><strong>Examples:</strong> GPT-4, Claude, Gemini, LLaMA 3 70B</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inference -->
+    <div class="panel-full" style="margin-bottom:14px;">
+      <div class="panel-hd"><div class="dot" style="background:#fbbf24"></div><span class="panel-title">Inference &amp; Generation — how the model produces output</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Decoding strategies</div>
+            <table class="mini-table">
+              <tr><th>Strategy</th><th>How it works</th></tr>
+              <tr><td>Greedy</td><td>Always pick the highest probability token</td></tr>
+              <tr><td>Beam Search</td><td>Keep top-K sequences at each step</td></tr>
+              <tr><td>Top-k Sampling</td><td>Sample from top K most likely tokens</td></tr>
+              <tr><td>Top-p (Nucleus)</td><td>Sample from tokens covering p% probability</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="grp-label">Key parameters</div>
+            <table class="mini-table">
+              <tr><th>Parameter</th><th>Effect</th></tr>
+              <tr><td>Temperature</td><td>Low = focused, High = creative/random</td></tr>
+              <tr><td>Context Window</td><td>How much text the model can see at once</td></tr>
+              <tr><td>Max tokens</td><td>Maximum length of the response</td></tr>
+            </table>
+            <div class="grp-label">Prompting (beginner intro)</div>
+            <div class="chips">
+              <span class="chip hi">Zero-shot — just ask, no examples</span>
+              <span class="chip hi">Few-shot — give 2–3 examples in prompt</span>
+              <span class="chip">System prompt — set role and context</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LLM Embeddings & Vector Search -->
+    <div class="panel-full" style="border-color:var(--emb-bd);">
+      <div class="panel-hd"><div class="dot" style="background:var(--emb)"></div><span class="panel-title">LLM Embeddings &amp; Vector Search</span><span class="panel-sub">used in LLM applications</span></div>
+      <div class="panel-intro">LLMs can convert any text into a high-dimensional vector that captures its meaning. These vectors power semantic search, document retrieval, and RAG systems.</div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <table class="mini-table">
+              <tr><th>Concept</th><th>What it means</th></tr>
+              <tr><td>Text → Embedding Vector</td><td>Any text → a list of ~1536 numbers representing meaning</td></tr>
+              <tr><td>Cosine Similarity</td><td>Measure how similar two vectors are (0=different, 1=same)</td></tr>
+              <tr><td>Semantic Search</td><td>Find meaning-similar results, not just keyword matches</td></tr>
+            </table>
+          </div>
+          <div>
+            <table class="mini-table">
+              <tr><th>Concept</th><th>What it means</th></tr>
+              <tr><td>Vector Database</td><td>Store millions of embeddings and search them fast</td></tr>
+              <tr><td>FAISS / Chroma / Pinecone</td><td>Popular vector DB tools</td></tr>
+              <tr><td>RAG (intro)</td><td>Retrieve relevant docs → feed to LLM as context → answer</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="purpose" style="margin-top:10px"><strong>Connects to →</strong> Agentic AI, Prompt Engineering, and building real LLM-powered apps</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 07 · GENERATIVE AI
+════════════════════════════════════════════ -->
+<div class="block" id="genai">
+<div class="block-card" style="border-top:2.5px solid #e879f9;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(232,121,249,0.12);color:#e879f9;">BLOCK 07</div>
+      <div class="bh-title">Generative AI</div>
+      <div class="bh-intro">LLMs that don't just understand — they create. Given a prompt, generative models produce new text, images, audio, or across all modalities at once. Built on transformers and diffusion models. The output of everything you've learned so far.</div>
+    </div>
+    <div class="bh-tag">Models: GPT-4o · Claude · Gemini · DALL-E · Whisper</div>
+  </div>
+  <div class="bb">
+
+    <!-- How generation works -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#e879f9;"></div><span class="panel-title">How Generation Works</span></div>
+      <div class="panel-bd">
+        <div class="chips">
+          <span class="chip hi">Autoregressive — predict next token, repeat until done</span>
+          <span class="chip hi">Prompt → Model → Output pipeline</span>
+          <span class="chip">Temperature controls creativity vs precision</span>
+          <span class="chip">Sampling (Top-k, Top-p) picks from probable tokens</span>
+          <span class="chip">Stop sequences tell the model when to finish</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Modalities — what can be generated</div>
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#e879f9;"></div><span class="panel-title">Text Generation</span></div>
+        <div class="panel-intro">Generate human-quality writing, code, summaries, and answers using decoder-style transformers.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Task</th><th>Purpose</th></tr>
+            <tr><td>Completion</td><td>Continue a given piece of text naturally</td></tr>
+            <tr><td>Instruction following</td><td>Do exactly what the prompt asks</td></tr>
+            <tr><td>Summarisation</td><td>Condense long content into key points</td></tr>
+            <tr><td>Code generation</td><td>Write, explain, or debug code</td></tr>
+            <tr><td>Creative writing</td><td>Stories, poems, scripts</td></tr>
+          </table>
+          <div class="purpose"><strong>Models:</strong> GPT-4, Claude 3, Gemini, LLaMA 3</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#c084fc;"></div><span class="panel-title">Image Generation — Diffusion Models</span></div>
+        <div class="panel-intro">Not transformers — diffusion models learn to reverse a noise process. Add noise to images step-by-step during training, then learn to denoise from pure noise guided by text.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>What it means</th></tr>
+            <tr><td>Forward diffusion</td><td>Gradually add random noise to a real image</td></tr>
+            <tr><td>Reverse diffusion</td><td>Learned denoising → generates image from noise</td></tr>
+            <tr><td>Text conditioning</td><td>CLIP embeddings guide what image to generate</td></tr>
+            <tr><td>Text-to-Image</td><td>Type a description → get an image</td></tr>
+            <tr><td>Image-to-Image</td><td>Modify an existing image with a prompt</td></tr>
+          </table>
+          <div class="purpose"><strong>Models:</strong> DALL-E 3, Stable Diffusion, Midjourney</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="g2" style="margin-bottom:14px;">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#a78bfa;"></div><span class="panel-title">Audio Generation</span></div>
+        <div class="panel-intro">Generate or transcribe speech, clone voices, and create music from text prompts.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Task</th><th>Purpose</th></tr>
+            <tr><td>Text-to-Speech (TTS)</td><td>Convert text to natural-sounding voice</td></tr>
+            <tr><td>Speech-to-Text (STT)</td><td>Transcribe audio to text accurately</td></tr>
+            <tr><td>Voice cloning</td><td>Reproduce a speaker's voice from samples</td></tr>
+            <tr><td>Music generation</td><td>Generate music from text description</td></tr>
+          </table>
+          <div class="purpose"><strong>Models:</strong> Whisper (STT), ElevenLabs (TTS), Suno (music)</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#f0abfc;"></div><span class="panel-title">Evaluation</span></div>
+        <div class="panel-intro">How do you measure if generated output is good? Different modalities need different metrics.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Metric</th><th>Used for</th></tr>
+            <tr><td>BLEU</td><td>Text similarity to reference — translation, summarisation</td></tr>
+            <tr><td>ROUGE</td><td>Recall-based text overlap — summarisation</td></tr>
+            <tr><td>FID Score</td><td>Image generation quality vs real images</td></tr>
+            <tr><td>Human evaluation</td><td>Best judge for open-ended generation tasks</td></tr>
+            <tr><td>LLM-as-judge</td><td>Use another LLM to score output quality</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Multimodal — highlighted section -->
+    <div class="divider"></div>
+    <div class="section-label" style="color:#f0abfc;">Multimodal AI — the current frontier</div>
+
+    <div class="panel-full" style="border-color:rgba(232,121,249,0.3);">
+      <div class="panel-hd"><div class="dot" style="background:#f0abfc;"></div><span class="panel-title">Multimodal AI</span><span class="panel-sub">text + image + audio + video in one model</span></div>
+      <div class="panel-intro">Models that understand and generate across multiple types of data simultaneously. Instead of separate models for text and images, one model handles everything — the direction all frontier AI is heading.</div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Input types the model understands</div>
+            <div class="chips">
+              <span class="chip hi">Text — questions, instructions, documents</span>
+              <span class="chip hi">Images — photos, charts, screenshots, diagrams</span>
+              <span class="chip hi">Audio — speech, sound</span>
+              <span class="chip">Video — frames + audio together</span>
+              <span class="chip">Documents — PDFs, spreadsheets</span>
+            </div>
+            <div class="grp-label">Key capabilities</div>
+            <div class="chips">
+              <span class="chip hi">Vision-Language — understand image + text together</span>
+              <span class="chip hi">Image captioning — describe what's in an image</span>
+              <span class="chip hi">Visual QA — answer questions about images</span>
+              <span class="chip hi">Document understanding — read charts and PDFs</span>
+              <span class="chip">OCR — extract text from images</span>
+            </div>
+          </div>
+          <div>
+            <div class="grp-label">How it works (concept)</div>
+            <div class="chips">
+              <span class="chip hi">Vision encoder converts image → tokens</span>
+              <span class="chip hi">Audio encoder converts speech → tokens</span>
+              <span class="chip">All modalities mapped to same token space</span>
+              <span class="chip">LLM processes unified token sequence</span>
+              <span class="chip">Output in any modality needed</span>
+            </div>
+            <div class="grp-label">Models to know</div>
+            <div class="chips">
+              <span class="chip hi">GPT-4o — text + image + audio natively</span>
+              <span class="chip hi">Gemini 1.5 — text + image + video + audio</span>
+              <span class="chip hi">Claude 3 — text + image understanding</span>
+              <span class="chip">LLaVA — open-source vision-language model</span>
+              <span class="chip">Whisper + GPT — audio pipeline</span>
+            </div>
+            <div class="purpose"><strong>Why it matters:</strong> Real-world problems are multimodal — a doctor reads an X-ray + notes, a customer sends a photo of a broken product, a user speaks instead of types</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">models are powerful — learn how to talk to them first</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 08 · PROMPT ENGINEERING
+════════════════════════════════════════════ -->
+<div class="block" id="prompt">
+<div class="block-card" style="border-top:2.5px solid #fb923c;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(251,146,60,0.12);color:#fb923c;">BLOCK 08</div>
+      <div class="bh-title">Prompt Engineering</div>
+      <div class="bh-intro">LLMs are sensitive to how you phrase things. Prompt engineering is the skill of crafting inputs that reliably get the output you want — no model training required. The first practical skill every AI practitioner needs.</div>
+    </div>
+    <div class="bh-tag">Tools: OpenAI Playground · Anthropic Console · LangSmith</div>
+  </div>
+  <div class="bb">
+
+    <!-- Anatomy -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#fb923c;"></div><span class="panel-title">Anatomy of a Good Prompt</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <table class="mini-table">
+              <tr><th>Part</th><th>Purpose</th></tr>
+              <tr><td>System prompt</td><td>Set the model's role, persona, rules, and constraints</td></tr>
+              <tr><td>User message</td><td>The actual question or task</td></tr>
+              <tr><td>Context / Examples</td><td>Background info or demonstrations to guide the model</td></tr>
+              <tr><td>Output format</td><td>Tell the model how to structure its response</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="grp-label">Golden rules</div>
+            <div class="chips">
+              <span class="chip hi">Be specific and explicit — not vague</span>
+              <span class="chip hi">Always specify the output format you want</span>
+              <span class="chip hi">Give context the model doesn't have</span>
+              <span class="chip">Iterate — first prompt is rarely the best</span>
+              <span class="chip">Tell it what NOT to do</span>
+              <span class="chip">Test with edge cases</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Core Prompting Techniques</div>
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fb923c;"></div><span class="panel-title">Basic Techniques</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Technique</th><th>What it is</th><th>When to use</th></tr>
+            <tr><td>Zero-shot</td><td>Just ask — no examples given</td><td>Simple, common tasks</td></tr>
+            <tr><td>Few-shot</td><td>Give 2–5 input/output examples in prompt</td><td>When format or style matters</td></tr>
+            <tr><td>Role prompting</td><td>"You are an expert in…"</td><td>Shift tone or expertise</td></tr>
+            <tr><td>Instruction prompting</td><td>Explicit, step-by-step instructions</td><td>Complex or misunderstood tasks</td></tr>
+            <tr><td>Negative prompting</td><td>Tell model what NOT to do</td><td>Avoid unwanted patterns</td></tr>
+            <tr><td>Output format</td><td>Ask for JSON / table / bullet list</td><td>Structured downstream use</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fdba74;"></div><span class="panel-title">Reasoning Techniques</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Technique</th><th>What it is</th></tr>
+            <tr><td>Chain-of-Thought (CoT)</td><td>Ask model to reason step by step before answering</td></tr>
+            <tr><td>Zero-shot CoT</td><td>Add "Let's think step by step" — no examples needed</td></tr>
+            <tr><td>Self-consistency</td><td>Generate multiple answers, pick the most common one</td></tr>
+            <tr><td>Prompt chaining</td><td>Output of one prompt becomes input of the next</td></tr>
+            <tr><td>ReAct prompting</td><td>Reason + Act pattern — used in agents</td></tr>
+            <tr><td>Tree of Thought</td><td>Explore multiple reasoning paths — intro concept</td></tr>
+          </table>
+          <div class="purpose"><strong>Key insight:</strong> "Think step by step" alone significantly improves model accuracy on complex tasks</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="g2">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#f97316;"></div><span class="panel-title">Common Prompt Pitfalls &amp; Fixes</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Problem</th><th>Fix</th></tr>
+            <tr><td>Vague instructions</td><td>Be explicit — "Summarise in 3 bullet points under 20 words each"</td></tr>
+            <tr><td>No output format</td><td>Always specify JSON, table, paragraph, or list</td></tr>
+            <tr><td>Hallucinations</td><td>Ask model to say "I don't know" when uncertain</td></tr>
+            <tr><td>Inconsistent results</td><td>Add few-shot examples to anchor the style</td></tr>
+            <tr><td>Ignores instructions</td><td>Put critical instructions at start AND end</td></tr>
+            <tr><td>Too long prompt</td><td>Be concise — only include what the model needs</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fed7aa;"></div><span class="panel-title">Prompt Engineering Tools</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Tool</th><th>Purpose</th></tr>
+            <tr><td>OpenAI Playground</td><td>Test prompts with GPT models interactively</td></tr>
+            <tr><td>Anthropic Console</td><td>Test Claude prompts — has prompt generator</td></tr>
+            <tr><td>Google AI Studio</td><td>Test Gemini prompts with system instructions</td></tr>
+            <tr><td>LangSmith</td><td>Debug, trace, and evaluate LLM prompt chains</td></tr>
+            <tr><td>PromptFlow (Azure)</td><td>Build and test prompt pipelines visually</td></tr>
+          </table>
+          <div class="lib-badge">Start with: <span>Anthropic Console or OpenAI Playground</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">you can prompt a model — now give it tools and let it act autonomously</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 09 · AGENTIC AI
+════════════════════════════════════════════ -->
+<div class="block" id="agentic">
+<div class="block-card" style="border-top:2.5px solid #34d399;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(52,211,153,0.12);color:#34d399;">BLOCK 09</div>
+      <div class="bh-title">Agentic AI</div>
+      <div class="bh-intro">Give an LLM the ability to take actions — use tools, browse the web, run code, call APIs, and plan multi-step tasks autonomously. Agents turn LLMs from question-answering systems into autonomous problem-solvers that can act in the world.</div>
+    </div>
+    <div class="bh-tag">Libraries: LangChain · LangGraph · AutoGen · CrewAI · ADK</div>
+  </div>
+  <div class="bb">
+
+    <!-- What makes an agent -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#34d399;"></div><span class="panel-title">What Makes an Agent? — Five components</span></div>
+      <div class="panel-bd">
+        <div class="chips">
+          <span class="chip hi">LLM (brain) — reasoning and decision-making at the core</span>
+          <span class="chip hi">Tools — what the agent can do: search, code, APIs, files</span>
+          <span class="chip hi">Memory — remember previous steps and user context</span>
+          <span class="chip hi">Planning — break a big goal into ordered sub-tasks</span>
+          <span class="chip hi">Observation loop — Act → see result → decide next step</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <!-- Agent patterns -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#34d399;"></div><span class="panel-title">Agent Patterns</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Pattern</th><th>What it is</th></tr>
+            <tr><td>ReAct (Reason + Act)</td><td>Think → Act → Observe → Repeat until done. Most common.</td></tr>
+            <tr><td>Plan-and-Execute</td><td>Plan all steps upfront, then execute each one in order</td></tr>
+            <tr><td>Tool-use / Function calling</td><td>LLM calls structured functions or APIs with parameters</td></tr>
+            <tr><td>Multi-agent</td><td>Multiple specialised agents collaborate on one task</td></tr>
+            <tr><td>Human-in-the-loop</td><td>Human approves or corrects agent actions at checkpoints</td></tr>
+          </table>
+          <div class="purpose"><strong>Start with:</strong> ReAct — simplest and most widely used pattern</div>
+        </div>
+      </div>
+
+      <!-- Tool use -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#6ee7b7;"></div><span class="panel-title">Tool Use — extend what an LLM can do</span></div>
+        <div class="panel-intro">LLMs alone can only generate text. Tools give them the ability to take real actions in the world.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Tool type</th><th>Examples</th></tr>
+            <tr><td>Web search</td><td>Tavily, SerpAPI, Bing Search API</td></tr>
+            <tr><td>Code execution</td><td>Python REPL, E2B sandbox — run actual code</td></tr>
+            <tr><td>Database query</td><td>SQL agent — query structured databases</td></tr>
+            <tr><td>API calls</td><td>Any REST API — weather, finance, custom services</td></tr>
+            <tr><td>File operations</td><td>Read/write documents, PDFs, spreadsheets</td></tr>
+            <tr><td>Calculator</td><td>Reliable math — LLMs bad at arithmetic alone</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="g2">
+
+      <!-- Multi-agent -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#a7f3d0;"></div><span class="panel-title">Multi-Agent Systems</span></div>
+        <div class="panel-intro">Complex tasks benefit from specialised agents — a researcher, a coder, a writer — that hand off work to each other.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>Orchestrator agent</td><td>Breaks the task, assigns work to sub-agents</td></tr>
+            <tr><td>Sub-agents</td><td>Specialised agents — researcher, coder, writer, reviewer</td></tr>
+            <tr><td>Agent communication</td><td>Agents share results and context through messages</td></tr>
+            <tr><td>Human-in-the-loop</td><td>Human approves key decisions or corrects mistakes</td></tr>
+          </table>
+          <div class="purpose"><strong>Use for:</strong> Long research tasks, code review pipelines, content creation workflows</div>
+        </div>
+      </div>
+
+      <!-- Memory -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#d1fae5;"></div><span class="panel-title">Agent Memory Types</span></div>
+        <div class="panel-intro">Agents need different kinds of memory to handle tasks that span many steps or sessions.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Memory type</th><th>Purpose</th></tr>
+            <tr><td>Short-term (in-context)</td><td>Current task steps and observations in the prompt</td></tr>
+            <tr><td>Long-term (external)</td><td>Past sessions and learned facts in a vector database</td></tr>
+            <tr><td>Episodic</td><td>Specific past interactions stored and recalled by similarity</td></tr>
+            <tr><td>Procedural</td><td>How-to knowledge — successful plans from past tasks</td></tr>
+          </table>
+          <div class="lib-badge">Library: <span>LangChain Memory · LangGraph state · LlamaIndex</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">now build all of this with frameworks that handle the complexity for you</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 10 · RAG
+════════════════════════════════════════════ -->
+<div class="block" id="rag">
+<div class="block-card" style="border-top:2.5px solid #60a5fa;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(96,165,250,0.12);color:#60a5fa;">BLOCK 10</div>
+      <div class="bh-title">RAG — Retrieval-Augmented Generation</div>
+      <div class="bh-intro">LLMs know what they were trained on — nothing more. RAG gives them access to fresh, private, or specialised knowledge by retrieving relevant documents and injecting them into the context at query time. The most important pattern in real-world LLM applications.</div>
+    </div>
+    <div class="bh-tag">Libraries: LangChain · LlamaIndex · ChromaDB · FAISS · Pinecone</div>
+  </div>
+  <div class="bb">
+
+    <!-- Why RAG -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#60a5fa;"></div><span class="panel-title">Why RAG? — Problems it solves</span></div>
+      <div class="panel-bd">
+        <div class="chips">
+          <span class="chip hi">Knowledge cutoff — LLM doesn't know recent events → retrieve live documents</span>
+          <span class="chip hi">Private data — LLM wasn't trained on your company docs → retrieve them</span>
+          <span class="chip hi">Hallucination — LLM makes things up → ground it in real retrieved facts</span>
+          <span class="chip hi">Long documents — LLM can't read 1000 pages → retrieve only relevant chunks</span>
+          <span class="chip">Cost — cheaper than fine-tuning for knowledge updates</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">RAG Pipeline — 8 steps from document to answer</div>
+
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#60a5fa;"></div><span class="panel-title">Complete RAG Pipeline</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <div class="grp-label">Indexing phase — done once, offline</div>
+            <table class="mini-table">
+              <tr><th>Step</th><th>What happens</th></tr>
+              <tr><td>1. Document ingestion</td><td>Load PDFs, Word docs, web pages, databases</td></tr>
+              <tr><td>2. Chunking</td><td>Split docs into pieces — fixed-size, sentence, or semantic</td></tr>
+              <tr><td>3. Embedding</td><td>Convert each chunk to a vector using an embedding model</td></tr>
+              <tr><td>4. Vector store</td><td>Save all chunk vectors in a searchable vector database</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="grp-label">Retrieval + Generation phase — at query time</div>
+            <table class="mini-table">
+              <tr><th>Step</th><th>What happens</th></tr>
+              <tr><td>5. Query embedding</td><td>Convert user's question to a vector using same model</td></tr>
+              <tr><td>6. Similarity search</td><td>Find top-K chunks whose vectors are closest to query</td></tr>
+              <tr><td>7. Context injection</td><td>Insert retrieved chunks into the LLM prompt</td></tr>
+              <tr><td>8. LLM generation</td><td>Model answers using the retrieved context as grounding</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#93c5fd;"></div><span class="panel-title">Key Concepts</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>Chunking strategies</td><td>Fixed-size / sentence / semantic / recursive character</td></tr>
+            <tr><td>Embedding models</td><td>Convert text to vectors — text-embedding-3, BGE, E5</td></tr>
+            <tr><td>Vector databases</td><td>FAISS (local fast), Chroma (easy), Pinecone (cloud)</td></tr>
+            <tr><td>Cosine similarity</td><td>Measure how similar query and chunk vectors are</td></tr>
+            <tr><td>Top-K retrieval</td><td>Return the K most relevant chunks</td></tr>
+            <tr><td>Reranking</td><td>Second pass to improve chunk relevance ordering</td></tr>
+            <tr><td>Hybrid search</td><td>Combine keyword search + semantic search for better recall</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#bfdbfe;"></div><span class="panel-title">RAG Types</span><span class="panel-sub">concept level</span></div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Type</th><th>What it is</th></tr>
+            <tr><td>Naive RAG</td><td>Basic pipeline — retrieve → inject → generate. Start here.</td></tr>
+            <tr><td>Advanced RAG</td><td>Better chunking, reranking, query rewriting for more accuracy</td></tr>
+            <tr><td>Modular RAG</td><td>Swap out pipeline components like Lego blocks</td></tr>
+            <tr><td>Agentic RAG</td><td>Agent decides when and what to retrieve dynamically</td></tr>
+          </table>
+          <div class="grp-label">Libraries for RAG</div>
+          <div class="chips">
+            <span class="chip hi">LangChain — end-to-end RAG pipeline</span>
+            <span class="chip hi">LlamaIndex — document-focused RAG</span>
+            <span class="chip">ChromaDB — lightweight local vector store</span>
+            <span class="chip">FAISS — fast vector search</span>
+            <span class="chip">Pinecone — managed cloud vector DB</span>
+            <span class="chip">HuggingFace — embedding models</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">agents need fresh knowledge they weren't trained on → retrieve it with RAG</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 11 · CONTEXT ENGINEERING
+════════════════════════════════════════════ -->
+<div class="block" id="context">
+<div class="block-card" style="border-top:2.5px solid #2dd4bf;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(45,212,191,0.12);color:#2dd4bf;">BLOCK 11</div>
+      <div class="bh-title">Context Engineering</div>
+      <div class="bh-intro">The evolution beyond prompt engineering — not just how you phrase the request, but what information you place in the context window, how you structure it, and how you manage what the model can see at any given moment. The model can only reason about what it can see.</div>
+    </div>
+    <div class="bh-tag">Libraries: LangChain Memory · LlamaIndex · HuggingFace</div>
+  </div>
+  <div class="bb">
+
+    <!-- Context window -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#2dd4bf;"></div><span class="panel-title">What is the Context Window?</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <table class="mini-table">
+              <tr><th>Concept</th><th>What it means</th></tr>
+              <tr><td>Context window</td><td>Maximum text the model can process in one call</td></tr>
+              <tr><td>Tokens</td><td>How text is counted — roughly 1 word ≈ 1.3 tokens</td></tr>
+              <tr><td>Context limit growth</td><td>4K → 32K → 128K → 1M+ tokens over time</td></tr>
+              <tr><td>What fits inside</td><td>System prompt + conversation + documents + examples</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="grp-label">Lost-in-the-middle problem</div>
+            <div class="chips">
+              <span class="chip hi">Models pay most attention to start and end of context</span>
+              <span class="chip hi">Important info buried in the middle gets ignored</span>
+              <span class="chip">Solution: put key instructions first and repeat at end</span>
+            </div>
+            <div class="grp-label">What context engineering manages</div>
+            <div class="chips">
+              <span class="chip hi">What documents to include</span>
+              <span class="chip hi">How much conversation history to keep</span>
+              <span class="chip">Where to place examples and instructions</span>
+              <span class="chip">How to compress when limit is reached</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <!-- Memory systems -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#2dd4bf;"></div><span class="panel-title">Memory Systems</span><span class="panel-sub">LLMs have no memory by default</span></div>
+        <div class="panel-intro">Every LLM call starts fresh. Memory systems give applications the ability to remember across turns and sessions.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Memory Type</th><th>How it works</th></tr>
+            <tr><td>In-context memory</td><td>Everything in the current prompt window — simple but limited</td></tr>
+            <tr><td>External memory (RAG)</td><td>Retrieve relevant facts from a database when needed</td></tr>
+            <tr><td>Episodic memory</td><td>Store and recall specific past conversations</td></tr>
+            <tr><td>Semantic memory</td><td>Store facts and knowledge as searchable embeddings</td></tr>
+            <tr><td>Working memory</td><td>Temporary scratchpad notes inside the prompt</td></tr>
+          </table>
+          <div class="lib-badge">Library: <span>LangChain Memory · LlamaIndex · MemoryOS</span></div>
+        </div>
+      </div>
+
+      <!-- Context strategies -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#5eead4;"></div><span class="panel-title">Context Management Strategies</span></div>
+        <div class="panel-intro">When context fills up — what do you keep, what do you drop, and how do you compress?</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Strategy</th><th>Purpose</th></tr>
+            <tr><td>Sliding window</td><td>Keep only the most recent N tokens, drop oldest</td></tr>
+            <tr><td>Summarisation compression</td><td>Summarise old turns into a compact paragraph</td></tr>
+            <tr><td>Selective retrieval (RAG)</td><td>Only pull in relevant documents at query time</td></tr>
+            <tr><td>Context prioritisation</td><td>Put most important info at start or end</td></tr>
+            <tr><td>Document chunking</td><td>Break large docs into smaller pieces before inserting</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Structured context design -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#99f6e4;"></div><span class="panel-title">Structured Context Design</span><span class="panel-sub">how to organise what goes in</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <table class="mini-table">
+              <tr><th>Technique</th><th>Purpose</th></tr>
+              <tr><td>XML / Markdown tagging</td><td>Clearly label sections: &lt;document&gt;, &lt;examples&gt;, &lt;question&gt;</td></tr>
+              <tr><td>Grounding</td><td>Anchor model to specific facts — "Answer only from the document below"</td></tr>
+              <tr><td>Persona + constraints first</td><td>Front-load the most critical instructions</td></tr>
+              <tr><td>Document injection</td><td>Insert retrieved docs cleanly into prompt with labels</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="grp-label">Ideal context structure order</div>
+            <div class="chips">
+              <span class="chip hi">1. System prompt + persona + rules</span>
+              <span class="chip hi">2. Retrieved documents / grounding facts</span>
+              <span class="chip hi">3. Conversation history (compressed)</span>
+              <span class="chip hi">4. Few-shot examples (near the query)</span>
+              <span class="chip hi">5. User query (last — model reads it fresh)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">RAG fills the context — context engineering decides what else goes in and how</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 12 · FRAMEWORKS
+════════════════════════════════════════════ -->
+<div class="block" id="frameworks">
+<div class="block-card" style="border-top:2.5px solid #a78bfa;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(167,139,250,0.12);color:#a78bfa;">BLOCK 12</div>
+      <div class="bh-title">LLM Frameworks</div>
+      <div class="bh-intro">Frameworks abstract the complexity of building LLM applications — chaining prompts, managing memory, orchestrating agents, and connecting to tools — so you focus on application logic, not boilerplate. Each framework has a different strength.</div>
+    </div>
+    <div class="bh-tag">LangChain · LlamaIndex · AutoGen · Google ADK</div>
+  </div>
+  <div class="bb">
+
+    <div class="g2" style="margin-bottom:12px;">
+
+      <!-- LangChain -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#a78bfa;"></div><span class="panel-title">LangChain</span><span class="panel-sub">most popular · general purpose</span></div>
+        <div class="panel-intro">The most widely used LLM framework. Provides building blocks for chains, agents, memory, and RAG pipelines. Best starting point for most beginners.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Core components</div>
+          <table class="mini-table">
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td>LLMChain</td><td>Prompt template + LLM + output parser in one step</td></tr>
+            <tr><td>PromptTemplate</td><td>Reusable, parameterised prompts with variables</td></tr>
+            <tr><td>OutputParser</td><td>Parse LLM output into structured data (JSON, list)</td></tr>
+            <tr><td>Memory</td><td>ConversationBufferMemory, SummaryMemory for chat history</td></tr>
+            <tr><td>Retriever</td><td>Connect to vector stores for RAG pipelines</td></tr>
+            <tr><td>Agent + Tools</td><td>Build tool-using agents with ReAct or other patterns</td></tr>
+          </table>
+          <div class="grp-label">Related tools</div>
+          <div class="chips">
+            <span class="chip hi">LangGraph — stateful agent workflows with cycles (intermediate)</span>
+            <span class="chip">LangSmith — debug, trace, evaluate prompts</span>
+          </div>
+          <div class="lib-badge">Install: <span>pip install langchain langchain-openai</span></div>
+        </div>
+      </div>
+
+      <!-- LlamaIndex -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#c4b5fd;"></div><span class="panel-title">LlamaIndex</span><span class="panel-sub">best for RAG · document-focused</span></div>
+        <div class="panel-intro">Specialised in data ingestion, indexing, and retrieval. The go-to framework when your application is primarily about connecting LLMs to your own documents and data sources.</div>
+        <div class="panel-bd">
+          <div class="grp-label">Core components</div>
+          <table class="mini-table">
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td>Document loaders</td><td>Load PDFs, web pages, Notion, databases, CSV files</td></tr>
+            <tr><td>Node parser</td><td>Intelligently chunk documents into nodes</td></tr>
+            <tr><td>VectorStoreIndex</td><td>Index chunks → store embeddings → enable search</td></tr>
+            <tr><td>Query engine</td><td>Ask natural language questions over your documents</td></tr>
+            <tr><td>Retriever</td><td>Fine-grained retrieval with filters and reranking</td></tr>
+            <tr><td>Response synthesiser</td><td>Combine retrieved chunks into a coherent answer</td></tr>
+          </table>
+          <div class="lib-badge">Install: <span>pip install llama-index</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="g2">
+
+      <!-- AutoGen -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#ddd6fe;"></div><span class="panel-title">AutoGen <span style="font-size:10px;font-weight:400;color:var(--text2);">by Microsoft</span></span><span class="panel-sub">multi-agent conversations</span></div>
+        <div class="panel-intro">Framework for building systems where multiple AI agents talk to each other to solve problems. Agents can write and run code automatically, making it powerful for coding and research tasks.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Concept</th><th>Purpose</th></tr>
+            <tr><td>ConversableAgent</td><td>Base agent that can send and receive messages</td></tr>
+            <tr><td>AssistantAgent</td><td>LLM-powered problem solver — the "AI" agent</td></tr>
+            <tr><td>UserProxyAgent</td><td>Represents the human, can execute code locally</td></tr>
+            <tr><td>GroupChat</td><td>Multiple agents in one coordinated conversation</td></tr>
+            <tr><td>Code execution</td><td>Agents write code → UserProxy runs it → result fed back</td></tr>
+          </table>
+          <div class="purpose"><strong>Best for:</strong> Coding assistants, research automation, multi-step problem solving</div>
+          <div class="lib-badge">Install: <span>pip install pyautogen</span></div>
+        </div>
+      </div>
+
+      <!-- Google ADK -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#ede9fe;"></div><span class="panel-title">Google ADK <span style="font-size:10px;font-weight:400;color:var(--text2);">Agent Development Kit</span></span><span class="panel-sub">Google's agent framework</span></div>
+        <div class="panel-intro">Google's open-source framework for building production-grade agents, especially on Google Cloud and Vertex AI infrastructure. Tightly integrated with Gemini models.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td>Agent definition</td><td>Define agent goals, instructions, and available tools</td></tr>
+            <tr><td>Tool integration</td><td>Connect to Google Search, APIs, custom functions</td></tr>
+            <tr><td>Multi-agent orchestration</td><td>Coordinate specialised sub-agents on complex tasks</td></tr>
+            <tr><td>Evaluation</td><td>Built-in agent testing and quality benchmarking</td></tr>
+            <tr><td>Vertex AI integration</td><td>Deploy agents to Google Cloud infrastructure</td></tr>
+          </table>
+          <div class="purpose"><strong>Best for:</strong> Google Cloud users, Gemini-based agents, enterprise deployment</div>
+          <div class="lib-badge">Install: <span>pip install google-adk</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Framework comparison -->
+    <div class="divider"></div>
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#a78bfa;"></div><span class="panel-title">Which framework should a beginner start with?</span></div>
+      <div class="panel-bd">
+        <div class="g2">
+          <div>
+            <table class="mini-table">
+              <tr><th>If you want to…</th><th>Start with</th></tr>
+              <tr><td>Build a chatbot or chain prompts</td><td>LangChain</td></tr>
+              <tr><td>Build a Q&A over your own documents</td><td>LlamaIndex</td></tr>
+              <tr><td>Build multi-agent coding systems</td><td>AutoGen</td></tr>
+              <tr><td>Build on Google Cloud / Gemini</td><td>Google ADK</td></tr>
+              <tr><td>Build role-based agent teams</td><td>CrewAI</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="grp-label">Other frameworks worth knowing</div>
+            <div class="chips">
+              <span class="chip hi">CrewAI — role-based multi-agent teams, beginner-friendly</span>
+              <span class="chip hi">Semantic Kernel — Microsoft's agent + plugin SDK (.NET / Python)</span>
+              <span class="chip">Haystack — production NLP and RAG pipelines</span>
+              <span class="chip">DSPy — program LLMs with code instead of prompts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="connector">
+  <div class="conn-line"></div>
+  <div class="conn-label">frameworks run on platforms — platforms provide the compute, APIs, and scale</div>
+  <div class="conn-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BLOCK 13 · PLATFORMS
+════════════════════════════════════════════ -->
+<div class="block" id="platforms">
+<div class="block-card" style="border-top:2.5px solid #fbbf24;">
+  <div class="bh">
+    <div class="bh-left">
+      <div class="bh-num" style="background:rgba(251,191,36,0.12);color:#fbbf24;">BLOCK 13</div>
+      <div class="bh-title">Platforms</div>
+      <div class="bh-intro">Platforms provide the infrastructure to access, deploy, and scale LLM applications — without managing GPU servers yourself. Three major cloud providers offer managed LLM services. You write the application; the platform handles compute, scaling, and model access.</div>
+    </div>
+    <div class="bh-tag">Azure · AWS Bedrock · Google Vertex AI</div>
+  </div>
+  <div class="bb">
+
+    <div class="g3">
+
+      <!-- Microsoft / Azure -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fbbf24;"></div><span class="panel-title">Microsoft — Copilot + Azure</span></div>
+        <div class="panel-intro">Enterprise-grade LLM deployment on Microsoft infrastructure. Tight integration with Office 365, Teams, and the full Microsoft ecosystem.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Service</th><th>Purpose</th></tr>
+            <tr><td>Azure OpenAI Service</td><td>Access GPT-4, DALL-E, Whisper via secure API</td></tr>
+            <tr><td>Microsoft Copilot</td><td>LLM built into Office 365, Teams, and Windows</td></tr>
+            <tr><td>Copilot Studio</td><td>Build custom copilots for your business — no-code/low-code</td></tr>
+            <tr><td>Azure AI Foundry</td><td>Build, evaluate, and deploy AI apps on Azure</td></tr>
+            <tr><td>Azure AI Search</td><td>Vector + keyword search for RAG pipelines</td></tr>
+            <tr><td>Semantic Kernel</td><td>SDK to integrate LLMs into .NET and Python apps</td></tr>
+          </table>
+          <div class="purpose"><strong>Best for:</strong> Enterprise teams already using Microsoft stack, Office integration</div>
+        </div>
+      </div>
+
+      <!-- AWS Bedrock -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#f59e0b;"></div><span class="panel-title">Amazon Bedrock</span></div>
+        <div class="panel-intro">Access multiple foundation models through one AWS API — no model management needed. Best if your infrastructure is already on AWS.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Service</th><th>Purpose</th></tr>
+            <tr><td>Foundation models</td><td>Claude, Llama, Titan, Mistral all via one API</td></tr>
+            <tr><td>Bedrock Agents</td><td>Build agents with tool use on AWS infrastructure</td></tr>
+            <tr><td>Knowledge Bases</td><td>Managed RAG — connect S3 docs to a vector store</td></tr>
+            <tr><td>Model evaluation</td><td>Compare multiple models side by side</td></tr>
+            <tr><td>Fine-tuning</td><td>Fine-tune foundation models on your own data</td></tr>
+            <tr><td>Guardrails</td><td>Safety filters and content policies for LLM output</td></tr>
+          </table>
+          <div class="purpose"><strong>Best for:</strong> AWS users, multi-model flexibility, enterprise security</div>
+        </div>
+      </div>
+
+      <!-- Google Vertex AI -->
+      <div class="panel">
+        <div class="panel-hd"><div class="dot" style="background:#fde68a;"></div><span class="panel-title">Google Vertex AI</span></div>
+        <div class="panel-intro">Google's unified ML and LLM platform — from model access to training to deployment. Home of Gemini models and deep integration with Google services.</div>
+        <div class="panel-bd">
+          <table class="mini-table">
+            <tr><th>Service</th><th>Purpose</th></tr>
+            <tr><td>Model Garden</td><td>Access Gemini, Claude, Llama, and open models</td></tr>
+            <tr><td>Vertex AI Studio</td><td>Test and design prompts for Gemini models</td></tr>
+            <tr><td>Agent Builder</td><td>Build and deploy agents visually</td></tr>
+            <tr><td>Vector Search</td><td>Managed vector database for RAG pipelines</td></tr>
+            <tr><td>Pipelines (MLOps)</td><td>Automate training and deployment workflows</td></tr>
+            <tr><td>Evaluation</td><td>Built-in model and agent quality evaluation</td></tr>
+          </table>
+          <div class="purpose"><strong>Best for:</strong> Google Cloud users, Gemini-based apps, ML + LLM combined projects</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Platform comparison -->
+    <div class="panel-full">
+      <div class="panel-hd"><div class="dot" style="background:#fbbf24;"></div><span class="panel-title">Platform Quick Comparison</span></div>
+      <div class="panel-bd">
+        <table class="mini-table">
+          <tr><th>Platform</th><th>Best models</th><th>Best for</th><th>Unique strength</th></tr>
+          <tr><td>Azure OpenAI</td><td>GPT-4o, DALL-E, Whisper</td><td>Microsoft / enterprise</td><td>Office + Teams Copilot integration</td></tr>
+          <tr><td>AWS Bedrock</td><td>Claude, Llama, Mistral</td><td>AWS-first teams</td><td>Multi-model API + managed RAG</td></tr>
+          <tr><td>Google Vertex</td><td>Gemini 1.5, open models</td><td>Google Cloud teams</td><td>Multimodal Gemini + MLOps</td></tr>
+        </table>
+        <div class="grp-label" style="margin-top:12px;">Free options for beginners to get started</div>
+        <div class="chips">
+          <span class="chip hi">Google AI Studio — free Gemini API access with generous limits</span>
+          <span class="chip hi">Anthropic Console — free tier for Claude API testing</span>
+          <span class="chip hi">OpenAI Playground — free credits for GPT models</span>
+          <span class="chip">AWS Free Tier — limited Bedrock access</span>
+          <span class="chip">Azure Free Account — $200 credit for new users</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- footer -->
+<div style="text-align:center;padding:48px 0 0;border-top:1px solid var(--border);margin-top:48px;">
+  <p style="font-family:var(--mono);font-size:11px;color:var(--text2);">ML &amp; AI Beginner Learning Path · 13 Blocks · Python → Platforms · Share freely</p>
+</div>
+
+</div><!-- /flow -->
+</body>
+</html>
