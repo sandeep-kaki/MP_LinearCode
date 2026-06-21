@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn ML From Me — Issue #02: Unsupervised Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #0f0f0f;
+    --ink2:       #3a3a3a;
+    --ink3:       #777;
+    --paper:      #f7f9fc;
+    --paper2:     #edf1f7;
+    --paper3:     #dde4f0;
+    --accent:     #7c3aed;
+    --accent2:    #5b21b6;
+    --teal:       #0d7377;
+    --teal-bg:    #e6f6f6;
+    --amber:      #a05c00;
+    --amber-bg:   #fdf4e3;
+    --red:        #c0002a;
+    --red-bg:     #fdf0f2;
+    --blue:       #1a6bff;
+    --blue-bg:    #e8f0ff;
+    --green:      #0a7c4a;
+    --green-bg:   #edf7f2;
+    --code-bg:    #12151f;
+    --code-text:  #e8eaf6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: #12101a;
+    color: #fff;
+    padding: 14px 0;
+  }
+  .masthead-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .masthead-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+  .masthead-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    opacity: 0.45;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: #12101a;
+    padding: 76px 24px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 62%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(13,115,119,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .issue-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #a78bfa;
+    border: 1px solid rgba(167,139,250,0.35);
+    border-radius: 20px;
+    padding: 5px 14px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.7rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero h1 em { font-style: italic; color: #a78bfa; }
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    max-width: 480px;
+    margin: 0 auto 36px;
+    line-height: 1.7;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .hero-stat strong {
+    display: block;
+    font-size: 22px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin-bottom: 3px;
+  }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── TOC ── */
+  .toc {
+    background: #fff;
+    border: 1px solid var(--paper3);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin: 52px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .toc-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 18px;
+  }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px 28px;
+  }
+  .toc li {
+    counter-increment: toc;
+    font-size: 13.5px;
+    color: var(--ink2);
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+  }
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .toc li a {
+    color: var(--ink2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .toc li a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 60px 0 50px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--paper3);
+  }
+  .divider span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    white-space: nowrap;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.06rem;
+    font-weight: 600;
+    margin: 32px 0 10px;
+    color: var(--ink);
+  }
+  p { margin-bottom: 16px; color: var(--ink2); }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 26px;
+    margin: 34px 0;
+  }
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.22rem;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── ANALOGY BLOCK ── */
+  .analogy {
+    background: #fff;
+    border: 1px solid var(--paper3);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .analogy-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .analogy p { font-size: 14.5px; color: var(--ink2); margin: 0; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 28px 0;
+    border: 1px solid transparent;
+  }
+  .callout-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 9px;
+  }
+  .callout p { font-size: 14px; margin: 0; line-height: 1.65; }
+  .callout.teal   { background: var(--teal-bg);  border-color: rgba(13,115,119,0.22); }
+  .callout.teal   .callout-label { color: var(--teal); }
+  .callout.amber  { background: var(--amber-bg); border-color: rgba(160,92,0,0.22); }
+  .callout.amber  .callout-label { color: var(--amber); }
+  .callout.red    { background: var(--red-bg);   border-color: rgba(192,0,42,0.22); }
+  .callout.red    .callout-label { color: var(--red); }
+  .callout.purple { background: #f3eeff;          border-color: rgba(124,58,237,0.22); }
+  .callout.purple .callout-label { color: var(--accent2); }
+  .callout.blue   { background: var(--blue-bg);  border-color: rgba(26,107,255,0.22); }
+  .callout.blue   .callout-label { color: var(--blue); }
+  .callout.green  { background: var(--green-bg); border-color: rgba(10,124,74,0.22); }
+  .callout.green  .callout-label { color: var(--green); }
+
+  /* ── ALGO CARD ── */
+  .algo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 24px 0;
+  }
+  .algo-card {
+    background: #fff;
+    border: 1px solid var(--paper3);
+    border-radius: 12px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  }
+  .algo-card-name {
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+  .algo-card-type {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .algo-card-type.cluster { color: var(--teal); }
+  .algo-card-type.dimred  { color: var(--accent); }
+  .algo-card-type.assoc   { color: var(--amber); }
+  .algo-card-desc { font-size: 13.5px; color: var(--ink3); line-height: 1.6; }
+  .algo-card-when {
+    font-size: 12.5px; color: var(--ink2);
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--paper3);
+  }
+  .algo-card-when strong { color: var(--ink); }
+
+  /* ── STEP LIST ── */
+  .step-list { list-style: none; margin: 20px 0; }
+  .step-list li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--paper2);
+    font-size: 14.5px;
+    color: var(--ink2);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: #f3eeff;
+    border-radius: 6px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── METRIC TABLE ── */
+  .metric-table {
+    width: 100%; border-collapse: collapse;
+    margin: 20px 0; font-size: 14px;
+  }
+  .metric-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink3);
+    text-align: left; padding: 0 0 10px;
+    border-bottom: 1px solid var(--paper3);
+  }
+  .metric-table td {
+    padding: 10px 0 9px;
+    border-bottom: 1px solid var(--paper2);
+    vertical-align: top;
+    color: var(--ink2); line-height: 1.55;
+  }
+  .metric-table td:first-child {
+    font-weight: 600; color: var(--ink);
+    padding-right: 18px; white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+  }
+  .metric-table tr:last-child td { border-bottom: none; }
+
+  /* ── FORMULA ── */
+  .formula {
+    background: #fff;
+    border: 1px solid var(--paper3);
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    margin: 16px 0;
+    text-align: center;
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  /* ── VISUAL COMPARISON ── */
+  .vs-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px; margin: 24px 0;
+  }
+  .vs-col {
+    background: #fff;
+    border: 1px solid var(--paper3);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .vs-col-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .vs-col.purple .vs-col-label { color: var(--accent); }
+  .vs-col.teal   .vs-col-label { color: var(--teal); }
+  .vs-col.amber  .vs-col-label { color: var(--amber); }
+  .vs-col.blue   .vs-col-label { color: var(--blue); }
+  .vs-col ul { list-style: none; font-size: 13.5px; color: var(--ink2); }
+  .vs-col ul li { margin-bottom: 6px; padding-left: 16px; position: relative; }
+  .vs-col ul li::before { content: '→'; position: absolute; left: 0; color: var(--ink3); }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: var(--code-bg);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 30px 0;
+  }
+  .code-header {
+    background: rgba(255,255,255,0.04);
+    padding: 11px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .code-header-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dot:nth-child(1) { background: #ff5f57; }
+  .code-dot:nth-child(2) { background: #febc2e; }
+  .code-dot:nth-child(3) { background: #28c840; }
+  pre {
+    padding: 22px 24px;
+    overflow-x: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px; line-height: 1.78;
+    color: var(--code-text);
+  }
+  .cm { color: #5c6bc0; }
+  .ck { color: #ce93d8; }
+  .cs { color: #a5d6a7; }
+  .cn { color: #ffcc80; }
+  .cf { color: #90caf9; }
+  .cv { color: #80cbc4; }
+
+  /* ── AGENT BOX ── */
+  .agent-box {
+    background: #12101a;
+    border-radius: 14px;
+    padding: 30px 32px;
+    margin: 44px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .agent-box::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .agent-box-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #a78bfa;
+    margin-bottom: 12px;
+  }
+  .agent-box h3 { color: #fff; margin: 0 0 12px; font-size: 1.12rem; }
+  .agent-box p  { color: rgba(255,255,255,0.65); font-size: 14px; margin-bottom: 10px; }
+  .agent-box p:last-child { margin-bottom: 0; }
+
+  /* ── CHEAT GRID ── */
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin: 20px 0;
+  }
+  .cheat-cell {
+    background: #fff;
+    border: 1px solid var(--paper3);
+    border-radius: 10px;
+    padding: 15px 17px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .cheat-cell-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--ink3);
+    margin-bottom: 6px;
+  }
+  .cheat-cell-val { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+  .cheat-cell-desc { color: var(--ink3); font-size: 12px; margin-top: 3px; }
+
+  /* ── HIGHLIGHT STRIP ── */
+  .highlight-strip {
+    background: linear-gradient(135deg, #f3eeff 0%, #e8f0ff 100%);
+    border: 1px solid rgba(124,58,237,0.18);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 32px 0;
+  }
+  .highlight-strip p { color: var(--ink2); font-size: 14.5px; margin: 0; }
+  .highlight-strip strong { color: var(--accent2); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #12101a;
+    padding: 56px 24px;
+    margin-top: 80px;
+    text-align: center;
+  }
+  .footer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: #fff; margin-bottom: 8px;
+  }
+  .footer-sub {
+    font-size: 13px; color: rgba(255,255,255,0.4);
+    margin-bottom: 10px;
+  }
+  .footer-next {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: #a78bfa; margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .toc ol, .algo-grid, .vs-strip, .cheat-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 20px; }
+    .masthead-inner { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title">Learn ML From Me · Issue #02</div>
+    <div class="masthead-meta">Unsupervised Learning · June 2025</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="issue-tag">Issue 02 of 03 · Unsupervised Learning</div>
+  <h1>Finding Patterns<br>Nobody <em>Told</em> the Machine to Find</h1>
+  <p class="hero-sub">No labels. No correct answers. Just raw data — and algorithms that discover hidden structure inside it entirely on their own.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>28 min</strong>read</div>
+    <div class="hero-stat"><strong>5</strong>algorithms</div>
+    <div class="hero-stat"><strong>6</strong>code blocks</div>
+    <div class="hero-stat"><strong>1</strong>big insight</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-label">In this issue</div>
+    <ol>
+      <li><a href="#mental-model">The mental model shift</a></li>
+      <li><a href="#kmeans">K-Means Clustering</a></li>
+      <li><a href="#hierarchical">Hierarchical Clustering</a></li>
+      <li><a href="#apriori">Apriori — Association Rules</a></li>
+      <li><a href="#pca">PCA — Dimensionality Reduction</a></li>
+      <li><a href="#autoencoder">Autoencoders (intro)</a></li>
+      <li><a href="#when-to-use">When to use which</a></li>
+      <li><a href="#code">Full Python implementation</a></li>
+      <li><a href="#agent-connection">Why this matters for AI Agents</a></li>
+      <li><a href="#cheatsheet">Your cheat sheet</a></li>
+    </ol>
+  </div>
+
+  <!-- OPENING -->
+  <div class="eyebrow">From the editor</div>
+  <p>Welcome back to <strong>Learn ML From Me.</strong> Last issue we covered Supervised Learning — the machine that learns from your labels. This issue is about something fundamentally different.</p>
+  <p>Unsupervised learning is the part of ML that most beginners skip too fast. That's a mistake. Because some of the most powerful things AI does — finding customer segments you didn't know existed, compressing 1000-dimensional data into 2 dimensions, discovering that "people who buy X also buy Y" — none of that has a label. None of that is supervised.</p>
+  <p>And when you get to building AI Agents, unsupervised learning is everywhere: embeddings, semantic search, RAG, anomaly detection — all of it traces back to what we're covering today.</p>
+  <p>Let's get into it.</p>
+
+  <div class="divider"><span>Part 1 · The Mental Model Shift</span></div>
+
+  <!-- MENTAL MODEL -->
+  <div id="mental-model">
+    <div class="eyebrow">The one thing to understand first</div>
+    <h2>Supervised vs Unsupervised — <em>a completely different question</em></h2>
+
+    <p>In supervised learning, you asked: <em>"Given this input, what is the correct output?"</em> You had labels. The model learned the mapping between input and label.</p>
+
+    <p>Unsupervised learning asks a completely different question:</p>
+
+    <div class="pull-quote">
+      <p>"I have no labels, no correct answers, no one telling me what to look for. What structure, patterns, or groupings naturally exist in this data?"</p>
+    </div>
+
+    <p>The model doesn't know what "correct" looks like. Instead, it discovers — on its own — that certain data points are similar to each other, that certain dimensions are redundant, that certain items tend to appear together.</p>
+
+    <div class="analogy">
+      <div class="analogy-label">The analogy</div>
+      <p>Imagine you're a new librarian. You inherit a room with 10,000 unlabelled books dumped in a pile. Nobody tells you how to categorise them. Supervised learning is impossible — there are no labels. So you start reading, noticing patterns: these 400 books use similar vocabulary, these 200 share themes, these 50 keep referencing each other. You create categories <em>from the data itself.</em> That's unsupervised learning. You didn't classify books into predefined categories — you discovered the categories.</p>
+    </div>
+
+    <p>Unsupervised learning has three major flavours. <strong>Clustering</strong> — find groups of similar things. <strong>Dimensionality Reduction</strong> — compress data while keeping its essence. <strong>Association Rule Mining</strong> — find "if this, then that" patterns. Each solves a fundamentally different problem. Let's go through all of them.</p>
+  </div>
+
+  <div class="divider"><span>Part 2 · Clustering</span></div>
+
+  <!-- KMEANS -->
+  <div id="kmeans">
+    <div class="eyebrow">Clustering — Algorithm 1</div>
+    <h2>K-Means — <em>the simplest grouping algorithm that works</em></h2>
+
+    <p>K-Means is the most widely used clustering algorithm. The idea is almost embarrassingly simple. You tell it: "I think there are K groups in this data." It finds them.</p>
+
+    <h3>How it works — step by step</h3>
+
+    <ul class="step-list">
+      <li><span class="step-num">01</span><div><strong>Initialise:</strong> Randomly place K points (called centroids) somewhere in your data space. These will become the centres of your K clusters.</div></li>
+      <li><span class="step-num">02</span><div><strong>Assign:</strong> For every data point, measure the distance to every centroid. Assign each point to its nearest centroid. Every point now belongs to a cluster.</div></li>
+      <li><span class="step-num">03</span><div><strong>Update:</strong> Recalculate each centroid as the mean (average position) of all points currently assigned to it. The centroid moves to the centre of its cluster.</div></li>
+      <li><span class="step-num">04</span><div><strong>Repeat:</strong> Go back to step 2 and reassign. Repeat steps 2–3 until the centroids stop moving (convergence). That's your final clustering.</div></li>
+    </ul>
+
+    <div class="analogy">
+      <div class="analogy-label">Real world analogy</div>
+      <p>You run an e-commerce site and have 1 million customers with no labels. K-Means with K=4 might discover: Cluster 1 = high-value frequent buyers, Cluster 2 = price-sensitive deal hunters, Cluster 3 = occasional browsers, Cluster 4 = one-time purchasers. You never told it to find these segments. It found them purely from purchase frequency, average order value, and recency data.</p>
+    </div>
+
+    <h3>The K problem — how do you choose K?</h3>
+    <p>This is the central challenge of K-Means. You need to tell it how many clusters to find. If you don't know (and usually you don't), use the <strong>Elbow Method</strong>:</p>
+
+    <ul class="step-list">
+      <li><span class="step-num">→</span><div>Run K-Means for K = 1, 2, 3, 4, ... 10</div></li>
+      <li><span class="step-num">→</span><div>For each K, record the inertia (sum of distances from each point to its centroid — lower = tighter clusters)</div></li>
+      <li><span class="step-num">→</span><div>Plot K vs inertia. The curve will look like an arm with an elbow. The elbow point = the optimal K. Adding more clusters beyond the elbow gives diminishing returns.</div></li>
+    </ul>
+
+    <div class="callout amber">
+      <div class="callout-label">K-Means limitations you must know</div>
+      <p>It assumes clusters are roughly spherical and similar in size — bad for irregular shapes. It's sensitive to outliers (one extreme point can pull a centroid far away). It can converge to a local minimum depending on random initialisation. Fix: run it multiple times (n_init=10) and pick the best result. Always scale features before K-Means — it uses distances, so unscaled features will dominate unfairly.</p>
+    </div>
+  </div>
+
+  <!-- HIERARCHICAL -->
+  <div id="hierarchical">
+    <div class="eyebrow">Clustering — Algorithm 2</div>
+    <h2>Hierarchical Clustering — <em>building a tree of groups</em></h2>
+
+    <p>K-Means requires you to decide K upfront. What if you don't know how many clusters you want? Hierarchical clustering builds a full tree of clusterings from 1 group all the way down to N individual points — and you decide the cut-off after seeing the full picture.</p>
+
+    <h3>How Agglomerative (bottom-up) works</h3>
+
+    <ul class="step-list">
+      <li><span class="step-num">01</span><div>Start: every single data point is its own cluster. N data points = N clusters.</div></li>
+      <li><span class="step-num">02</span><div>Find the two closest clusters (by your chosen linkage: single, complete, or average linkage). Merge them into one cluster.</div></li>
+      <li><span class="step-num">03</span><div>You now have N-1 clusters. Repeat — find the next two closest and merge.</div></li>
+      <li><span class="step-num">04</span><div>Keep merging until everything is one big cluster. Record the full history of merges.</div></li>
+      <li><span class="step-num">05</span><div>Visualise as a <strong>dendrogram</strong> — a tree diagram showing every merge and at what distance it happened. Cut the tree at any horizontal line to get any number of clusters you want.</div></li>
+    </ul>
+
+    <div class="vs-strip">
+      <div class="vs-col purple">
+        <div class="vs-col-label">K-Means</div>
+        <ul>
+          <li>Need to specify K upfront</li>
+          <li>Fast on large datasets</li>
+          <li>Spherical clusters only</li>
+          <li>Good for millions of points</li>
+          <li>Can't see cluster hierarchy</li>
+        </ul>
+      </div>
+      <div class="vs-col teal">
+        <div class="vs-col-label">Hierarchical</div>
+        <ul>
+          <li>No need to specify K upfront</li>
+          <li>Slow on large datasets (O(n³))</li>
+          <li>Any shape of clusters</li>
+          <li>Best for hundreds/thousands</li>
+          <li>Full hierarchy visible in dendrogram</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">When to use Hierarchical over K-Means</div>
+      <p>When you genuinely don't know how many clusters exist and want to explore the data. When you need to understand cluster relationships (are these two groups subcategories of a bigger group?). When your dataset is small-to-medium (under ~10,000 points). Gene expression analysis and document taxonomy are classic use cases.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · Association Rules</span></div>
+
+  <!-- APRIORI -->
+  <div id="apriori">
+    <div class="eyebrow">Association Rule Mining</div>
+    <h2>Apriori — <em>"people who bought X also bought Y"</em></h2>
+
+    <p>This is an entirely different type of unsupervised learning. It's not about grouping data points — it's about finding <strong>co-occurrence patterns</strong> in transactions. Which items appear together? Which events co-occur?</p>
+
+    <div class="analogy">
+      <div class="analogy-label">The classic example</div>
+      <p>A supermarket has 10,000 transaction receipts. No labels. Apriori discovers: "87% of customers who buy bread and butter also buy milk in the same transaction." This is an association rule: {bread, butter} → {milk}. The supermarket puts milk near bread. Sales go up. Nobody labelled anything — the pattern came from the raw transactions.</p>
+    </div>
+
+    <h3>The three key metrics</h3>
+
+    <table class="metric-table">
+      <tr><th>Metric</th><th>What it means</th><th>Example</th></tr>
+      <tr>
+        <td>Support</td>
+        <td>How often does this combination appear across all transactions? Filters out rare patterns.</td>
+        <td>{bread, milk} appears in 40% of all transactions → support = 0.40</td>
+      </tr>
+      <tr>
+        <td>Confidence</td>
+        <td>Given someone bought X, what % also bought Y? Measures the strength of the rule.</td>
+        <td>Of customers buying bread, 75% also bought milk → confidence = 0.75</td>
+      </tr>
+      <tr>
+        <td>Lift</td>
+        <td>Is this rule better than random chance? Lift > 1 means the association is real, not a coincidence.</td>
+        <td>Lift = 2.5 means milk is 2.5x more likely to be bought when bread is in the cart vs by itself</td>
+      </tr>
+    </table>
+
+    <h3>How Apriori works</h3>
+    <p>The algorithm's key insight is the <strong>Apriori property</strong>: if an itemset is rare (low support), then any larger itemset containing it is also rare. This lets it prune the search space massively instead of checking every possible combination.</p>
+
+    <ul class="step-list">
+      <li><span class="step-num">01</span><div>Find all individual items that meet minimum support threshold (e.g., appear in at least 5% of transactions).</div></li>
+      <li><span class="step-num">02</span><div>Use those frequent single items to generate candidate pairs. Check their support. Keep only frequent pairs.</div></li>
+      <li><span class="step-num">03</span><div>From frequent pairs, generate candidate triples. Check support. Keep frequent triples.</div></li>
+      <li><span class="step-num">04</span><div>Continue until no more frequent itemsets can be found.</div></li>
+      <li><span class="step-num">05</span><div>Generate association rules from all frequent itemsets. Filter by confidence and lift thresholds.</div></li>
+    </ul>
+
+    <div class="callout purple">
+      <div class="callout-label">Where Apriori shows up in AI systems</div>
+      <p>In recommendation engines (Netflix, Amazon, Spotify), knowledge graph construction, and medical diagnosis systems ("patients with symptoms A and B also present symptom C in 78% of cases"). When an AI agent is deciding what tool to call next based on conversation context — the pattern mining concept is the same idea.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · Dimensionality Reduction</span></div>
+
+  <!-- PCA -->
+  <div id="pca">
+    <div class="eyebrow">Dimensionality Reduction — Algorithm 1</div>
+    <h2>PCA — <em>compressing data without losing what matters</em></h2>
+
+    <p>PCA (Principal Component Analysis) is one of the most important algorithms in all of machine learning. Not because it's complex — but because the problem it solves appears everywhere.</p>
+
+    <p>The problem: <strong>high-dimensional data.</strong> Imagine you have 1000 features describing each customer. Most of those features are correlated (income and spending are related; age and tenure are related). You have a lot of redundant information packed into 1000 dimensions. That's slow to compute, hard to visualise, and often causes overfitting.</p>
+
+    <p>PCA asks: <em>"What is the minimum number of new dimensions I need to preserve most of the information in the data?"</em></p>
+
+    <h3>The intuition — shadows on a wall</h3>
+
+    <div class="analogy">
+      <div class="analogy-label">The shadow analogy</div>
+      <p>Hold a 3D object in front of a light. You see a 2D shadow on the wall. The shadow is a projection — it loses some information (depth), but if you choose the right angle to project from, the shadow captures the most important shape. PCA finds the mathematically optimal "angles" (called principal components) to project your data onto fewer dimensions while losing as little information as possible.</p>
+    </div>
+
+    <h3>What PCA actually does — step by step</h3>
+
+    <ul class="step-list">
+      <li><span class="step-num">01</span><div><strong>Standardise:</strong> Scale all features to mean=0, std=1. PCA is sensitive to scale — always do this first.</div></li>
+      <li><span class="step-num">02</span><div><strong>Compute covariance matrix:</strong> Find how every feature varies with every other feature. This tells PCA where the spread of the data is.</div></li>
+      <li><span class="step-num">03</span><div><strong>Find eigenvectors and eigenvalues:</strong> The eigenvectors are the directions of maximum spread (principal components). The eigenvalues tell you how much variance each direction captures.</div></li>
+      <li><span class="step-num">04</span><div><strong>Rank by explained variance:</strong> Sort principal components by eigenvalue (highest first). The first PC captures the most variance, second captures the second most, and so on.</div></li>
+      <li><span class="step-num">05</span><div><strong>Project:</strong> Choose how many components to keep (enough to explain 90–95% of variance). Project your data onto those components. Done — you've compressed N dimensions to K dimensions.</div></li>
+    </ul>
+
+    <div class="formula">Explained Variance Ratio = eigenvalue_i / sum(all eigenvalues)</div>
+
+    <div class="callout blue">
+      <div class="callout-label">How many components to keep?</div>
+      <p>Plot the cumulative explained variance ratio as you add components. When the curve flattens past 90% or 95%, that's your cut-off. If 10 components out of 1000 explain 95% of variance — use 10. You've reduced the problem 100x with minimal information loss.</p>
+    </div>
+
+    <h3>What PCA is NOT</h3>
+    <div class="callout red">
+      <div class="callout-label">Common misconception</div>
+      <p>PCA doesn't select which original features are important and discard the rest. It creates entirely <strong>new features</strong> (principal components) that are linear combinations of all original features. You lose interpretability — PC1 isn't "age" or "income", it's 0.3×age + 0.7×income - 0.1×tenure + ... The tradeoff: you gain compression and often better model performance.</p>
+    </div>
+  </div>
+
+  <!-- AUTOENCODER -->
+  <div id="autoencoder">
+    <div class="eyebrow">Dimensionality Reduction — Algorithm 2</div>
+    <h2>Autoencoders — <em>PCA but with neural networks</em></h2>
+
+    <p>PCA is linear — it can only find straight-line combinations of features. Real data is often non-linear. An autoencoder is a neural network that does the same job as PCA but can capture non-linear patterns.</p>
+
+    <h3>The architecture — a bottleneck by design</h3>
+
+    <div class="analogy">
+      <div class="analogy-label">The compression analogy</div>
+      <p>Imagine compressing a photo to send through a narrow pipe. You squeeze it down at one end (encoder), pass the tiny compressed version through the pipe (bottleneck — the latent space), and reconstruct it at the other end (decoder). The network is forced to learn only the most essential representation of the image to survive the bottleneck. If the reconstruction is good, the bottleneck captured the essence.</p>
+    </div>
+
+    <div class="vs-strip">
+      <div class="vs-col purple">
+        <div class="vs-col-label">Encoder half</div>
+        <ul>
+          <li>Takes full input (e.g. 784 pixels)</li>
+          <li>Compresses through shrinking layers</li>
+          <li>Outputs a small latent vector (e.g. 32 numbers)</li>
+          <li>This is the compressed representation</li>
+        </ul>
+      </div>
+      <div class="vs-col teal">
+        <div class="vs-col-label">Decoder half</div>
+        <ul>
+          <li>Takes the small latent vector</li>
+          <li>Expands through growing layers</li>
+          <li>Tries to reconstruct the original input</li>
+          <li>Loss = reconstruction error</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>The key insight: we <strong>never use the decoder after training.</strong> We throw it away. The encoder is what we want — it's a function that compresses any input into a meaningful low-dimensional representation. That representation is called the <strong>latent space</strong>.</p>
+
+    <div class="callout teal">
+      <div class="callout-label">PCA vs Autoencoder — when to use which</div>
+      <p><strong>PCA:</strong> Fast, interpretable, always works, linear relationships only. Use for tabular data, quick dimensionality reduction, preprocessing before another model. <strong>Autoencoder:</strong> Slower to train, handles non-linear patterns, needs more data. Use for images, audio, text, anything with complex non-linear structure. The embeddings that power semantic search in RAG systems? Those are autoencoder-style neural network compressions.</p>
+    </div>
+
+    <div class="callout purple">
+      <div class="callout-label">Autoencoders in production AI</div>
+      <p>The embedding models you'll use in LLM applications (like <code>text-embedding-3-small</code> from OpenAI) are essentially sophisticated autoencoders trained on massive text corpora. They compress any piece of text into a 1536-number vector that captures its semantic meaning. That's the same bottleneck architecture — just at massive scale, with transformer blocks instead of simple linear layers.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · When to Use Which</span></div>
+
+  <!-- WHEN TO USE -->
+  <div id="when-to-use">
+    <div class="eyebrow">Decision guide</div>
+    <h2>Picking the right <em>unsupervised</em> algorithm</h2>
+
+    <table class="metric-table">
+      <tr><th>Your goal</th><th>Algorithm</th><th>Condition</th></tr>
+      <tr>
+        <td>Group customers / users / documents</td>
+        <td>K-Means</td>
+        <td>Large dataset, roughly equal-sized groups, speed matters</td>
+      </tr>
+      <tr>
+        <td>Group data but don't know K</td>
+        <td>Hierarchical</td>
+        <td>Small-medium dataset, want to explore full hierarchy</td>
+      </tr>
+      <tr>
+        <td>Find "also bought" / co-occurrence patterns</td>
+        <td>Apriori</td>
+        <td>Transaction or event data, looking for if-then rules</td>
+      </tr>
+      <tr>
+        <td>Speed up another ML model, reduce noise</td>
+        <td>PCA</td>
+        <td>Tabular data, many correlated features, need interpretability</td>
+      </tr>
+      <tr>
+        <td>Compress images, text, or complex non-linear data</td>
+        <td>Autoencoder</td>
+        <td>Enough data to train a neural network, non-linear patterns</td>
+      </tr>
+      <tr>
+        <td>Visualise high-dimensional data in 2D</td>
+        <td>PCA (first 2 components)</td>
+        <td>Quick exploration of any dataset — always try this first</td>
+      </tr>
+      <tr>
+        <td>Detect anomalies (fraud, defects)</td>
+        <td>Autoencoder</td>
+        <td>Normal data compresses well; anomalies have high reconstruction error</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="divider"><span>Part 6 · Python Implementation</span></div>
+
+  <!-- CODE -->
+  <div id="code">
+    <div class="eyebrow">Run this in Google Colab</div>
+    <h2>The complete code — <em>every line explained</em></h2>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 1 — Setup &amp; Imports</div>
+      </div>
+      <pre><span class="cm"># ── Import everything we need ──────────────────────────────────</span>
+<span class="ck">import</span> numpy <span class="ck">as</span> np                      <span class="cm"># fast math on arrays</span>
+<span class="ck">import</span> pandas <span class="ck">as</span> pd                    <span class="cm"># DataFrames for tabular data</span>
+<span class="ck">import</span> matplotlib.pyplot <span class="ck">as</span> plt        <span class="cm"># plotting</span>
+<span class="ck">import</span> seaborn <span class="ck">as</span> sns                   <span class="cm"># prettier statistical plots</span>
+<span class="ck">import</span> warnings
+warnings.<span class="cf">filterwarnings</span>(<span class="cs">'ignore'</span>)       <span class="cm"># silence non-critical warnings</span>
+
+<span class="cm"># ── Clustering algorithms ──────────────────────────────────────</span>
+<span class="ck">from</span> sklearn.cluster <span class="ck">import</span> KMeans, AgglomerativeClustering
+<span class="cm"># KMeans: partition into K groups by distance</span>
+<span class="cm"># AgglomerativeClustering: bottom-up hierarchical clustering</span>
+
+<span class="cm"># ── Dimensionality reduction ───────────────────────────────────</span>
+<span class="ck">from</span> sklearn.decomposition <span class="ck">import</span> PCA
+<span class="cm"># PCA: Principal Component Analysis — linear compression</span>
+
+<span class="cm"># ── Data tools ────────────────────────────────────────────────</span>
+<span class="ck">from</span> sklearn.preprocessing <span class="ck">import</span> StandardScaler
+<span class="cm"># StandardScaler: mean=0, std=1 — mandatory before K-Means and PCA</span>
+<span class="ck">from</span> sklearn.datasets <span class="ck">import</span> make_blobs, load_iris
+<span class="cm"># make_blobs: generates realistic clustered data for demos</span>
+<span class="cm"># load_iris: classic real-world dataset (150 flowers, 4 features)</span>
+<span class="ck">from</span> sklearn.metrics <span class="ck">import</span> silhouette_score
+<span class="cm"># silhouette_score: measures clustering quality without needing labels</span>
+<span class="cm"># ranges from -1 (bad) to +1 (perfect), 0.5+ is generally good</span>
+
+<span class="cm"># ── Dendrogram (for hierarchical clustering) ──────────────────</span>
+<span class="ck">from</span> scipy.cluster.hierarchy <span class="ck">import</span> dendrogram, linkage
+<span class="cm"># scipy has a better dendrogram tool than sklearn</span>
+<span class="cm"># linkage: computes the merge history for hierarchical clustering</span>
+<span class="cm"># dendrogram: visualises that merge history as a tree</span>
+
+np.random.<span class="cf">seed</span>(<span class="cn">42</span>)         <span class="cm"># reproducibility — same random results every run</span>
+<span class="cf">print</span>(<span class="cs">"✅ Libraries ready"</span>)</pre>
+    </div>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 2 — K-Means + Elbow Method</div>
+      </div>
+      <pre><span class="cm"># ── Generate realistic clustered data ─────────────────────────</span>
+X_blobs, true_labels = make_blobs(
+    n_samples=<span class="cn">300</span>,         <span class="cm"># 300 data points total</span>
+    centers=<span class="cn">4</span>,              <span class="cm"># 4 true underlying clusters</span>
+    cluster_std=<span class="cn">0.8</span>,        <span class="cm"># how spread out each cluster is (lower = tighter)</span>
+    random_state=<span class="cn">42</span>         <span class="cm"># reproducible</span>
+)
+<span class="cm"># true_labels exist here only for visual comparison — K-Means never sees them</span>
+
+<span class="cm"># ── Scale features BEFORE K-Means ─────────────────────────────</span>
+scaler = <span class="cf">StandardScaler</span>()
+X_scaled = scaler.<span class="cf">fit_transform</span>(X_blobs)
+<span class="cm"># always scale first — K-Means uses distances, unscaled features dominate</span>
+
+<span class="cm"># ── Elbow Method — find the best K ────────────────────────────</span>
+inertia_values = []                     <span class="cm"># will store the "tightness" score for each K</span>
+K_range = <span class="cf">range</span>(<span class="cn">1</span>, <span class="cn">11</span>)                  <span class="cm"># try K = 1, 2, 3, ..., 10</span>
+
+<span class="ck">for</span> k <span class="ck">in</span> K_range:
+    km = <span class="cf">KMeans</span>(
+        n_clusters=k,         <span class="cm"># number of clusters to find</span>
+        n_init=<span class="cn">10</span>,            <span class="cm"># run K-Means 10 times with different random starts</span>
+        random_state=<span class="cn">42</span>       <span class="cm"># reproducible</span>
+    )
+    km.<span class="cf">fit</span>(X_scaled)          <span class="cm"># find K clusters in the data</span>
+    inertia_values.<span class="cf">append</span>(km.inertia_)
+    <span class="cm"># km.inertia_ = sum of squared distances from each point to its centroid</span>
+    <span class="cm"># lower inertia = tighter, more compact clusters</span>
+
+<span class="cm"># ── Plot the elbow curve ───────────────────────────────────────</span>
+fig, axes = plt.<span class="cf">subplots</span>(<span class="cn">1</span>, <span class="cn">2</span>, figsize=(<span class="cn">14</span>, <span class="cn">5</span>))
+<span class="cm"># subplots(1, 2) = one row, two charts side by side</span>
+
+axes[<span class="cn">0</span>].<span class="cf">plot</span>(K_range, inertia_values,
+             marker=<span class="cs">'o'</span>,          <span class="cm"># put a circle dot at each K value</span>
+             color=<span class="cs">'#7c3aed'</span>,     <span class="cm"># purple line</span>
+             linewidth=<span class="cn">2.5</span>,
+             markersize=<span class="cn">7</span>)
+axes[<span class="cn">0</span>].<span class="cf">axvline</span>(x=<span class="cn">4</span>,               <span class="cm"># vertical line at the elbow (K=4)</span>
+               color=<span class="cs">'tomato'</span>,
+               linestyle=<span class="cs">'--'</span>,     <span class="cm"># dashed line</span>
+               label=<span class="cs">'Elbow at K=4'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Number of Clusters (K)'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Inertia (lower = tighter clusters)'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_title</span>(<span class="cs">'Elbow Method — Finding Optimal K'</span>)
+axes[<span class="cn">0</span>].<span class="cf">legend</span>()
+axes[<span class="cn">0</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.3</span>)
+
+<span class="cm"># ── Train final K-Means with optimal K=4 ──────────────────────</span>
+final_km = <span class="cf">KMeans</span>(n_clusters=<span class="cn">4</span>, n_init=<span class="cn">10</span>, random_state=<span class="cn">42</span>)
+final_km.<span class="cf">fit</span>(X_scaled)               <span class="cm"># train on scaled data</span>
+cluster_labels = final_km.labels_     <span class="cm"># predicted cluster for each data point</span>
+centroids = final_km.cluster_centers_ <span class="cm"># coordinates of the 4 cluster centres</span>
+
+<span class="cm"># ── Plot final clusters ────────────────────────────────────────</span>
+colors = [<span class="cs">'#7c3aed'</span>, <span class="cs">'#0d7377'</span>, <span class="cs">'#f59e0b'</span>, <span class="cs">'#e11d48'</span>]
+<span class="cm"># one colour per cluster</span>
+
+<span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">4</span>):
+    mask = cluster_labels == i         <span class="cm"># boolean mask: True for points in cluster i</span>
+    axes[<span class="cn">1</span>].<span class="cf">scatter</span>(
+        X_scaled[mask, <span class="cn">0</span>],            <span class="cm"># x-coordinate of all points in cluster i</span>
+        X_scaled[mask, <span class="cn">1</span>],            <span class="cm"># y-coordinate of all points in cluster i</span>
+        c=colors[i], s=<span class="cn">45</span>, alpha=<span class="cn">0.8</span>,
+        label=<span class="cs">f'Cluster {i+1}'</span>
+    )
+axes[<span class="cn">1</span>].<span class="cf">scatter</span>(
+    centroids[:, <span class="cn">0</span>], centroids[:, <span class="cn">1</span>],  <span class="cm"># x and y of all 4 centroids</span>
+    c=<span class="cs">'black'</span>, marker=<span class="cs">'X'</span>,              <span class="cm"># X marker = centroid</span>
+    s=<span class="cn">200</span>, zorder=<span class="cn">5</span>,                    <span class="cm"># zorder=5 draws on top of everything</span>
+    label=<span class="cs">'Centroids'</span>
+)
+axes[<span class="cn">1</span>].<span class="cf">set_title</span>(<span class="cs">'K-Means Result — K=4'</span>)
+axes[<span class="cn">1</span>].<span class="cf">legend</span>()
+axes[<span class="cn">1</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.2</span>)
+plt.<span class="cf">tight_layout</span>()
+plt.<span class="cf">show</span>()
+
+<span class="cm"># ── Evaluate without labels using silhouette score ─────────────</span>
+sil = <span class="cf">silhouette_score</span>(X_scaled, cluster_labels)
+<span class="cf">print</span>(<span class="cs">f"Silhouette Score: {sil:.3f}  (range: -1 to +1,  0.5+ = good clustering)"</span>)</pre>
+    </div>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 3 — Hierarchical Clustering + Dendrogram</div>
+      </div>
+      <pre><span class="cm"># ── Use a smaller subset for clarity in the dendrogram ────────</span>
+X_small = X_scaled[:<span class="cn">50</span>]
+<span class="cm"># take just 50 points — dendrogram gets messy with too many points</span>
+
+<span class="cm"># ── Compute linkage matrix (full merge history) ────────────────</span>
+Z = <span class="cf">linkage</span>(
+    X_small,
+    method=<span class="cs">'ward'</span>    <span class="cm"># ward = minimise variance within clusters when merging</span>
+                      <span class="cm"># other options: 'complete' (max distance), 'average'</span>
+)
+<span class="cm"># Z is a matrix where each row = one merge: [cluster_a, cluster_b, distance, count]</span>
+
+<span class="cm"># ── Plot the dendrogram ────────────────────────────────────────</span>
+fig, axes = plt.<span class="cf">subplots</span>(<span class="cn">1</span>, <span class="cn">2</span>, figsize=(<span class="cn">15</span>, <span class="cn">5</span>))
+
+<span class="cf">dendrogram</span>(
+    Z,
+    ax=axes[<span class="cn">0</span>],                       <span class="cm"># which subplot to draw on</span>
+    truncate_mode=<span class="cs">'lastp'</span>,            <span class="cm"># only show the last p merges (cleaner)</span>
+    p=<span class="cn">12</span>,                              <span class="cm"># show last 12 merges</span>
+    leaf_rotation=<span class="cn">45</span>,                 <span class="cm"># rotate x-axis labels 45 degrees</span>
+    color_threshold=<span class="cn">3.5</span>               <span class="cm"># colour clusters below this distance</span>
+)
+axes[<span class="cn">0</span>].<span class="cf">set_title</span>(<span class="cs">'Dendrogram — Hierarchical Clustering'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Data points (or cluster size)'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Distance at merge (cut here to choose K)'</span>)
+axes[<span class="cn">0</span>].<span class="cf">axhline</span>(y=<span class="cn">3.5</span>, color=<span class="cs">'tomato'</span>, linestyle=<span class="cs">'--'</span>,
+                 label=<span class="cs">'Cut line → 4 clusters'</span>)
+<span class="cm"># axhline draws a horizontal line — where you cut = how many clusters you get</span>
+axes[<span class="cn">0</span>].<span class="cf">legend</span>()
+
+<span class="cm"># ── Apply Agglomerative Clustering with K=4 ───────────────────</span>
+agg = <span class="cf">AgglomerativeClustering</span>(
+    n_clusters=<span class="cn">4</span>,       <span class="cm"># cut the tree at 4 clusters</span>
+    linkage=<span class="cs">'ward'</span>       <span class="cm"># same linkage as above for consistency</span>
+)
+agg_labels = agg.<span class="cf">fit_predict</span>(X_small)
+<span class="cm"># fit_predict = fit and return labels in one step (no separate predict needed)</span>
+
+<span class="cm"># ── Plot hierarchical clustering result ───────────────────────</span>
+<span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">4</span>):
+    mask = agg_labels == i
+    axes[<span class="cn">1</span>].<span class="cf">scatter</span>(
+        X_small[mask, <span class="cn">0</span>],
+        X_small[mask, <span class="cn">1</span>],
+        c=colors[i], s=<span class="cn">60</span>, alpha=<span class="cn">0.85</span>,
+        label=<span class="cs">f'Cluster {i+1}'</span>,
+        edgecolors=<span class="cs">'white'</span>,           <span class="cm"># white border around each dot</span>
+        linewidths=<span class="cn">0.5</span>
+    )
+axes[<span class="cn">1</span>].<span class="cf">set_title</span>(<span class="cs">'Agglomerative Clustering — K=4'</span>)
+axes[<span class="cn">1</span>].<span class="cf">legend</span>()
+axes[<span class="cn">1</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.2</span>)
+plt.<span class="cf">tight_layout</span>()
+plt.<span class="cf">show</span>()</pre>
+    </div>
+
+    <!-- CODE BLOCK 4 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 4 — Apriori / Association Rules</div>
+      </div>
+      <pre><span class="cm"># ── Install mlxtend (has Apriori implementation) ──────────────</span>
+<span class="cm"># Run this once. After install, skip this cell on re-runs.</span>
+<span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">'pip'</span>, <span class="cs">'install'</span>, <span class="cs">'mlxtend'</span>, <span class="cs">'-q'</span>])
+<span class="cm"># subprocess.run: runs a terminal command from inside Python</span>
+<span class="cm"># -q = quiet mode (less output noise)</span>
+
+<span class="ck">from</span> mlxtend.frequent_patterns <span class="ck">import</span> apriori, association_rules
+<span class="cm"># apriori: finds all itemsets that meet minimum support</span>
+<span class="cm"># association_rules: generates if-then rules from those itemsets</span>
+<span class="ck">from</span> mlxtend.preprocessing <span class="ck">import</span> TransactionEncoder
+<span class="cm"># TransactionEncoder: converts transaction lists to a binary matrix</span>
+
+<span class="cm"># ── Create a fake grocery transaction dataset ──────────────────</span>
+transactions = [
+    [<span class="cs">'bread'</span>, <span class="cs">'milk'</span>, <span class="cs">'butter'</span>],            <span class="cm"># customer 1 bought these</span>
+    [<span class="cs">'bread'</span>, <span class="cs">'milk'</span>],                       <span class="cm"># customer 2</span>
+    [<span class="cs">'milk'</span>, <span class="cs">'eggs'</span>, <span class="cs">'cheese'</span>],             <span class="cm"># customer 3</span>
+    [<span class="cs">'bread'</span>, <span class="cs">'butter'</span>, <span class="cs">'eggs'</span>],             <span class="cm"># customer 4</span>
+    [<span class="cs">'bread'</span>, <span class="cs">'milk'</span>, <span class="cs">'eggs'</span>, <span class="cs">'butter'</span>],    <span class="cm"># customer 5</span>
+    [<span class="cs">'milk'</span>, <span class="cs">'butter'</span>],                      <span class="cm"># customer 6</span>
+    [<span class="cs">'bread'</span>, <span class="cs">'eggs'</span>],                       <span class="cm"># customer 7</span>
+    [<span class="cs">'bread'</span>, <span class="cs">'milk'</span>, <span class="cs">'cheese'</span>],             <span class="cm"># customer 8</span>
+    [<span class="cs">'eggs'</span>, <span class="cs">'butter'</span>, <span class="cs">'cheese'</span>],            <span class="cm"># customer 9</span>
+    [<span class="cs">'bread'</span>, <span class="cs">'milk'</span>, <span class="cs">'butter'</span>, <span class="cs">'eggs'</span>],    <span class="cm"># customer 10</span>
+]
+
+<span class="cm"># ── Encode: transaction lists → binary True/False matrix ──────</span>
+te = <span class="cf">TransactionEncoder</span>()
+te_array = te.<span class="cf">fit_transform</span>(transactions)
+<span class="cm"># each row = one transaction, each column = one item</span>
+<span class="cm"># True = item was in that transaction, False = was not</span>
+
+df_trans = pd.<span class="cf">DataFrame</span>(te_array, columns=te.columns_)
+<span class="cm"># wrap in a DataFrame so apriori can read it</span>
+<span class="cf">print</span>(<span class="cs">"Transaction matrix (True = item was bought):\n"</span>)
+<span class="cf">print</span>(df_trans.<span class="cf">to_string</span>())   <span class="cm"># to_string() shows all rows without truncation</span>
+
+<span class="cm"># ── Run Apriori to find frequent itemsets ─────────────────────</span>
+frequent_itemsets = <span class="cf">apriori</span>(
+    df_trans,
+    min_support=<span class="cn">0.4</span>,          <span class="cm"># only keep itemsets appearing in ≥40% of transactions</span>
+    use_colnames=<span class="ck">True</span>         <span class="cm"># show item names instead of column numbers</span>
+)
+<span class="cf">print</span>(<span class="cs">f"\nFrequent itemsets (support ≥ 40%):\n"</span>)
+<span class="cf">print</span>(frequent_itemsets.<span class="cf">sort_values</span>(<span class="cs">'support'</span>, ascending=<span class="ck">False</span>).<span class="cf">to_string</span>())
+<span class="cm"># sort_values: sort DataFrame rows by the 'support' column, highest first</span>
+
+<span class="cm"># ── Generate association rules from frequent itemsets ──────────</span>
+rules = <span class="cf">association_rules</span>(
+    frequent_itemsets,
+    metric=<span class="cs">'confidence'</span>,       <span class="cm"># filter rules by confidence</span>
+    min_threshold=<span class="cn">0.6</span>          <span class="cm"># keep only rules with confidence ≥ 60%</span>
+)
+<span class="cf">print</span>(<span class="cs">f"\nAssociation Rules (confidence ≥ 60%):\n"</span>)
+<span class="cf">print</span>(rules[[<span class="cs">'antecedents'</span>, <span class="cs">'consequents'</span>, <span class="cs">'support'</span>, <span class="cs">'confidence'</span>, <span class="cs">'lift'</span>]]
+      .<span class="cf">sort_values</span>(<span class="cs">'lift'</span>, ascending=<span class="ck">False</span>)
+      .<span class="cf">round</span>(<span class="cn">3</span>)
+      .<span class="cf">to_string</span>())
+<span class="cm"># antecedents = the "if" part,  consequents = the "then" part</span>
+<span class="cm"># round(3) = show 3 decimal places</span>
+<span class="cm"># sort by lift: highest lift = strongest real association (not just coincidence)</span></pre>
+    </div>
+
+    <!-- CODE BLOCK 5 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 5 — PCA on the Iris Dataset</div>
+      </div>
+      <pre><span class="cm"># ── Load the Iris dataset — 150 flowers, 4 features ───────────</span>
+iris = <span class="cf">load_iris</span>()              <span class="cm"># loads the dataset object</span>
+X_iris = iris.data               <span class="cm"># features: sepal length/width, petal length/width</span>
+y_iris = iris.target             <span class="cm"># labels: 0=Setosa, 1=Versicolor, 2=Virginica</span>
+species = iris.target_names      <span class="cm"># array: ['setosa', 'versicolor', 'virginica']</span>
+
+<span class="cf">print</span>(<span class="cs">f"Original shape: {X_iris.shape}"</span>)
+<span class="cm"># shape = (150, 4) → 150 flowers, 4 features each</span>
+
+<span class="cm"># ── Scale before PCA — mandatory ──────────────────────────────</span>
+sc_iris = <span class="cf">StandardScaler</span>()
+X_iris_scaled = sc_iris.<span class="cf">fit_transform</span>(X_iris)
+<span class="cm"># PCA finds directions of maximum variance</span>
+<span class="cm"># if features aren't scaled, the high-variance feature dominates unfairly</span>
+
+<span class="cm"># ── Run PCA — keep ALL components first to study explained variance</span>
+pca_full = <span class="cf">PCA</span>()               <span class="cm"># no n_components argument = keep all</span>
+pca_full.<span class="cf">fit</span>(X_iris_scaled)     <span class="cm"># learn the principal component directions</span>
+
+<span class="cm"># explained_variance_ratio_: % of variance captured by each component</span>
+evr = pca_full.explained_variance_ratio_
+cumulative_evr = np.<span class="cf">cumsum</span>(evr)
+<span class="cm"># np.cumsum: running total — [0.73, 0.73+0.23, 0.73+0.23+0.03, ...]</span>
+
+fig, axes = plt.<span class="cf">subplots</span>(<span class="cn">1</span>, <span class="cn">3</span>, figsize=(<span class="cn">16</span>, <span class="cn">5</span>))
+
+<span class="cm"># ── Plot 1: explained variance per component ──────────────────</span>
+axes[<span class="cn">0</span>].<span class="cf">bar</span>(
+    <span class="cf">range</span>(<span class="cn">1</span>, <span class="cn">5</span>),              <span class="cm"># x-axis: component numbers 1 to 4</span>
+    evr * <span class="cn">100</span>,                <span class="cm"># y-axis: % explained (multiply by 100 for percentage)</span>
+    color=<span class="cs">'#7c3aed'</span>, alpha=<span class="cn">0.8</span>
+)
+axes[<span class="cn">0</span>].<span class="cf">plot</span>(
+    <span class="cf">range</span>(<span class="cn">1</span>, <span class="cn">5</span>),
+    cumulative_evr * <span class="cn">100</span>,     <span class="cm"># plot cumulative % on top</span>
+    marker=<span class="cs">'o'</span>, color=<span class="cs">'tomato'</span>, linewidth=<span class="cn">2</span>
+)
+axes[<span class="cn">0</span>].<span class="cf">axhline</span>(y=<span class="cn">95</span>, color=<span class="cs">'green'</span>, linestyle=<span class="cs">'--'</span>, label=<span class="cs">'95% threshold'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Principal Component'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Explained Variance (%)'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_title</span>(<span class="cs">'How much does each PC explain?'</span>)
+axes[<span class="cn">0</span>].<span class="cf">legend</span>()
+axes[<span class="cn">0</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.3</span>)
+
+<span class="cm"># ── Reduce to 2 components (for 2D visualisation) ─────────────</span>
+pca_2d = <span class="cf">PCA</span>(n_components=<span class="cn">2</span>)           <span class="cm"># keep only 2 principal components</span>
+X_pca = pca_2d.<span class="cf">fit_transform</span>(X_iris_scaled)
+<span class="cm"># X_pca shape: (150, 2) — compressed from 4 features to 2</span>
+<span class="cf">print</span>(<span class="cs">f"Compressed shape: {X_pca.shape}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Variance retained: {pca_2d.explained_variance_ratio_.sum()*100:.1f}%"</span>)
+
+<span class="cm"># ── Plot 2: raw data (can't visualise 4D) vs PCA 2D ───────────</span>
+axes[<span class="cn">1</span>].<span class="cf">set_title</span>(<span class="cs">'Original data — 4D (can\'t plot)'</span>)
+axes[<span class="cn">1</span>].<span class="cf">text</span>(<span class="cn">0.5</span>, <span class="cn">0.5</span>, <span class="cs">'4 dimensions\n← can\'t visualise →'</span>,
+             ha=<span class="cs">'center'</span>, va=<span class="cs">'center'</span>,
+             fontsize=<span class="cn">14</span>, color=<span class="cs">'gray'</span>,
+             transform=axes[<span class="cn">1</span>].transAxes)
+<span class="cm"># transAxes: position text using 0-1 coordinates relative to axes (not data)</span>
+axes[<span class="cn">1</span>].<span class="cf">axis</span>(<span class="cs">'off'</span>)            <span class="cm"># hide axis lines for this placeholder</span>
+
+<span class="cm"># ── Plot 3: PCA 2D — now we CAN visualise and see the clusters</span>
+palette = [<span class="cs">'#7c3aed'</span>, <span class="cs">'#0d7377'</span>, <span class="cs">'#f59e0b'</span>]   <span class="cm"># one colour per species</span>
+<span class="ck">for</span> i, sp_name <span class="ck">in</span> <span class="cf">enumerate</span>(species):
+    <span class="cm"># enumerate: gives (index, value) pairs → (0, 'setosa'), (1, 'versicolor')...</span>
+    mask = y_iris == i          <span class="cm"># True for all flowers of species i</span>
+    axes[<span class="cn">2</span>].<span class="cf">scatter</span>(
+        X_pca[mask, <span class="cn">0</span>],         <span class="cm"># PC1 values for this species</span>
+        X_pca[mask, <span class="cn">1</span>],         <span class="cm"># PC2 values for this species</span>
+        c=palette[i], s=<span class="cn">55</span>, alpha=<span class="cn">0.85</span>,
+        edgecolors=<span class="cs">'white'</span>, linewidths=<span class="cn">0.5</span>,
+        label=sp_name
+    )
+axes[<span class="cn">2</span>].<span class="cf">set_xlabel</span>(<span class="cs">f'PC1 ({evr[0]*100:.1f}% variance)'</span>)
+axes[<span class="cn">2</span>].<span class="cf">set_ylabel</span>(<span class="cs">f'PC2 ({evr[1]*100:.1f}% variance)'</span>)
+axes[<span class="cn">2</span>].<span class="cf">set_title</span>(<span class="cs">'After PCA — 4D compressed to 2D'</span>)
+axes[<span class="cn">2</span>].<span class="cf">legend</span>()
+axes[<span class="cn">2</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.2</span>)
+
+plt.<span class="cf">tight_layout</span>()
+plt.<span class="cf">show</span>()</pre>
+    </div>
+
+    <!-- CODE BLOCK 6 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 6 — Autoencoder with PyTorch</div>
+      </div>
+      <pre><span class="ck">import</span> torch                           <span class="cm"># PyTorch: deep learning framework</span>
+<span class="ck">import</span> torch.nn <span class="ck">as</span> nn                  <span class="cm"># nn: neural network building blocks</span>
+<span class="ck">import</span> torch.optim <span class="ck">as</span> optim            <span class="cm"># optim: optimisers (Adam etc)</span>
+<span class="ck">from</span> torch.utils.data <span class="ck">import</span> DataLoader, TensorDataset
+<span class="cm"># DataLoader: feeds batches of data to the model during training</span>
+<span class="cm"># TensorDataset: wraps tensors into a dataset PyTorch can iterate</span>
+
+<span class="cm"># ── Convert Iris data to PyTorch tensors ──────────────────────</span>
+X_tensor = torch.<span class="cf">FloatTensor</span>(X_iris_scaled)
+<span class="cm"># FloatTensor: PyTorch works with tensors (like numpy arrays but GPU-compatible)</span>
+<span class="cm"># FloatTensor = 32-bit floating point numbers (standard for neural networks)</span>
+
+dataset = <span class="cf">TensorDataset</span>(X_tensor, X_tensor)
+<span class="cm"># NOTICE: X_tensor appears twice — input AND target are the same!</span>
+<span class="cm"># Autoencoder tries to reconstruct its own input — that's the whole point</span>
+
+loader = <span class="cf">DataLoader</span>(dataset, batch_size=<span class="cn">32</span>, shuffle=<span class="ck">True</span>)
+<span class="cm"># batch_size=32: feed 32 examples at a time during training</span>
+<span class="cm"># shuffle=True: randomise order each epoch (prevents the model learning order)</span>
+
+<span class="cm"># ── Define the Autoencoder architecture ───────────────────────</span>
+<span class="ck">class</span> <span class="cf">Autoencoder</span>(nn.Module):          <span class="cm"># inherit from nn.Module — every PyTorch model does this</span>
+    <span class="ck">def</span> <span class="cf">__init__</span>(self):
+        <span class="cf">super</span>().<span class="cf">__init__</span>()              <span class="cm"># initialise parent class (required)</span>
+
+        <span class="cm"># ── Encoder: 4 features → 2 (the bottleneck) ──────────────</span>
+        self.encoder = nn.<span class="cf">Sequential</span>(
+            <span class="cm"># Sequential: run layers one after another in order</span>
+            nn.<span class="cf">Linear</span>(<span class="cn">4</span>, <span class="cn">8</span>),            <span class="cm"># fully connected: 4 inputs → 8 hidden neurons</span>
+            nn.<span class="cf">ReLU</span>(),                  <span class="cm"># ReLU activation: max(0, x) — adds non-linearity</span>
+            nn.<span class="cf">Linear</span>(<span class="cn">8</span>, <span class="cn">2</span>)             <span class="cm"># 8 hidden → 2 (our bottleneck = 2D latent space)</span>
+        )
+
+        <span class="cm"># ── Decoder: 2 (bottleneck) → 4 features (reconstruct) ───</span>
+        self.decoder = nn.<span class="cf">Sequential</span>(
+            nn.<span class="cf">Linear</span>(<span class="cn">2</span>, <span class="cn">8</span>),            <span class="cm"># 2 latent → 8 hidden</span>
+            nn.<span class="cf">ReLU</span>(),                  <span class="cm"># add non-linearity</span>
+            nn.<span class="cf">Linear</span>(<span class="cn">8</span>, <span class="cn">4</span>)             <span class="cm"># 8 hidden → 4 outputs (same as original input)</span>
+        )
+
+    <span class="ck">def</span> <span class="cf">forward</span>(self, x):               <span class="cm"># forward: defines what happens on each pass</span>
+        latent = self.encoder(x)       <span class="cm"># compress: 4D → 2D</span>
+        reconstructed = self.decoder(latent)  <span class="cm"># expand: 2D → 4D</span>
+        <span class="ck">return</span> reconstructed, latent   <span class="cm"># return both (we want the latent space)</span>
+
+<span class="cm"># ── Instantiate and train ──────────────────────────────────────</span>
+model = <span class="cf">Autoencoder</span>()
+criterion = nn.<span class="cf">MSELoss</span>()              <span class="cm"># MSE loss: how different is reconstruction from original?</span>
+optimizer = optim.<span class="cf">Adam</span>(model.<span class="cf">parameters</span>(), lr=<span class="cn">0.001</span>)
+<span class="cm"># Adam: adaptive learning rate optimiser — standard choice for neural networks</span>
+<span class="cm"># model.parameters(): gives Adam all the weights it needs to update</span>
+<span class="cm"># lr=0.001: learning rate (how big each weight update step is)</span>
+
+loss_history = []                      <span class="cm"># track loss each epoch for plotting</span>
+
+<span class="ck">for</span> epoch <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">200</span>):               <span class="cm"># train for 200 full passes through the data</span>
+    total_loss = <span class="cn">0</span>
+    <span class="ck">for</span> batch_x, batch_y <span class="ck">in</span> loader:   <span class="cm"># loop through mini-batches</span>
+        optimizer.<span class="cf">zero_grad</span>()         <span class="cm"># reset gradients to zero (PyTorch accumulates them)</span>
+        reconstructed, _ = <span class="cf">model</span>(batch_x)  <span class="cm"># forward pass: get reconstruction</span>
+        loss = <span class="cf">criterion</span>(reconstructed, batch_y)  <span class="cm"># compare reconstruction to original</span>
+        loss.<span class="cf">backward</span>()              <span class="cm"># backpropagation: compute gradients</span>
+        optimizer.<span class="cf">step</span>()             <span class="cm"># update all weights one step downhill</span>
+        total_loss += loss.<span class="cf">item</span>()    <span class="cm"># .item(): extract Python number from tensor</span>
+    loss_history.<span class="cf">append</span>(total_loss / <span class="cf">len</span>(loader))
+    <span class="cm"># average loss per epoch = total_loss / number of batches</span>
+
+<span class="cf">print</span>(<span class="cs">f"Final reconstruction loss: {loss_history[-1]:.4f}"</span>)
+
+<span class="cm"># ── Extract latent space and visualise ────────────────────────</span>
+model.<span class="cf">eval</span>()                          <span class="cm"># eval mode: disables dropout/batch norm effects</span>
+<span class="ck">with</span> torch.<span class="cf">no_grad</span>():                 <span class="cm"># no_grad: don't compute gradients (saves memory)</span>
+    _, latent_vecs = <span class="cf">model</span>(X_tensor)  <span class="cm"># run all data through, get latent representations</span>
+    latent_np = latent_vecs.<span class="cf">numpy</span>()  <span class="cm"># convert PyTorch tensor → numpy array for plotting</span>
+
+fig, axes = plt.<span class="cf">subplots</span>(<span class="cn">1</span>, <span class="cn">2</span>, figsize=(<span class="cn">13</span>, <span class="cn">5</span>))
+
+<span class="cm"># Loss curve</span>
+axes[<span class="cn">0</span>].<span class="cf">plot</span>(loss_history, color=<span class="cs">'#7c3aed'</span>, linewidth=<span class="cn">2</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_title</span>(<span class="cs">'Autoencoder training loss'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Epoch'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Reconstruction Loss'</span>)
+axes[<span class="cn">0</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.3</span>)
+
+<span class="cm"># Latent space: compare to PCA</span>
+<span class="ck">for</span> i, sp_name <span class="ck">in</span> <span class="cf">enumerate</span>(species):
+    mask = y_iris == i
+    axes[<span class="cn">1</span>].<span class="cf">scatter</span>(latent_np[mask, <span class="cn">0</span>], latent_np[mask, <span class="cn">1</span>],
+                   c=palette[i], s=<span class="cn">55</span>, alpha=<span class="cn">0.85</span>,
+                   edgecolors=<span class="cs">'white'</span>, linewidths=<span class="cn">0.5</span>,
+                   label=sp_name)
+axes[<span class="cn">1</span>].<span class="cf">set_title</span>(<span class="cs">'Autoencoder Latent Space (non-linear compression)'</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Latent Dimension 1'</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Latent Dimension 2'</span>)
+axes[<span class="cn">1</span>].<span class="cf">legend</span>()
+axes[<span class="cn">1</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.2</span>)
+plt.<span class="cf">tight_layout</span>()
+plt.<span class="cf">show</span>()</pre>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · The Agentic AI Connection</span></div>
+
+  <!-- AGENT CONNECTION -->
+  <div id="agent-connection">
+    <div class="agent-box">
+      <div class="agent-box-label">Why this matters for AI Agents</div>
+      <h3>Unsupervised learning is the invisible backbone of every AI agent you'll build</h3>
+      <p>Every time you use an LLM in an agent, embeddings are involved. Embeddings are trained with contrastive learning — an unsupervised technique that pulls semantically similar text together in vector space and pushes dissimilar text apart. Same core idea as clustering. The 1536-number vector that represents a sentence in your RAG system came from an autoencoder-style neural network trained without any labels.</p>
+      <p>RAG (Retrieval Augmented Generation) — the technique used in practically every production AI agent — does semantic search over a vector database. Semantic search IS unsupervised learning: you're finding nearest neighbours in an embedding space. K-Means and hierarchical clustering are used under the hood to index and partition those vector databases for fast retrieval.</p>
+      <p>PCA and autoencoders are used to compress context. When an agent's context window starts filling up, compression models reduce conversation history to its essential meaning — the same bottleneck principle as PCA, implemented at scale. And Apriori-style pattern mining? It's the foundation of recommendation systems and tool-selection patterns in multi-step agent pipelines.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · Your Cheat Sheet</span></div>
+
+  <!-- CHEAT SHEET -->
+  <div id="cheatsheet">
+    <div class="eyebrow">Save this</div>
+    <h2>The unsupervised learning <em>cheat sheet</em></h2>
+
+    <div class="cheat-grid">
+      <div class="cheat-cell">
+        <div class="cheat-cell-label">Group similar things</div>
+        <div class="cheat-cell-val">K-Means</div>
+        <div class="cheat-cell-desc">Scale first. Use elbow method for K.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-cell-label">Don't know K</div>
+        <div class="cheat-cell-val">Hierarchical</div>
+        <div class="cheat-cell-desc">Read the dendrogram. Ward linkage.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-cell-label">If X then Y patterns</div>
+        <div class="cheat-cell-val">Apriori</div>
+        <div class="cheat-cell-desc">Filter by lift &gt; 1 for real rules.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-cell-label">Too many features</div>
+        <div class="cheat-cell-val">PCA</div>
+        <div class="cheat-cell-desc">Keep 95% explained variance.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-cell-label">Non-linear compression</div>
+        <div class="cheat-cell-val">Autoencoder</div>
+        <div class="cheat-cell-desc">Images, audio, text embeddings.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-cell-label">Visualise any dataset</div>
+        <div class="cheat-cell-val">PCA (2 components)</div>
+        <div class="cheat-cell-desc">Always do this first to understand data.</div>
+      </div>
+    </div>
+
+    <h3>The 5 concepts that connect back to everything</h3>
+
+    <table class="metric-table">
+      <tr><th>Concept</th><th>Supervise or Unsupervised?</th><th>Where you'll see it in AI agents</th></tr>
+      <tr>
+        <td>Embeddings</td>
+        <td>Unsupervised (contrastive learning)</td>
+        <td>Semantic search, RAG, vector databases</td>
+      </tr>
+      <tr>
+        <td>Clustering</td>
+        <td>Unsupervised</td>
+        <td>Routing queries, grouping memories, indexing vector DBs</td>
+      </tr>
+      <tr>
+        <td>PCA / Autoencoders</td>
+        <td>Unsupervised</td>
+        <td>Context compression, latent space representations</td>
+      </tr>
+      <tr>
+        <td>Association Rules</td>
+        <td>Unsupervised</td>
+        <td>Tool recommendation, co-occurrence patterns in logs</td>
+      </tr>
+      <tr>
+        <td>Anomaly Detection</td>
+        <td>Unsupervised (autoencoder-based)</td>
+        <td>Detecting unusual agent behaviour, fraud, errors</td>
+      </tr>
+    </table>
+
+    <div class="callout green" style="margin-top:32px;">
+      <div class="callout-label">The unsupervised workflow every time</div>
+      <p>
+        1. Scale features (always, for every algorithm here) →
+        2. Visualise with PCA (2 components) to understand your data →
+        3. If you want groups → K-Means (try elbow method) or Hierarchical (small data) →
+        4. If you want patterns → Apriori (transactions) →
+        5. If you want compression → PCA (fast, interpretable) or Autoencoder (complex data) →
+        6. Measure cluster quality with silhouette score
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"><span>That's Issue #02</span></div>
+
+  <p>You now understand a completely different way machines learn. No labels, no teacher, no right answer — just raw data and algorithms smart enough to find the structure hiding inside it. That's unsupervised learning.</p>
+
+  <p>And the deeper insight? Most of the world's data is unlabelled. Labelling is expensive, slow, and requires human expertise. The algorithms in this issue are what let AI systems learn from the vast majority of data that nobody bothered to label.</p>
+
+  <p>Issue #03 lands next: <strong>Reinforcement Learning.</strong> The most different type of all. No dataset. No labels. Just an agent, an environment, and the ability to learn from its own mistakes — one action at a time. It's the algorithm behind game-playing AI, robotics, and most importantly for us, the RLHF that makes Claude and ChatGPT actually helpful.</p>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="container">
+    <div class="footer-title" style="color:#fff;">Learn ML From Me</div>
+    <div class="footer-sub">A newsletter for people building AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-next">Issue 02 of 03 · Unsupervised Learning · Next up: Reinforcement Learning →</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn ML From Me — Issue #03: Reinforcement Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #0d0d0d;
+    --ink2:      #383838;
+    --ink3:      #767676;
+    --paper:     #f6f4f0;
+    --paper2:    #ede9e1;
+    --paper3:    #ddd8cc;
+    --accent:    #e05a00;
+    --accent2:   #b34700;
+    --teal:      #0d7377;
+    --teal-bg:   #e4f5f5;
+    --amber:     #a05c00;
+    --amber-bg:  #fdf4e3;
+    --red:       #c0002a;
+    --red-bg:    #fdf0f2;
+    --blue:      #1a56db;
+    --blue-bg:   #e8f0ff;
+    --green:     #0a7c4a;
+    --green-bg:  #edf7f2;
+    --purple:    #6d28d9;
+    --purple-bg: #f3eeff;
+    --code-bg:   #0f1117;
+    --code-text: #e8eaf6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.78;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead { background: #0d0d0d; padding: 13px 0; }
+  .masthead-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 780px; margin: 0 auto; padding: 0 24px;
+  }
+  .masthead-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255,255,255,0.75);
+  }
+  .masthead-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.35);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: #0d0d0d;
+    padding: 80px 24px 68px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-glow-left {
+    position: absolute; top: -60px; left: -60px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(224,90,0,0.16) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-glow-right {
+    position: absolute; bottom: -60px; right: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(13,115,119,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .issue-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid rgba(224,90,0,0.4);
+    border-radius: 20px; padding: 5px 16px; margin-bottom: 26px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.3rem, 5.5vw, 3.9rem);
+    font-weight: 900; color: #fff; line-height: 1.08;
+    letter-spacing: -0.025em; margin-bottom: 22px;
+    max-width: 720px; margin-left: auto; margin-right: auto;
+    position: relative;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: 15px; color: rgba(255,255,255,0.52);
+    max-width: 500px; margin: 0 auto 38px; line-height: 1.72;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+    position: relative;
+  }
+  .hero-stat {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    color: rgba(255,255,255,0.38); letter-spacing: 0.07em; text-transform: uppercase;
+  }
+  .hero-stat strong {
+    display: block; font-size: 23px; color: #fff;
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    letter-spacing: 0; margin-bottom: 3px;
+  }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── TOC ── */
+  .toc {
+    background: #fff; border: 1px solid var(--paper3);
+    border-radius: 14px; padding: 30px 34px; margin: 54px 0;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  }
+  .toc-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink3); margin-bottom: 18px;
+  }
+  .toc ol {
+    list-style: none; counter-reset: toc;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 11px 30px;
+  }
+  .toc li {
+    counter-increment: toc; font-size: 13.5px;
+    color: var(--ink2); display: flex; align-items: baseline; gap: 9px;
+  }
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    color: var(--accent); flex-shrink: 0;
+  }
+  .toc li a {
+    color: var(--ink2); text-decoration: none;
+    border-bottom: 1px solid transparent; transition: color .2s, border-color .2s;
+  }
+  .toc li a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex; align-items: center; gap: 16px; margin: 62px 0 52px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--paper3);
+  }
+  .divider span {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink3); white-space: nowrap;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.75rem, 3.2vw, 2.45rem);
+    font-weight: 700; line-height: 1.18; letter-spacing: -0.015em;
+    margin-bottom: 20px; color: var(--ink);
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+  h3 {
+    font-family: 'Inter', sans-serif; font-size: 1.07rem;
+    font-weight: 600; margin: 34px 0 10px; color: var(--ink);
+  }
+  p { margin-bottom: 16px; color: var(--ink2); }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); font-weight: 600; }
+  code {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+    background: var(--paper2); padding: 1px 5px; border-radius: 4px;
+    color: var(--accent2);
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    border-left: 3px solid var(--accent); padding: 4px 0 4px 28px; margin: 36px 0;
+  }
+  .pull-quote p {
+    font-family: 'Playfair Display', serif; font-size: 1.24rem;
+    font-style: italic; color: var(--ink); line-height: 1.6; margin: 0;
+  }
+
+  /* ── ANALOGY ── */
+  .analogy {
+    background: #fff; border: 1px solid var(--paper3); border-radius: 12px;
+    padding: 24px 28px; margin: 28px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  }
+  .analogy-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .analogy p { font-size: 14.5px; color: var(--ink2); margin: 0; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px; padding: 20px 24px; margin: 28px 0;
+    border: 1px solid transparent;
+  }
+  .callout-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 9px;
+  }
+  .callout p { font-size: 14px; margin: 0; line-height: 1.68; }
+  .callout.orange { background: #fff4ed; border-color: rgba(224,90,0,0.22); }
+  .callout.orange .callout-label { color: var(--accent2); }
+  .callout.teal   { background: var(--teal-bg);  border-color: rgba(13,115,119,0.22); }
+  .callout.teal   .callout-label { color: var(--teal); }
+  .callout.amber  { background: var(--amber-bg); border-color: rgba(160,92,0,0.22); }
+  .callout.amber  .callout-label { color: var(--amber); }
+  .callout.red    { background: var(--red-bg);   border-color: rgba(192,0,42,0.22); }
+  .callout.red    .callout-label { color: var(--red); }
+  .callout.purple { background: var(--purple-bg);border-color: rgba(109,40,217,0.22); }
+  .callout.purple .callout-label { color: var(--purple); }
+  .callout.blue   { background: var(--blue-bg);  border-color: rgba(26,86,219,0.22); }
+  .callout.blue   .callout-label { color: var(--blue); }
+  .callout.green  { background: var(--green-bg); border-color: rgba(10,124,74,0.22); }
+  .callout.green  .callout-label { color: var(--green); }
+
+  /* ── CONCEPT CARDS (RL Six Core) ── */
+  .concept-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; margin: 24px 0;
+  }
+  .concept-card {
+    background: #fff; border: 1px solid var(--paper3);
+    border-radius: 12px; padding: 20px 20px 18px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    border-top: 3px solid var(--accent);
+  }
+  .concept-card.teal  { border-top-color: var(--teal); }
+  .concept-card.amber { border-top-color: var(--amber); }
+  .concept-card.blue  { border-top-color: var(--blue); }
+  .concept-card.green { border-top-color: var(--green); }
+  .concept-card.purple{ border-top-color: var(--purple); }
+  .concept-icon {
+    font-size: 22px; margin-bottom: 10px; display: block;
+  }
+  .concept-name {
+    font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 6px;
+  }
+  .concept-desc { font-size: 13px; color: var(--ink3); line-height: 1.6; }
+  .concept-example {
+    font-size: 12px; color: var(--ink2); margin-top: 8px;
+    padding-top: 8px; border-top: 1px solid var(--paper3);
+    font-style: italic;
+  }
+
+  /* ── STEP LIST ── */
+  .step-list { list-style: none; margin: 20px 0; }
+  .step-list li {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 13px 0; border-bottom: 1px solid var(--paper2);
+    font-size: 14.5px; color: var(--ink2);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;
+    color: var(--accent); background: #fff4ed;
+    border-radius: 6px; padding: 2px 8px; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-num.teal   { color: var(--teal);   background: var(--teal-bg); }
+  .step-num.blue   { color: var(--blue);   background: var(--blue-bg); }
+  .step-num.purple { color: var(--purple); background: var(--purple-bg); }
+
+  /* ── TABLE ── */
+  .metric-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+  .metric-table th {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3);
+    text-align: left; padding: 0 0 10px; border-bottom: 1px solid var(--paper3);
+  }
+  .metric-table td {
+    padding: 10px 0 9px; border-bottom: 1px solid var(--paper2);
+    vertical-align: top; color: var(--ink2); line-height: 1.55;
+  }
+  .metric-table td:first-child {
+    font-weight: 600; color: var(--ink); padding-right: 18px; white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+  }
+  .metric-table tr:last-child td { border-bottom: none; }
+
+  /* ── FORMULA ── */
+  .formula {
+    background: #fff; border: 1px solid var(--paper3); border-radius: 8px;
+    padding: 15px 22px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 13.5px; color: var(--ink); margin: 16px 0;
+    text-align: center; letter-spacing: 0.02em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .formula .label {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink3); display: block; margin-bottom: 6px;
+  }
+
+  /* ── MAZE VISUAL ── */
+  .maze-wrap {
+    background: #fff; border: 1px solid var(--paper3); border-radius: 14px;
+    padding: 28px 32px; margin: 28px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .maze-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+  .maze-grid {
+    display: grid; grid-template-columns: repeat(5, 48px); gap: 4px;
+    justify-content: center; margin-bottom: 18px;
+  }
+  .maze-cell {
+    width: 48px; height: 48px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
+    border: 1px solid var(--paper3);
+    background: var(--paper2);
+  }
+  .maze-cell.wall   { background: #1a1a2e; border-color: #1a1a2e; }
+  .maze-cell.start  { background: #fff4ed; border-color: rgba(224,90,0,0.4); color: var(--accent); }
+  .maze-cell.goal   { background: var(--green-bg); border-color: rgba(10,124,74,0.4); color: var(--green); }
+  .maze-cell.path   { background: #fff9f5; border-color: rgba(224,90,0,0.2); }
+  .maze-cell.danger { background: var(--red-bg); border-color: rgba(192,0,42,0.3); color: var(--red); }
+  .maze-legend {
+    display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+    font-size: 12px; color: var(--ink3);
+  }
+  .maze-legend span { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+  }
+
+  /* ── Q-TABLE ── */
+  .qtable-wrap {
+    background: #fff; border: 1px solid var(--paper3); border-radius: 12px;
+    overflow: hidden; margin: 24px 0; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  }
+  .qtable-header {
+    background: var(--paper2); padding: 12px 20px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3);
+  }
+  .qtable {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+  }
+  .qtable th {
+    background: var(--paper2); padding: 10px 16px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink3); text-align: center; border-bottom: 1px solid var(--paper3);
+  }
+  .qtable th:first-child { text-align: left; }
+  .qtable td {
+    padding: 10px 16px; border-bottom: 1px solid var(--paper2);
+    text-align: center; color: var(--ink2);
+  }
+  .qtable td:first-child { text-align: left; font-weight: 600; color: var(--ink); }
+  .qtable tr:last-child td { border-bottom: none; }
+  .qtable td.best { color: var(--green); font-weight: 700; }
+  .qtable td.bad  { color: var(--red); }
+
+  /* ── RLHF PIPELINE STEPS ── */
+  .pipeline {
+    display: grid; grid-template-columns: 1fr; gap: 0; margin: 24px 0;
+  }
+  .pipeline-step {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px solid var(--paper2); position: relative;
+  }
+  .pipeline-step:last-child { border-bottom: none; }
+  .pipeline-step::before {
+    content: ''; position: absolute;
+    left: 19px; top: 52px; bottom: -20px; width: 2px;
+    background: var(--paper3);
+  }
+  .pipeline-step:last-child::before { display: none; }
+  .pipeline-num {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500;
+    position: relative; z-index: 1;
+  }
+  .pipeline-num.orange { background: #fff4ed; color: var(--accent); border: 2px solid rgba(224,90,0,0.3); }
+  .pipeline-num.blue   { background: var(--blue-bg); color: var(--blue); border: 2px solid rgba(26,86,219,0.3); }
+  .pipeline-num.green  { background: var(--green-bg); color: var(--green); border: 2px solid rgba(10,124,74,0.3); }
+  .pipeline-num.purple { background: var(--purple-bg); color: var(--purple); border: 2px solid rgba(109,40,217,0.3); }
+  .pipeline-content { flex: 1; padding-top: 6px; }
+  .pipeline-title { font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 5px; }
+  .pipeline-desc { font-size: 14px; color: var(--ink2); line-height: 1.65; }
+  .pipeline-tag {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 4px; margin-top: 8px;
+  }
+  .pipeline-tag.sl  { background: var(--blue-bg);   color: var(--blue); }
+  .pipeline-tag.rl  { background: #fff4ed; color: var(--accent2); }
+  .pipeline-tag.sup { background: var(--green-bg); color: var(--green); }
+
+  /* ── COMPARISON ── */
+  .three-col {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; margin: 22px 0;
+  }
+  .three-card {
+    background: #fff; border: 1px solid var(--paper3);
+    border-radius: 10px; padding: 18px 18px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.04);
+  }
+  .three-card-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .three-card-label.sup  { color: var(--blue); }
+  .three-card-label.unsup{ color: var(--purple); }
+  .three-card-label.rl   { color: var(--accent2); }
+  .three-card ul { list-style: none; font-size: 13px; color: var(--ink2); }
+  .three-card ul li { padding: 4px 0 4px 14px; position: relative; }
+  .three-card ul li::before { content: '·'; position: absolute; left: 0; color: var(--ink3); }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    background: var(--code-bg); border-radius: 14px; overflow: hidden; margin: 30px 0;
+  }
+  .code-header {
+    background: rgba(255,255,255,0.04); padding: 11px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .code-header-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.28);
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dot:nth-child(1) { background: #ff5f57; }
+  .code-dot:nth-child(2) { background: #febc2e; }
+  .code-dot:nth-child(3) { background: #28c840; }
+  pre {
+    padding: 22px 24px; overflow-x: auto;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+    line-height: 1.8; color: var(--code-text);
+  }
+  .cm { color: #4a5568; }
+  .ck { color: #ce93d8; }
+  .cs { color: #a5d6a7; }
+  .cn { color: #ffcc80; }
+  .cf { color: #90caf9; }
+  .cv { color: #80deea; }
+  .co { color: #ff8a65; }
+
+  /* ── AGENT BOX ── */
+  .agent-box {
+    background: #0d0d0d; border-radius: 14px; padding: 32px 34px; margin: 46px 0;
+    position: relative; overflow: hidden;
+  }
+  .agent-box::before {
+    content: ''; position: absolute; top: -40px; left: -40px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(224,90,0,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .agent-box::after {
+    content: ''; position: absolute; bottom: -40px; right: -40px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(13,115,119,0.14) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .agent-box-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px; position: relative;
+  }
+  .agent-box h3 { color: #fff; margin: 0 0 13px; font-size: 1.15rem; position: relative; }
+  .agent-box p  { color: rgba(255,255,255,0.62); font-size: 14px; margin-bottom: 12px; position: relative; }
+  .agent-box p:last-child { margin-bottom: 0; }
+
+  /* ── CHEAT GRID ── */
+  .cheat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 20px 0; }
+  .cheat-cell {
+    background: #fff; border: 1px solid var(--paper3); border-radius: 10px;
+    padding: 15px 17px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .cheat-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink3); margin-bottom: 6px; }
+  .cheat-val   { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+  .cheat-desc  { color: var(--ink3); font-size: 12px; margin-top: 3px; }
+
+  /* ── FINAL CARD (series wrap-up) ── */
+  .finale-card {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a0a00 100%);
+    border-radius: 16px; padding: 36px 38px; margin: 48px 0;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .finale-card::before {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(224,90,0,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .finale-card h3 { font-family: 'Playfair Display', serif; font-size: 1.7rem; color: #fff; margin-bottom: 12px; font-weight: 700; position: relative; }
+  .finale-card p  { color: rgba(255,255,255,0.6); font-size: 14.5px; max-width: 520px; margin: 0 auto; line-height: 1.7; position: relative; }
+
+  /* ── FOOTER ── */
+  .footer { background: #0d0d0d; padding: 56px 24px; margin-top: 80px; text-align: center; }
+  .footer-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .footer-sub   { font-size: 13px; color: rgba(255,255,255,0.38); margin-bottom: 10px; }
+  .footer-complete { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--accent); margin-top: 20px; }
+
+  @media (max-width: 620px) {
+    .toc ol, .concept-grid, .three-col, .cheat-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 22px; }
+    .masthead-inner { flex-direction: column; gap: 4px; }
+    .maze-grid { grid-template-columns: repeat(5, 40px); }
+    .maze-cell { width: 40px; height: 40px; font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title">Learn ML From Me · Issue #03 · Final</div>
+    <div class="masthead-meta">Reinforcement Learning · June 2025</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow-left"></div>
+  <div class="hero-glow-right"></div>
+  <div class="issue-tag">Issue 03 of 03 · The Final Chapter</div>
+  <h1>The Machine That Learns<br>From Its Own <em>Mistakes</em></h1>
+  <p class="hero-sub">No dataset. No labels. No teacher. Just an agent, an environment, and the stubborn act of trying — failing — and trying again until it figures it out.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>30 min</strong>read</div>
+    <div class="hero-stat"><strong>6</strong>core concepts</div>
+    <div class="hero-stat"><strong>5</strong>code blocks</div>
+    <div class="hero-stat"><strong>1</strong>series complete</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-label">In this issue — the final chapter</div>
+    <ol>
+      <li><a href="#mental-model">The radical mental model shift</a></li>
+      <li><a href="#six-concepts">The 6 core RL concepts</a></li>
+      <li><a href="#loop">The RL loop — how agents learn</a></li>
+      <li><a href="#qlearning">Q-Learning — the algorithm</a></li>
+      <li><a href="#qtable">The Q-Table explained visually</a></li>
+      <li><a href="#exploration">Exploration vs Exploitation</a></li>
+      <li><a href="#rlhf">RLHF — how Claude learns from humans</a></li>
+      <li><a href="#code">Full Python implementation</a></li>
+      <li><a href="#agent-connection">Why RL is the soul of every AI agent</a></li>
+      <li><a href="#cheatsheet">Series wrap-up cheat sheet</a></li>
+    </ol>
+  </div>
+
+  <!-- OPENING -->
+  <div class="eyebrow">From the editor — the final issue</div>
+  <p>We've come a long way. Issue 01 was Supervised Learning — machines that learn from labelled examples. Issue 02 was Unsupervised Learning — machines that discover hidden structure in raw data with no labels at all.</p>
+  <p>This is Issue 03. And Reinforcement Learning is the strangest, most fascinating type of all.</p>
+  <p>It has no dataset. No examples of correct answers. No teacher giving feedback on every step. There is only an agent dropped into an environment — and the agent has to figure everything out by interacting with that environment, making mistakes, receiving sparse rewards, and slowly — across thousands of attempts — building up wisdom about what actions lead to good outcomes.</p>
+  <p>This is how AlphaGo learned to beat the world champion at Go. How OpenAI Five beat professional Dota 2 players. And most importantly for us — <strong>it is the core algorithm that makes Claude, ChatGPT, and Gemini actually helpful and safe.</strong> That's called RLHF, and by the end of this issue, you'll understand it deeply.</p>
+
+  <div class="divider"><span>Part 1 · The Mental Model Shift</span></div>
+
+  <div id="mental-model">
+    <div class="eyebrow">Everything changes here</div>
+    <h2>Three types of learning — <em>one final shift</em></h2>
+
+    <p>Before we go deep, let's place RL in the context of everything you've learned:</p>
+
+    <div class="three-col">
+      <div class="three-card">
+        <div class="three-card-label sup">Supervised Learning</div>
+        <ul>
+          <li>You have labelled data</li>
+          <li>Correct answers exist</li>
+          <li>Teacher guides every step</li>
+          <li>Learn mapping: input → label</li>
+          <li>Example: classify images</li>
+        </ul>
+      </div>
+      <div class="three-card">
+        <div class="three-card-label unsup">Unsupervised Learning</div>
+        <ul>
+          <li>No labels at all</li>
+          <li>No correct answers</li>
+          <li>No teacher — find structure</li>
+          <li>Discover: groupings, patterns</li>
+          <li>Example: cluster customers</li>
+        </ul>
+      </div>
+      <div class="three-card">
+        <div class="three-card-label rl">Reinforcement Learning</div>
+        <ul>
+          <li>No dataset at all</li>
+          <li>No correct answers anywhere</li>
+          <li>Learn from consequences</li>
+          <li>Maximise: cumulative reward</li>
+          <li>Example: learn to play chess</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>The crucial difference: in supervised and unsupervised learning, you have a static dataset you can study. In RL, there is no dataset. <strong>The agent creates its own data by interacting with the environment.</strong> Every action it takes, every reward it receives — that's the training data, generated on the fly, in real time.</p>
+
+    <div class="pull-quote">
+      <p>Reinforcement learning is the only type of machine learning that learns the way a human child learns — not from a textbook, but from touching, failing, adjusting, and trying again.</p>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-label">The perfect analogy</div>
+      <p>You've just started learning to ride a bicycle. Nobody can give you a dataset of "correct body positions at every millisecond." No textbook can transfer the skill. You just get on. You wobble. You fall. Your brain registers: that lean was too far — bad outcome. You get up. You try again. Slightly different lean. Better. You repeat this thousands of times over days. Gradually, without anyone explicitly programming you, your brain builds a complete policy for balancing on a bicycle. That is reinforcement learning. The bicycle is the environment. Your body is the agent. Falling is negative reward. Staying upright is positive reward. The skill you build is the policy.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 2 · The Six Core Concepts</span></div>
+
+  <div id="six-concepts">
+    <div class="eyebrow">The vocabulary you must own</div>
+    <h2>Six words that explain <em>all of RL</em></h2>
+
+    <p>Every RL system in existence — from Q-learning to the algorithm inside ChatGPT — is built on six concepts. Learn these once, understand them deeply, and RL will never confuse you again.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="concept-icon">🤖</span>
+        <div class="concept-name">Agent</div>
+        <div class="concept-desc">The learner and decision-maker. The entity that takes actions and receives consequences. It has no predefined knowledge of what's good or bad — it discovers this through experience.</div>
+        <div class="concept-example">In a chess game: the AI player. In RLHF: the language model itself.</div>
+      </div>
+      <div class="concept-card teal">
+        <span class="concept-icon">🌍</span>
+        <div class="concept-name">Environment</div>
+        <div class="concept-desc">Everything the agent interacts with. The environment receives the agent's actions, updates its own state, and returns a new state and a reward signal back to the agent.</div>
+        <div class="concept-example">In a chess game: the board and rules. In RLHF: the human evaluators judging responses.</div>
+      </div>
+      <div class="concept-card amber">
+        <span class="concept-icon">👁️</span>
+        <div class="concept-name">State (s)</div>
+        <div class="concept-desc">A snapshot of the environment at a specific moment. What the agent can observe right now. The agent makes decisions based on the current state.</div>
+        <div class="concept-example">In a maze: which cell the agent is currently in. In chess: the current positions of all pieces on the board.</div>
+      </div>
+      <div class="concept-card blue">
+        <span class="concept-icon">🎮</span>
+        <div class="concept-name">Action (a)</div>
+        <div class="concept-desc">Something the agent can do. A choice made in a given state. The set of all possible actions is called the action space. The agent's job is to choose the best action in each state.</div>
+        <div class="concept-example">In a maze: move Up, Down, Left, or Right. In RLHF: generating a specific response to a user prompt.</div>
+      </div>
+      <div class="concept-card green">
+        <span class="concept-icon">🏆</span>
+        <div class="concept-name">Reward (r)</div>
+        <div class="concept-desc">A scalar number the environment gives the agent after each action. Positive = good. Negative = bad. Sparse (rare) rewards are the norm in real RL — you don't get feedback on every step, only at key moments.</div>
+        <div class="concept-example">Maze: +10 for reaching goal, -1 for each step (encourages efficiency), -5 for hitting a wall.</div>
+      </div>
+      <div class="concept-card purple">
+        <span class="concept-icon">📋</span>
+        <div class="concept-name">Policy (π)</div>
+        <div class="concept-desc">The agent's strategy. A function that maps every state to an action. The policy is what we're trying to learn. At the start it's random. After training it's the best possible strategy.</div>
+        <div class="concept-example">π(state = cell_3) = "move Right". A good policy always picks the action that leads to maximum cumulative reward.</div>
+      </div>
+    </div>
+
+    <div class="callout orange">
+      <div class="callout-label">The one extra concept — Return (G)</div>
+      <p>Reward is the immediate feedback from one action. <strong>Return</strong> is the total accumulated reward from now until the end of the episode. RL doesn't just maximise the next reward — it maximises the <em>sum of all future rewards.</em> This is why RL agents can make short-term sacrifices (accepting a small negative reward now) to get a much bigger reward later. Return is discounted: rewards further in the future are worth slightly less than immediate ones. The discount factor γ (gamma) controls this — typically 0.9 to 0.99.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · The RL Loop</span></div>
+
+  <div id="loop">
+    <div class="eyebrow">How an agent actually learns</div>
+    <h2>The learning loop — <em>four steps that repeat forever</em></h2>
+
+    <p>The entire RL learning process is one loop, repeated thousands of times. Understanding this loop is understanding all of RL:</p>
+
+    <ul class="step-list">
+      <li>
+        <span class="step-num">01</span>
+        <div><strong>Observe state.</strong> The agent looks at the current environment and records its state <code>s</code>. This is everything it can see right now.</div>
+      </li>
+      <li>
+        <span class="step-num">02</span>
+        <div><strong>Choose action.</strong> Based on the current state and its current policy, the agent picks an action <code>a</code>. Early in training the policy is random. Later it becomes smarter.</div>
+      </li>
+      <li>
+        <span class="step-num">03</span>
+        <div><strong>Execute action, receive feedback.</strong> The agent takes action <code>a</code>. The environment updates to a new state <code>s'</code> and gives the agent a reward <code>r</code>. Did this action help or hurt?</div>
+      </li>
+      <li>
+        <span class="step-num">04</span>
+        <div><strong>Learn and update.</strong> The agent updates its internal knowledge using the experience <code>(s, a, r, s')</code>. This is where Q-learning happens. The policy improves slightly.</div>
+      </li>
+      <li>
+        <span class="step-num">05</span>
+        <div><strong>Repeat.</strong> Set <code>s = s'</code> (the new state becomes the current state). Go back to step 1. Repeat until the episode ends (reached goal, fell off cliff, game over). Then start a new episode.</div>
+      </li>
+    </ul>
+
+    <div class="callout teal">
+      <div class="callout-label">Episode vs Step</div>
+      <p>A <strong>step</strong> is one iteration of the loop (one action taken). An <strong>episode</strong> is a full sequence of steps from start to finish (start of game to end). Training happens across thousands of episodes. Each episode the agent starts fresh but carries its updated policy from all previous episodes. Over time the policy gets better and episodes get longer (the agent survives longer, or reaches the goal faster).</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · Q-Learning</span></div>
+
+  <div id="qlearning">
+    <div class="eyebrow">The core algorithm</div>
+    <h2>Q-Learning — <em>teaching an agent what actions are worth</em></h2>
+
+    <p>Q-Learning is the fundamental RL algorithm. The idea: instead of directly learning the policy, learn a <strong>value function</strong> — a function that estimates how good each action is in each state. Then the policy is simple: always take the highest-value action.</p>
+
+    <p>This value function is called the <strong>Q-function</strong> (Q stands for "Quality"):</p>
+
+    <div class="formula">
+      <span class="label">The Q-function</span>
+      Q(state, action) = expected total future reward if I take this action in this state and then play optimally
+    </div>
+
+    <p>If you know Q for every (state, action) pair — you have your policy. Just look up the action with the highest Q-value in the current state. Done.</p>
+
+    <h3>The Q-Learning update rule — the heart of the algorithm</h3>
+
+    <p>But how do you learn Q? You start with all zeros (no knowledge) and update it every time you take an action:</p>
+
+    <div class="formula">
+      <span class="label">Bellman Equation — Q update rule</span>
+      Q(s, a) ← Q(s, a) + α × [ r + γ × max Q(s', a') − Q(s, a) ]
+    </div>
+
+    <p>Break this down word by word:</p>
+
+    <table class="metric-table">
+      <tr><th>Symbol</th><th>Name</th><th>What it means</th></tr>
+      <tr><td>Q(s, a)</td><td>Current Q-value</td><td>What we currently think this action is worth in this state</td></tr>
+      <tr><td>α (alpha)</td><td>Learning rate</td><td>How much to update on each step — same as in gradient descent (0.01–0.5)</td></tr>
+      <tr><td>r</td><td>Reward received</td><td>The actual reward the environment gave for taking action a in state s</td></tr>
+      <tr><td>γ (gamma)</td><td>Discount factor</td><td>How much future rewards are worth vs immediate rewards (0.9–0.99)</td></tr>
+      <tr><td>max Q(s', a')</td><td>Best future Q-value</td><td>The Q-value of the best action available in the NEXT state s'</td></tr>
+      <tr><td>[ r + γ × max Q(s',a') − Q(s,a) ]</td><td>TD Error</td><td>How wrong our current estimate was. This is the correction signal.</td></tr>
+    </table>
+
+    <div class="callout amber">
+      <div class="callout-label">The intuition in plain English</div>
+      <p>"What I currently think this action is worth" + learning_rate × ("what I now know it was actually worth" − "what I thought it was worth") = "my updated belief." It's exactly like gradient descent — you have an estimate, you see the truth, you move your estimate a little toward the truth. Repeat thousands of times. The Q-values converge to the correct values.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · The Q-Table</span></div>
+
+  <div id="qtable">
+    <div class="eyebrow">Making it visual</div>
+    <h2>The Q-Table — <em>RL's brain in a spreadsheet</em></h2>
+
+    <p>For small environments, Q-values are stored in a table — a grid where rows are states and columns are actions. After training, every cell contains the expected future reward of taking that action in that state.</p>
+
+    <p>Let's build the intuition with a 5×5 maze. The agent starts at S, must reach the goal G, and walls block certain paths:</p>
+
+    <!-- MAZE VISUAL -->
+    <div class="maze-wrap">
+      <div class="maze-label">A 5×5 Maze Environment — The Agent's World</div>
+      <div class="maze-grid">
+        <!-- Row 1 -->
+        <div class="maze-cell start">S</div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell wall"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <!-- Row 2 -->
+        <div class="maze-cell path"></div>
+        <div class="maze-cell wall"></div>
+        <div class="maze-cell wall"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell wall"></div>
+        <!-- Row 3 -->
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <!-- Row 4 -->
+        <div class="maze-cell wall"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell wall"></div>
+        <div class="maze-cell danger">⚠</div>
+        <div class="maze-cell path"></div>
+        <!-- Row 5 -->
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell path"></div>
+        <div class="maze-cell goal">G</div>
+      </div>
+      <div class="maze-legend">
+        <span><div class="legend-dot" style="background:#fff4ed;border:1px solid rgba(224,90,0,0.3);"></div>Start (S)</span>
+        <span><div class="legend-dot" style="background:var(--green-bg);border:1px solid rgba(10,124,74,0.3);"></div>Goal (G) +10</span>
+        <span><div class="legend-dot" style="background:#1a1a2e;"></div>Wall (blocked)</span>
+        <span><div class="legend-dot" style="background:var(--red-bg);border:1px solid rgba(192,0,42,0.3);"></div>Trap −5</span>
+        <span><div class="legend-dot" style="background:var(--paper2);border:1px solid var(--paper3);"></div>Open cell −0.1</span>
+      </div>
+    </div>
+
+    <p>Now here's what the Q-Table looks like for a few states — <strong>before</strong> training (all zeros) vs <strong>after</strong> training (Q-learning has converged):</p>
+
+    <div class="qtable-wrap">
+      <div class="qtable-header">Q-Table after training — a few key states shown</div>
+      <table class="qtable">
+        <tr>
+          <th>State (cell)</th>
+          <th>Q(Up)</th>
+          <th>Q(Down)</th>
+          <th>Q(Left)</th>
+          <th>Q(Right)</th>
+          <th>Best Action</th>
+        </tr>
+        <tr>
+          <td>S (0,0) Start</td>
+          <td class="bad">-0.10</td>
+          <td class="best">7.29</td>
+          <td class="bad">-0.10</td>
+          <td class="bad">-0.10</td>
+          <td>↓ Down</td>
+        </tr>
+        <tr>
+          <td>(2,0) Mid-left</td>
+          <td class="bad">-0.10</td>
+          <td class="best">6.56</td>
+          <td class="bad">-0.10</td>
+          <td class="bad">1.23</td>
+          <td>↓ Down</td>
+        </tr>
+        <tr>
+          <td>(2,2) Centre</td>
+          <td class="bad">-0.10</td>
+          <td class="best">5.90</td>
+          <td class="bad">1.10</td>
+          <td class="bad">2.40</td>
+          <td>↓ Down</td>
+        </tr>
+        <tr>
+          <td>(3,3) Near trap</td>
+          <td class="bad">-4.95</td>
+          <td class="best">8.10</td>
+          <td class="bad">-4.95</td>
+          <td class="bad">-0.10</td>
+          <td>↓ Down (avoid trap!)</td>
+        </tr>
+        <tr>
+          <td>(4,3) One from goal</td>
+          <td class="bad">-0.10</td>
+          <td class="bad">-0.10</td>
+          <td class="bad">-0.10</td>
+          <td class="best">9.90</td>
+          <td>→ Right (goal!)</td>
+        </tr>
+      </table>
+    </div>
+
+    <p>See what happened? The Q-table learned the <strong>entire optimal path</strong> through the maze — without anyone telling it the path. It discovered, purely through repeated trial-and-error and the Bellman update rule, that "going down" is the right move from the start, that the trap cell is dangerous (notice the large negative Q-values for moving toward it), and that from the cell next to the goal, "go right" is worth 9.90 in future rewards.</p>
+
+    <div class="callout purple">
+      <div class="callout-label">Why Q-learning works — the magic</div>
+      <p>Q-values propagate backwards from the goal. The cell next to the goal learns a high Q-value first (it's only one step away). Then the cells next to THAT cell update — their Q-values increase because they're near a high-Q state. This ripples all the way back to the starting cell. After enough episodes, every cell knows exactly how close it is to the goal and what direction to go. This backward propagation of value information is called <strong>temporal difference learning.</strong></p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 6 · Exploration vs Exploitation</span></div>
+
+  <div id="exploration">
+    <div class="eyebrow">The central dilemma of RL</div>
+    <h2>Exploration vs Exploitation — <em>the dilemma every agent faces</em></h2>
+
+    <p>Here's the core tension in all of reinforcement learning: should the agent use what it already knows works (exploitation), or try new things to discover if something better exists (exploration)?</p>
+
+    <div class="analogy">
+      <div class="analogy-label">The restaurant analogy</div>
+      <p>You know a restaurant you like. You go there every Friday (exploitation — you know it's good). But maybe there's an even better restaurant nearby you've never tried. If you never explore, you'll never find out. But if you always try new places, you never get to enjoy your favourite. The optimal strategy balances both — mostly go to your favourite, but occasionally try somewhere new. That's exactly what the epsilon-greedy algorithm does for RL agents.</p>
+    </div>
+
+    <h3>Epsilon-Greedy — the standard solution</h3>
+
+    <div class="formula">
+      <span class="label">Epsilon-Greedy Policy</span>
+      With probability ε → explore (random action) | With probability (1−ε) → exploit (best Q-value action)
+    </div>
+
+    <ul class="step-list">
+      <li><span class="step-num">→</span><div>Start with <strong>ε = 1.0</strong> (100% exploration). The agent knows nothing, so random actions are just as good as anything else.</div></li>
+      <li><span class="step-num">→</span><div><strong>Decay ε</strong> over time (e.g., multiply by 0.995 after each episode). As the agent learns, it should explore less and exploit more.</div></li>
+      <li><span class="step-num">→</span><div>Set a <strong>minimum ε</strong> (e.g., 0.01). Never drop to zero — always keep a tiny chance of exploration to handle environment changes.</div></li>
+    </ul>
+
+    <div class="callout amber">
+      <div class="callout-label">Why this matters for AI agents you'll build</div>
+      <p>When you build an AI agent that uses tools — a web searcher, code executor, database querier — your agent faces the same dilemma. Does it use the tool that worked last time (exploit)? Or try a different combination of tools that might work better (explore)? Modern agent frameworks handle this with temperature settings on the LLM and beam-search style multi-path planning. It's the same concept — different implementation.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · RLHF — The Big One</span></div>
+
+  <div id="rlhf">
+    <div class="eyebrow">How Claude actually learns from humans</div>
+    <h2>RLHF — <em>Reinforcement Learning from Human Feedback</em></h2>
+
+    <p>This is the most important section of the entire three-issue series. RLHF is the technique that turns a raw language model — which just predicts the next word, has no values, and might say harmful things — into a helpful, harmless, and honest assistant like Claude.</p>
+
+    <p>Understanding RLHF means understanding why AI assistants behave the way they do. Why Claude declines certain requests. Why ChatGPT's tone changed between versions. Why these models seem to have values. It all comes from RLHF.</p>
+
+    <h3>The three-phase process</h3>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="pipeline-num orange">1</div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">Pre-training — The Raw Model</div>
+          <div class="pipeline-desc">Train a large transformer on trillions of tokens of internet text using standard next-token prediction. This model learns language, facts, and reasoning — but it's not helpful. Ask it "how do I bake a cake?" and it might just continue the text in a random direction. It has no concept of being an assistant. It knows what words follow what words. That's it.</div>
+          <span class="pipeline-tag sup">Self-supervised learning</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num blue">2</div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">Supervised Fine-Tuning (SFT) — Teaching Behaviour</div>
+          <div class="pipeline-desc">Human contractors write thousands of example (prompt → ideal response) pairs. "What is photosynthesis?" → [detailed, helpful, accurate answer]. The pre-trained model is fine-tuned on this dataset using standard supervised learning. Now it knows the format of helpful responses — but it still makes mistakes, is sometimes verbose, sometimes sycophantic, sometimes subtly wrong.</div>
+          <span class="pipeline-tag sl">Supervised learning</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num green">3</div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">Reward Model Training — Teaching Preference</div>
+          <div class="pipeline-desc">Take the SFT model and generate multiple responses to the same prompt. Human raters rank these responses: "Response A was better than B, B was better than C." These human preference comparisons are used to train a separate neural network called the <strong>Reward Model</strong>. This model learns to predict "how much would a human prefer this response?" — it outputs a single score. This is supervised learning on preference data.</div>
+          <span class="pipeline-tag sl">Supervised learning on preference pairs</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num purple">4</div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">RL Fine-Tuning — PPO + Reward Model</div>
+          <div class="pipeline-desc">Now the RL part. The SFT model becomes the <strong>agent</strong>. Generating a response is the <strong>action</strong>. The user prompt is the <strong>state</strong>. The reward model scores the response — that score is the <strong>reward</strong>. An RL algorithm called <strong>PPO (Proximal Policy Optimisation)</strong> updates the LLM's weights to generate responses that receive higher reward model scores. Over thousands of iterations, the model learns to generate responses that humans prefer — more helpful, less harmful, better reasoned.</div>
+          <span class="pipeline-tag rl">Reinforcement learning — PPO</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>The RL mapping for RLHF</h3>
+    <table class="metric-table">
+      <tr><th>RL Concept</th><th>What it maps to in RLHF</th></tr>
+      <tr><td>Agent</td><td>The language model (the LLM being trained)</td></tr>
+      <tr><td>Environment</td><td>The user conversation + reward model evaluation</td></tr>
+      <tr><td>State</td><td>The conversation history + current user prompt</td></tr>
+      <tr><td>Action</td><td>Generating the next token (repeated until response is complete)</td></tr>
+      <tr><td>Reward</td><td>Score from the reward model (how much a human would prefer this response)</td></tr>
+      <tr><td>Policy</td><td>The LLM's weights — the probability distribution over next tokens</td></tr>
+      <tr><td>Episode</td><td>One full conversation turn: prompt → complete response generated</td></tr>
+    </table>
+
+    <div class="callout red">
+      <div class="callout-label">The critical limitation — reward hacking</div>
+      <p>The reward model is not perfect — it's a neural network approximating human preferences, trained on limited data. The LLM can learn to game the reward model: produce responses that score high on the reward model but aren't actually what humans would prefer. This is called <strong>reward hacking</strong> (a specific type of Goodhart's Law). The fix: PPO includes a KL-divergence penalty that prevents the model from drifting too far from the original SFT model. This keeps the RL fine-tuning stable. But it's an ongoing challenge in the field — which is why AI labs keep iterating on their RLHF processes.</p>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">RLHF variants you'll hear about</div>
+      <p><strong>RLAIF</strong> (RL from AI Feedback) — instead of human raters, use another LLM to generate preference comparisons. Cheaper and faster, used heavily in production. <strong>DPO</strong> (Direct Preference Optimisation) — skips the reward model entirely and directly fine-tunes on preference pairs. More stable than PPO and increasingly popular. <strong>Constitutional AI</strong> (Anthropic's approach for Claude) — uses a set of written principles (a constitution) to guide RLAIF, making the values explicit and auditable.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · Python Implementation</span></div>
+
+  <div id="code">
+    <div class="eyebrow">Run this in Google Colab</div>
+    <h2>The complete code — <em>every line explained</em></h2>
+
+    <!-- CODE 1 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 1 — Build the Maze Environment</div>
+      </div>
+      <pre><span class="ck">import</span> numpy <span class="ck">as</span> np                    <span class="cm"># fast array operations</span>
+<span class="ck">import</span> matplotlib.pyplot <span class="ck">as</span> plt      <span class="cm"># plotting</span>
+<span class="ck">import</span> matplotlib.patches <span class="ck">as</span> mpatches <span class="cm"># for legend patches in plots</span>
+<span class="ck">from</span> collections <span class="ck">import</span> defaultdict   <span class="cm"># dict that auto-creates missing keys</span>
+<span class="ck">import</span> warnings
+warnings.<span class="cf">filterwarnings</span>(<span class="cs">'ignore'</span>)
+
+np.random.<span class="cf">seed</span>(<span class="cn">42</span>)    <span class="cm"># reproducibility — same random results every run</span>
+
+<span class="cm"># ── Define the 5×5 Maze ───────────────────────────────────────</span>
+<span class="cm"># 0 = open cell, 1 = wall, 2 = trap (negative reward), 3 = goal</span>
+MAZE = np.<span class="cf">array</span>([
+    [<span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">1</span>, <span class="cn">0</span>, <span class="cn">0</span>],   <span class="cm"># row 0: start at (0,0), wall at (0,2)</span>
+    [<span class="cn">0</span>, <span class="cn">1</span>, <span class="cn">1</span>, <span class="cn">0</span>, <span class="cn">1</span>],   <span class="cm"># row 1: walls at (1,1),(1,2),(1,4)</span>
+    [<span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">0</span>],   <span class="cm"># row 2: all open</span>
+    [<span class="cn">1</span>, <span class="cn">0</span>, <span class="cn">1</span>, <span class="cn">2</span>, <span class="cn">0</span>],   <span class="cm"># row 3: trap at (3,3), walls at (3,0),(3,2)</span>
+    [<span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">0</span>, <span class="cn">3</span>],   <span class="cm"># row 4: goal at (4,4)</span>
+])
+
+START = (<span class="cn">0</span>, <span class="cn">0</span>)    <span class="cm"># agent always starts at top-left corner</span>
+GOAL  = (<span class="cn">4</span>, <span class="cn">4</span>)    <span class="cm"># agent must reach bottom-right corner</span>
+
+<span class="cm"># ── Define actions as (row_change, col_change) pairs ──────────</span>
+ACTIONS = {
+    <span class="cn">0</span>: (-<span class="cn">1</span>,  <span class="cn">0</span>),    <span class="cm"># Up:    move one row up (row decreases by 1)</span>
+    <span class="cn">1</span>: ( <span class="cn">1</span>,  <span class="cn">0</span>),    <span class="cm"># Down:  move one row down</span>
+    <span class="cn">2</span>: ( <span class="cn">0</span>, -<span class="cn">1</span>),    <span class="cm"># Left:  move one column left</span>
+    <span class="cn">3</span>: ( <span class="cn">0</span>,  <span class="cn">1</span>),    <span class="cm"># Right: move one column right</span>
+}
+ACTION_NAMES = {<span class="cn">0</span>: <span class="cs">'Up'</span>, <span class="cn">1</span>: <span class="cs">'Down'</span>, <span class="cn">2</span>: <span class="cs">'Left'</span>, <span class="cn">3</span>: <span class="cs">'Right'</span>}
+
+<span class="ck">def</span> <span class="cf">step</span>(state, action):
+    <span class="cs">"""Take one action from a state. Return (new_state, reward, done)."""</span>
+    row, col = state                              <span class="cm"># unpack current position</span>
+    drow, dcol = ACTIONS[action]                  <span class="cm"># get movement delta</span>
+    new_row, new_col = row + drow, col + dcol     <span class="cm"># calculate new position</span>
+
+    <span class="cm"># ── Check if new position is valid ────────────────────────────</span>
+    out_of_bounds = (new_row &lt; <span class="cn">0</span> <span class="ck">or</span> new_row &gt;= <span class="cn">5</span> <span class="ck">or</span>
+                     new_col &lt; <span class="cn">0</span> <span class="ck">or</span> new_col &gt;= <span class="cn">5</span>)
+    <span class="cm"># out_of_bounds: would moving here take us off the 5×5 grid?</span>
+
+    <span class="ck">if</span> out_of_bounds <span class="ck">or</span> MAZE[new_row, new_col] == <span class="cn">1</span>:
+        <span class="cm"># hit a wall or went out of bounds — stay in place, penalise</span>
+        <span class="ck">return</span> state, -<span class="cn">0.5</span>, <span class="ck">False</span>
+
+    new_state = (new_row, new_col)      <span class="cm"># valid move — update position</span>
+    cell_type = MAZE[new_row, new_col]  <span class="cm"># what type of cell is the new position?</span>
+
+    <span class="ck">if</span> cell_type == <span class="cn">3</span>:     <span class="cm"># reached the GOAL</span>
+        <span class="ck">return</span> new_state, +<span class="cn">10.0</span>, <span class="ck">True</span>   <span class="cm"># big reward, episode ends (done=True)</span>
+    <span class="ck">elif</span> cell_type == <span class="cn">2</span>:   <span class="cm"># stepped on a TRAP</span>
+        <span class="ck">return</span> new_state, -<span class="cn">5.0</span>, <span class="ck">False</span>  <span class="cm"># big penalty, but episode continues</span>
+    <span class="ck">else</span>:                   <span class="cm"># normal open cell</span>
+        <span class="ck">return</span> new_state, -<span class="cn">0.1</span>, <span class="ck">False</span>  <span class="cm"># small penalty per step (encourages efficiency)</span>
+
+<span class="cf">print</span>(<span class="cs">"✅ Maze environment ready"</span>)
+<span class="cf">print</span>(<span class="cs">f"Grid: {MAZE.shape}, Actions: {list(ACTION_NAMES.values())}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Start: {START}, Goal: {GOAL}"</span>)</pre>
+    </div>
+
+    <!-- CODE 2 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 2 — Q-Learning Agent</div>
+      </div>
+      <pre><span class="cm"># ── Q-Table: stores Q(state, action) for all state-action pairs</span>
+Q = <span class="cf">defaultdict</span>(<span class="ck">lambda</span>: np.<span class="cf">zeros</span>(<span class="cn">4</span>))
+<span class="cm"># defaultdict: auto-creates an entry for any new state we encounter</span>
+<span class="cm"># lambda: np.zeros(4) = when a new state is seen, initialise Q-values to [0,0,0,0]</span>
+<span class="cm"># 4 actions = 4 Q-values per state</span>
+
+<span class="cm"># ── Hyperparameters ────────────────────────────────────────────</span>
+ALPHA   = <span class="cn">0.1</span>      <span class="cm"># learning rate: how fast we update Q-values (0=never, 1=instant)</span>
+GAMMA   = <span class="cn">0.95</span>     <span class="cm"># discount factor: how much we value future rewards vs immediate (0=greedy, 1=far-sighted)</span>
+EPSILON = <span class="cn">1.0</span>      <span class="cm"># starting exploration rate: 1.0 = 100% random at start</span>
+EPS_MIN = <span class="cn">0.01</span>     <span class="cm"># minimum exploration rate: always keep 1% random exploration</span>
+EPS_DECAY = <span class="cn">0.995</span> <span class="cm"># multiply epsilon by this after each episode (slowly reduce randomness)</span>
+EPISODES = <span class="cn">3000</span>   <span class="cm"># total number of games to play (each game = one episode)</span>
+MAX_STEPS = <span class="cn">200</span>   <span class="cm"># max steps per episode (prevents infinite wandering)</span>
+
+<span class="cm"># ── Tracking variables ─────────────────────────────────────────</span>
+rewards_per_episode = []   <span class="cm"># total reward each episode (to track learning progress)</span>
+steps_per_episode   = []   <span class="cm"># steps taken each episode (shorter = smarter agent)</span>
+epsilon_history     = []   <span class="cm"># epsilon at each episode (to visualise exploration decay)</span>
+
+<span class="cm"># ── The main Q-Learning training loop ─────────────────────────</span>
+<span class="ck">for</span> episode <span class="ck">in</span> <span class="cf">range</span>(EPISODES):
+
+    state = START        <span class="cm"># reset: agent starts fresh at the beginning every episode</span>
+    total_reward = <span class="cn">0</span>    <span class="cm"># accumulate total reward for this episode</span>
+    step_count = <span class="cn">0</span>      <span class="cm"># count steps taken this episode</span>
+
+    <span class="ck">for</span> _ <span class="ck">in</span> <span class="cf">range</span>(MAX_STEPS):    <span class="cm"># run up to MAX_STEPS per episode</span>
+
+        <span class="cm"># ── Step 1: Choose action using epsilon-greedy ────────────</span>
+        <span class="ck">if</span> np.random.<span class="cf">random</span>() &lt; EPSILON:
+            action = np.random.<span class="cf">randint</span>(<span class="cn">4</span>)    <span class="cm"># EXPLORE: pick a random action (0,1,2,3)</span>
+        <span class="ck">else</span>:
+            action = np.<span class="cf">argmax</span>(Q[state])     <span class="cm"># EXPLOIT: pick the action with highest Q-value</span>
+            <span class="cm"># np.argmax: returns index of the maximum value in the array</span>
+
+        <span class="cm"># ── Step 2: Take action, observe result ───────────────────</span>
+        next_state, reward, done = <span class="cf">step</span>(state, action)
+        <span class="cm"># step() returns: new position, reward received, whether episode ended</span>
+
+        <span class="cm"># ── Step 3: Q-Learning update (Bellman equation) ──────────</span>
+        best_next_q = np.<span class="cf">max</span>(Q[next_state])
+        <span class="cm"># best_next_q: the Q-value of the best action available from the next state</span>
+        <span class="cm"># this is the "max Q(s', a')" term in the Bellman equation</span>
+
+        td_target = reward + GAMMA * best_next_q
+        <span class="cm"># td_target (Temporal Difference target): what we now believe this state-action is worth</span>
+        <span class="cm"># = immediate reward + discounted value of best future action</span>
+
+        td_error = td_target - Q[state][action]
+        <span class="cm"># td_error: how wrong our previous Q-value estimate was</span>
+        <span class="cm"># positive = we underestimated (increase Q), negative = overestimated (decrease Q)</span>
+
+        Q[state][action] += ALPHA * td_error
+        <span class="cm"># update Q-value: move current estimate toward td_target by a fraction (ALPHA)</span>
+        <span class="cm"># same idea as gradient descent: small step in the right direction</span>
+
+        <span class="cm"># ── Step 4: Update tracking variables ─────────────────────</span>
+        total_reward += reward    <span class="cm"># accumulate reward for this step</span>
+        step_count   += <span class="cn">1</span>
+        state = next_state        <span class="cm"># move to the new state</span>
+
+        <span class="ck">if</span> done: <span class="ck">break</span>    <span class="cm"># if we reached the goal, end this episode early</span>
+
+    <span class="cm"># ── After each episode: decay epsilon and record stats ────────</span>
+    EPSILON = <span class="cf">max</span>(EPS_MIN, EPSILON * EPS_DECAY)
+    <span class="cm"># max(EPS_MIN, ...): never let epsilon drop below EPS_MIN (keep some exploration)</span>
+
+    rewards_per_episode.<span class="cf">append</span>(total_reward)
+    steps_per_episode.<span class="cf">append</span>(step_count)
+    epsilon_history.<span class="cf">append</span>(EPSILON)
+
+    <span class="ck">if</span> (episode + <span class="cn">1</span>) % <span class="cn">500</span> == <span class="cn">0</span>:    <span class="cm"># print progress every 500 episodes</span>
+        recent_reward = np.<span class="cf">mean</span>(rewards_per_episode[-<span class="cn">100</span>:])
+        <span class="cm"># mean of last 100 episodes — smoother indicator of recent performance</span>
+        <span class="cf">print</span>(<span class="cs">f"Episode {episode+1:4d} | Avg reward (last 100): {recent_reward:6.2f} | ε: {EPSILON:.3f}"</span>)
+
+<span class="cf">print</span>(<span class="cs">"\n✅ Training complete!"</span>)</pre>
+    </div>
+
+    <!-- CODE 3 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 3 — Visualise Learning Progress</div>
+      </div>
+      <pre><span class="cm"># ── Plot three charts showing how the agent learned ───────────</span>
+fig, axes = plt.<span class="cf">subplots</span>(<span class="cn">1</span>, <span class="cn">3</span>, figsize=(<span class="cn">16</span>, <span class="cn">5</span>))
+<span class="cm"># subplots(1, 3): one row, three side-by-side charts</span>
+
+<span class="cm"># ── Smooth the reward curve using a rolling average ───────────</span>
+window = <span class="cn">50</span>    <span class="cm"># average over 50 episodes at a time (smoothing window)</span>
+smoothed_rewards = [
+    np.<span class="cf">mean</span>(rewards_per_episode[<span class="cf">max</span>(<span class="cn">0</span>, i-window):i+<span class="cn">1</span>])
+    <span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cf">len</span>(rewards_per_episode))
+]
+<span class="cm"># list comprehension: for each episode i, average the last 50 rewards</span>
+<span class="cm"># max(0, i-window): handles the beginning where we have fewer than 50 episodes</span>
+
+<span class="cm"># Chart 1: Reward over time ────────────────────────────────────</span>
+axes[<span class="cn">0</span>].<span class="cf">plot</span>(rewards_per_episode, color=<span class="cs">'#ffccaa'</span>, alpha=<span class="cn">0.35</span>, linewidth=<span class="cn">0.8</span>)
+<span class="cm"># raw rewards (noisy) in light orange, mostly for background context</span>
+axes[<span class="cn">0</span>].<span class="cf">plot</span>(smoothed_rewards, color=<span class="cs">'#e05a00'</span>, linewidth=<span class="cn">2.2</span>, label=<span class="cs">'50-ep moving avg'</span>)
+<span class="cm"># smoothed line in orange — this shows the clear learning trend</span>
+axes[<span class="cn">0</span>].<span class="cf">set_title</span>(<span class="cs">'Total Reward per Episode'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Episode'</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Total Reward'</span>)
+axes[<span class="cn">0</span>].<span class="cf">legend</span>()
+axes[<span class="cn">0</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.25</span>)
+<span class="cm"># Expected result: starts low/negative, rises and stabilises as agent learns</span>
+
+<span class="cm"># Chart 2: Steps per episode (shorter = smarter) ──────────────</span>
+smoothed_steps = [
+    np.<span class="cf">mean</span>(steps_per_episode[<span class="cf">max</span>(<span class="cn">0</span>, i-window):i+<span class="cn">1</span>])
+    <span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cf">len</span>(steps_per_episode))
+]
+axes[<span class="cn">1</span>].<span class="cf">plot</span>(smoothed_steps, color=<span class="cs">'#0d7377'</span>, linewidth=<span class="cn">2.2</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_title</span>(<span class="cs">'Steps per Episode (shorter = smarter)'</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Episode'</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Steps taken'</span>)
+axes[<span class="cn">1</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.25</span>)
+<span class="cm"># Expected: starts high (200 = hits max limit), drops as agent finds shorter path</span>
+
+<span class="cm"># Chart 3: Epsilon decay (exploration falling over time) ───────</span>
+axes[<span class="cn">2</span>].<span class="cf">plot</span>(epsilon_history, color=<span class="cs">'#6d28d9'</span>, linewidth=<span class="cn">2.2</span>)
+axes[<span class="cn">2</span>].<span class="cf">fill_between</span>(
+    <span class="cf">range</span>(<span class="cf">len</span>(epsilon_history)),
+    epsilon_history,
+    alpha=<span class="cn">0.15</span>,
+    color=<span class="cs">'#6d28d9'</span>
+)
+<span class="cm"># fill_between: fills area under the epsilon curve with transparent purple</span>
+axes[<span class="cn">2</span>].<span class="cf">set_title</span>(<span class="cs">'Epsilon Decay (exploration → exploitation)'</span>)
+axes[<span class="cn">2</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Episode'</span>)
+axes[<span class="cn">2</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Epsilon (exploration rate)'</span>)
+axes[<span class="cn">2</span>].<span class="cf">grid</span>(<span class="ck">True</span>, alpha=<span class="cn">0.25</span>)
+<span class="cm"># Expected: starts at 1.0 (pure random), smoothly decays to 0.01</span>
+
+plt.<span class="cf">suptitle</span>(<span class="cs">'Q-Learning Training Progress — Agent Getting Smarter'</span>, fontsize=<span class="cn">14</span>)
+plt.<span class="cf">tight_layout</span>()
+plt.<span class="cf">show</span>()</pre>
+    </div>
+
+    <!-- CODE 4 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 4 — Visualise the Learned Policy</div>
+      </div>
+      <pre><span class="cm"># ── Show what the trained agent now knows ─────────────────────</span>
+<span class="cm"># For each open cell, what action does the agent think is best?</span>
+
+arrow_map = {<span class="cn">0</span>: <span class="cs">'↑'</span>, <span class="cn">1</span>: <span class="cs">'↓'</span>, <span class="cn">2</span>: <span class="cs">'←'</span>, <span class="cn">3</span>: <span class="cs">'→'</span>}
+<span class="cm"># maps action numbers to arrow characters for display</span>
+
+fig, axes = plt.<span class="cf">subplots</span>(<span class="cn">1</span>, <span class="cn">2</span>, figsize=(<span class="cn">14</span>, <span class="cn">6</span>))
+
+<span class="cm"># ── Plot 1: Policy arrows (what action at each cell) ──────────</span>
+axes[<span class="cn">0</span>].<span class="cf">set_xlim</span>(-<span class="cn">0.5</span>, <span class="cn">4.5</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_ylim</span>(-<span class="cn">0.5</span>, <span class="cn">4.5</span>)
+axes[<span class="cn">0</span>].<span class="cf">set_aspect</span>(<span class="cs">'equal'</span>)   <span class="cm"># equal aspect ratio → square cells</span>
+axes[<span class="cn">0</span>].<span class="cf">invert_yaxis</span>()          <span class="cm"># flip y-axis so row 0 is at the top (like a matrix)</span>
+
+<span class="ck">for</span> r <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">5</span>):             <span class="cm"># loop through all 5 rows</span>
+    <span class="ck">for</span> c <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">5</span>):         <span class="cm"># loop through all 5 columns</span>
+        cell_type = MAZE[r, c]
+
+        <span class="ck">if</span> cell_type == <span class="cn">1</span>:      <span class="cm"># wall: draw dark square</span>
+            axes[<span class="cn">0</span>].<span class="cf">add_patch</span>(plt.Rectangle((c-<span class="cn">0.5</span>, r-<span class="cn">0.5</span>), <span class="cn">1</span>, <span class="cn">1</span>,
+                color=<span class="cs">'#1a1a2e'</span>))
+            <span class="cm"># plt.Rectangle: draws a filled rectangle at position (x, y), width 1, height 1</span>
+
+        <span class="ck">elif</span> (r, c) == GOAL:      <span class="cm"># goal cell</span>
+            axes[<span class="cn">0</span>].<span class="cf">add_patch</span>(plt.Rectangle((c-<span class="cn">0.5</span>, r-<span class="cn">0.5</span>), <span class="cn">1</span>, <span class="cn">1</span>,
+                color=<span class="cs">'#edf7f2'</span>, ec=<span class="cs">'#0a7c4a'</span>))
+            axes[<span class="cn">0</span>].<span class="cf">text</span>(c, r, <span class="cs">'🏆'</span>, ha=<span class="cs">'center'</span>, va=<span class="cs">'center'</span>, fontsize=<span class="cn">20</span>)
+
+        <span class="ck">elif</span> (r, c) == START:     <span class="cm"># start cell</span>
+            axes[<span class="cn">0</span>].<span class="cf">add_patch</span>(plt.Rectangle((c-<span class="cn">0.5</span>, r-<span class="cn">0.5</span>), <span class="cn">1</span>, <span class="cn">1</span>,
+                color=<span class="cs">'#fff4ed'</span>, ec=<span class="cs">'#e05a00'</span>))
+            axes[<span class="cn">0</span>].<span class="cf">text</span>(c, r, <span class="cs">'🤖'</span>, ha=<span class="cs">'center'</span>, va=<span class="cs">'center'</span>, fontsize=<span class="cn">20</span>)
+
+        <span class="ck">elif</span> cell_type == <span class="cn">2</span>:     <span class="cm"># trap cell</span>
+            axes[<span class="cn">0</span>].<span class="cf">add_patch</span>(plt.Rectangle((c-<span class="cn">0.5</span>, r-<span class="cn">0.5</span>), <span class="cn">1</span>, <span class="cn">1</span>,
+                color=<span class="cs">'#fdf0f2'</span>, ec=<span class="cs">'#c0002a'</span>))
+            axes[<span class="cn">0</span>].<span class="cf">text</span>(c, r, <span class="cs">'⚠️'</span>, ha=<span class="cs">'center'</span>, va=<span class="cs">'center'</span>, fontsize=<span class="cn">16</span>)
+
+        <span class="ck">else</span>:                     <span class="cm"># normal open cell — show the learned best action</span>
+            best_action = np.<span class="cf">argmax</span>(Q[(r, c)])
+            <span class="cm"># argmax: find which action (0,1,2,3) has the highest Q-value here</span>
+            q_val = np.<span class="cf">max</span>(Q[(r, c)])
+            <span class="cm"># q_val: the actual Q-value of the best action (used for colour intensity)</span>
+
+            <span class="cm"># shade cell by Q-value magnitude (brighter = more valuable cell)</span>
+            intensity = <span class="cf">min</span>(<span class="cn">0.7</span>, <span class="cf">max</span>(<span class="cn">0.05</span>, q_val / <span class="cn">10.0</span>))
+            <span class="cm"># normalise Q-value to 0.05–0.7 range for alpha transparency</span>
+            axes[<span class="cn">0</span>].<span class="cf">add_patch</span>(plt.Rectangle((c-<span class="cn">0.5</span>, r-<span class="cn">0.5</span>), <span class="cn">1</span>, <span class="cn">1</span>,
+                color=<span class="cs">'#e05a00'</span>, alpha=intensity))
+
+            axes[<span class="cn">0</span>].<span class="cf">text</span>(c, r, arrow_map[best_action],
+                ha=<span class="cs">'center'</span>, va=<span class="cs">'center'</span>,
+                fontsize=<span class="cn">22</span>, fontweight=<span class="cs">'bold'</span>, color=<span class="cs">'#1a1a1a'</span>)
+            <span class="cm"># draw the arrow showing the best action in this cell</span>
+
+axes[<span class="cn">0</span>].<span class="cf">set_title</span>(<span class="cs">'Learned Policy — What to do in each cell'</span>, fontsize=<span class="cn">13</span>)
+axes[<span class="cn">0</span>].<span class="cf">axis</span>(<span class="cs">'off'</span>)   <span class="cm"># hide default matplotlib axis lines</span>
+
+<span class="cm"># ── Plot 2: Q-value heatmap for "move right" action ───────────</span>
+q_right = np.<span class="cf">zeros</span>((<span class="cn">5</span>, <span class="cn">5</span>))       <span class="cm"># create 5×5 grid for Q(s, Right) values</span>
+<span class="ck">for</span> r <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">5</span>):
+    <span class="ck">for</span> c <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">5</span>):
+        <span class="ck">if</span> MAZE[r, c] != <span class="cn">1</span>:       <span class="cm"># only for non-wall cells</span>
+            q_right[r, c] = np.<span class="cf">max</span>(Q[(r, c)])
+            <span class="cm"># use the max Q-value (best action) at each cell for the heatmap</span>
+
+sns.<span class="cf">heatmap</span>(
+    q_right, ax=axes[<span class="cn">1</span>],
+    cmap=<span class="cs">'YlOrRd'</span>,         <span class="cm"># Yellow → Orange → Red colour scale</span>
+    annot=<span class="ck">True</span>,             <span class="cm"># show numbers inside cells</span>
+    fmt=<span class="cs">'.1f'</span>,              <span class="cm"># 1 decimal place</span>
+    linewidths=<span class="cn">1</span>,           <span class="cm"># thin borders between cells</span>
+    cbar_kws={<span class="cs">'label'</span>: <span class="cs">'Max Q-value'</span>}
+)
+axes[<span class="cn">1</span>].<span class="cf">set_title</span>(<span class="cs">'Q-Value Heatmap — Brighter = More Valuable Cell'</span>, fontsize=<span class="cn">13</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_xlabel</span>(<span class="cs">'Column'</span>)
+axes[<span class="cn">1</span>].<span class="cf">set_ylabel</span>(<span class="cs">'Row'</span>)
+
+plt.<span class="cf">tight_layout</span>()
+plt.<span class="cf">show</span>()</pre>
+    </div>
+
+    <!-- CODE 5 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 5 — Run the Trained Agent + RLHF Simulation</div>
+      </div>
+      <pre><span class="cm"># ── Test the trained agent: run one episode with no exploration</span>
+<span class="cf">print</span>(<span class="cs">"=== Trained agent solving the maze ===\n"</span>)
+state = START                     <span class="cm"># always start from the beginning</span>
+path  = [state]                   <span class="cm"># track the path taken</span>
+total_reward = <span class="cn">0</span>
+done = <span class="ck">False</span>
+
+<span class="ck">while</span> <span class="ck">not</span> done <span class="ck">and</span> <span class="cf">len</span>(path) &lt; <span class="cn">30</span>:    <span class="cm"># safety limit of 30 steps</span>
+    action = np.<span class="cf">argmax</span>(Q[state])         <span class="cm"># pure exploitation — no randomness</span>
+    <span class="cm"># argmax: always pick the action with highest Q-value (the learned optimal policy)</span>
+    next_state, reward, done = <span class="cf">step</span>(state, action)
+    total_reward += reward
+    state = next_state
+    path.<span class="cf">append</span>(state)
+    <span class="cf">print</span>(<span class="cs">f"  State: {state[<span class="cn">0</span>]},{state[<span class="cn">1</span>]} → Action: {ACTION_NAMES[action]:<span class="cn">6</span>} → Reward: {reward:+.1f}"</span>)
+
+<span class="cf">print</span>(<span class="cs">f"\n{'✅ REACHED GOAL!' if done else '❌ Did not reach goal'}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Path length: {len(path)} steps | Total reward: {total_reward:.1f}"</span>)
+
+<span class="cm"># ── Mini RLHF simulation ───────────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== RLHF Concept Simulation ==="</span>)
+<span class="cf">print</span>(<span class="cs">"Simulating how an LLM learns from human preferences\n"</span>)
+
+<span class="ck">class</span> <span class="cf">MiniRewardModel</span>:
+    <span class="cs">"""A tiny reward model that scores LLM responses."""</span>
+    <span class="ck">def</span> <span class="cf">score</span>(self, response: str) -> float:
+        <span class="cs">"""Score a response based on quality signals."""</span>
+        score = <span class="cn">0.0</span>
+
+        score += <span class="cf">min</span>(<span class="cn">3.0</span>, <span class="cf">len</span>(response.split()) * <span class="cn">0.1</span>)
+        <span class="cm"># reward for length: more content is generally better (up to a point)</span>
+
+        helpful_words = [<span class="cs">'because'</span>, <span class="cs">'therefore'</span>, <span class="cs">'example'</span>, <span class="cs">'however'</span>, <span class="cs">'step'</span>]
+        score += <span class="cf">sum</span>(<span class="cn">0.5</span> <span class="ck">for</span> w <span class="ck">in</span> helpful_words <span class="ck">if</span> w <span class="ck">in</span> response.lower())
+        <span class="cm"># reward for reasoning words: "because", "therefore" = structured thinking</span>
+
+        harmful_words = [<span class="cs">'idk'</span>, <span class="cs">'whatever'</span>, <span class="cs">'maybe'</span>, <span class="cs">'dunno'</span>]
+        score -= <span class="cf">sum</span>(<span class="cn">1.0</span> <span class="ck">for</span> w <span class="ck">in</span> harmful_words <span class="ck">if</span> w <span class="ck">in</span> response.lower())
+        <span class="cm"># penalise vague/unhelpful responses</span>
+
+        <span class="ck">return</span> <span class="cf">round</span>(<span class="cf">max</span>(<span class="cn">0.0</span>, score), <span class="cn">2</span>)    <span class="cm"># clip to minimum 0</span>
+
+<span class="cm"># ── Simulate 4 candidate responses for the same prompt ────────</span>
+prompt = <span class="cs">"How do I learn machine learning?"</span>
+
+responses = [
+    <span class="cs">"idk just google it maybe"</span>,
+    <span class="cs">"You can learn ML online."</span>,
+    <span class="cs">"Start with Python basics, then learn NumPy and Pandas for data handling."</span>,
+    <span class="cs">"Begin with Python fundamentals because they are essential. Then study supervised learning step by step with sklearn. For example, start with linear regression and build up. However, practice on real datasets is what matters most."</span>
+]
+
+reward_model = <span class="cf">MiniRewardModel</span>()   <span class="cm"># instantiate our tiny reward model</span>
+<span class="cf">print</span>(<span class="cs">f"Prompt: '{prompt}'\n"</span>)
+
+<span class="ck">for</span> i, resp <span class="ck">in</span> <span class="cf">enumerate</span>(responses, <span class="cn">1</span>):
+    <span class="cm"># enumerate(responses, 1): gives (1, resp1), (2, resp2)... (starts at 1)</span>
+    score = reward_model.<span class="cf">score</span>(resp)
+    bar = <span class="cs">'█'</span> * <span class="cf">int</span>(score * <span class="cn">2</span>)             <span class="cm"># visual score bar: each █ = 0.5 points</span>
+    resp_preview = resp[:<span class="cn">55</span>] + (<span class="cs">'...'</span> <span class="ck">if</span> <span class="cf">len</span>(resp) > <span class="cn">55</span> <span class="ck">else</span> <span class="cs">''</span>)
+    <span class="cm"># show first 55 chars, add '...' if truncated</span>
+    <span class="cf">print</span>(<span class="cs">f"Response {i} | Score: {score:4.1f} | {bar}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"           | '{resp_preview}'"</span>)
+    <span class="cf">print</span>()
+
+best_idx = <span class="cf">max</span>(<span class="cf">range</span>(<span class="cf">len</span>(responses)), key=<span class="ck">lambda</span> i: reward_model.<span class="cf">score</span>(responses[i]))
+<span class="cm"># max with key: find the index whose response has the highest reward model score</span>
+<span class="cm"># lambda i: ... defines an inline function to extract the score for comparison</span>
+<span class="cf">print</span>(<span class="cs">f"✅ Reward model selects Response {best_idx+1} as best."</span>)
+<span class="cf">print</span>(<span class="cs">f"   In real RLHF: the LLM is trained via PPO to produce more responses like this."</span>)</pre>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 9 · The Agentic AI Connection</span></div>
+
+  <div id="agent-connection">
+    <div class="agent-box">
+      <div class="agent-box-label">The connection you've been building toward</div>
+      <h3>RL is not just in the training — it's in the architecture of every agent you'll build</h3>
+      <p>Every AI agent you build with LangChain, LangGraph, CrewAI, or Google ADK is, at its core, a reinforcement learning system. The agent (the LLM) observes a state (the conversation + tool results). It takes an action (generates text, calls a tool, makes a decision). It receives implicit feedback (the task succeeds or fails). It adjusts future behaviour based on that feedback.</p>
+      <p>The ReAct (Reason + Act) pattern — the most common agent architecture — is literally the RL loop: observe state → reason about actions → take action → observe result → update plan. The difference is the policy isn't updated via gradient descent in real-time. It was learned during RLHF training. But the structure is identical.</p>
+      <p>Multi-agent systems are even closer: an orchestrator agent assigns tasks to sub-agents, observes their outputs (rewards), and adjusts future task assignments. That's exactly Q-learning at the meta level. When you understand that, you understand why agent frameworks are designed the way they are — they're implementations of RL theory.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 10 · Full Series Cheat Sheet</span></div>
+
+  <div id="cheatsheet">
+    <div class="eyebrow">The complete Block 02 reference</div>
+    <h2>All of ML — <em>three issues, one final cheat sheet</em></h2>
+
+    <h3>The three types — when to reach for each</h3>
+    <div class="cheat-grid">
+      <div class="cheat-cell">
+        <div class="cheat-label">You have labels</div>
+        <div class="cheat-val">Supervised Learning</div>
+        <div class="cheat-desc">Regression or Classification. sklearn. Always baseline first.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-label">No labels, find structure</div>
+        <div class="cheat-val">Unsupervised Learning</div>
+        <div class="cheat-desc">K-Means, PCA, Apriori. Scale first always.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-label">Learn from consequences</div>
+        <div class="cheat-val">Reinforcement Learning</div>
+        <div class="cheat-desc">Agent + Environment + Reward. Q-Learning or PPO.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-label">RL core algorithm</div>
+        <div class="cheat-val">Q-Learning</div>
+        <div class="cheat-desc">Q(s,a) ← Q(s,a) + α[r + γ·maxQ(s',a') − Q(s,a)]</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-label">Exploration strategy</div>
+        <div class="cheat-val">Epsilon-Greedy</div>
+        <div class="cheat-desc">Start ε=1.0, decay to 0.01. Always keep some exploration.</div>
+      </div>
+      <div class="cheat-cell">
+        <div class="cheat-label">LLMs learn from humans</div>
+        <div class="cheat-val">RLHF (PPO)</div>
+        <div class="cheat-desc">SFT → Reward Model → PPO. That's how Claude was trained.</div>
+      </div>
+    </div>
+
+    <h3>The full RL vocabulary — one line each</h3>
+    <table class="metric-table">
+      <tr><th>Term</th><th>One-line definition</th></tr>
+      <tr><td>Agent</td><td>The learner that takes actions and receives consequences</td></tr>
+      <tr><td>Environment</td><td>Everything the agent interacts with — gives states and rewards</td></tr>
+      <tr><td>State (s)</td><td>What the agent can observe at this moment</td></tr>
+      <tr><td>Action (a)</td><td>What the agent can do — chosen from the action space</td></tr>
+      <tr><td>Reward (r)</td><td>Scalar feedback from the environment — positive = good, negative = bad</td></tr>
+      <tr><td>Policy (π)</td><td>The agent's strategy — maps states to actions</td></tr>
+      <tr><td>Return (G)</td><td>Sum of all future discounted rewards from now until episode end</td></tr>
+      <tr><td>Q-value</td><td>Expected future return from taking action a in state s</td></tr>
+      <tr><td>Q-Table</td><td>A lookup table of Q-values for all (state, action) pairs</td></tr>
+      <tr><td>Bellman Equation</td><td>The update rule: Q(s,a) ← Q(s,a) + α[r + γ·maxQ(s',a') − Q(s,a)]</td></tr>
+      <tr><td>Epsilon-Greedy</td><td>Strategy: explore randomly with probability ε, exploit best Q-value otherwise</td></tr>
+      <tr><td>Episode</td><td>One full run from start to end (game over / goal reached)</td></tr>
+      <tr><td>RLHF</td><td>Pre-train → SFT → Reward Model → PPO. How Claude and ChatGPT are aligned.</td></tr>
+      <tr><td>PPO</td><td>Proximal Policy Optimisation — the RL algorithm used in RLHF</td></tr>
+    </table>
+
+    <div class="callout green" style="margin-top:32px;">
+      <div class="callout-label">The complete ML Block 02 learning path you just finished</div>
+      <p>
+        Issue 01: How machines learn from labelled data → Linear/Polynomial/Ridge/Lasso Regression → Logistic/Decision Tree/Random Forest/KNN/Naive Bayes/SVM Classification → MAE/RMSE/R²/F1/Confusion Matrix metrics → Regularisation → Cross-validation →
+        Issue 02: K-Means/Hierarchical Clustering → Apriori Association Rules → PCA → Autoencoders →
+        Issue 03: Agent/Environment/State/Action/Reward/Policy → Q-Learning + Bellman Equation → Epsilon-Greedy → RLHF → How Claude was trained.
+        That's all of Block 02. You're ready for Block 03: Neural Networks.
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Series Complete</span></div>
+
+  <!-- FINALE CARD -->
+  <div class="finale-card">
+    <h3>You just completed the full ML block.</h3>
+    <p>Three issues. Supervised Learning, Unsupervised Learning, Reinforcement Learning. Every algorithm, every metric, every concept from the flowchart — with Python code and the connection to Agentic AI. You didn't just learn ML. You learned how to think about machines that learn. That's the difference. Next up: Neural Networks — Block 03. The path to Transformers, LLMs, and the architecture behind every frontier AI model starts there.</p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="container">
+    <div class="footer-title">Learn ML From Me</div>
+    <div class="footer-sub">A newsletter for people building AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-complete">✓ Series complete — Issue 01 · 02 · 03 · Block 02: Machine Learning done.</div>
+  </div>
+</div>
+
+</body>
+</html>
