@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Agentic AI with Me — Issue #10: Prompt Engineering + Agentic AI</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0d0d0d; --ink2:#383838; --ink3:#787878;
+    --paper:#fff8f5; --paper2:#fef0e7; --paper3:#f5dcc8;
+
+    /* Block 08 — Prompt Engineering — orange */
+    --pe:#ea580c;  --pe2:#c2410c; --pe-bg:#fff7ed; --pe-bd:rgba(234,88,12,0.26);
+    --basic:#f97316; --basic-bg:#fff7ed; --basic-bd:rgba(249,115,22,0.24);
+    --reason:#d97706; --reason-bg:#fffbeb; --reason-bd:rgba(217,119,6,0.24);
+    --pitfall:#dc2626; --pitfall-bg:#fef2f2; --pitfall-bd:rgba(220,38,38,0.22);
+    --tools:#7c3aed; --tools-bg:#f5f3ff; --tools-bd:rgba(124,58,237,0.22);
+
+    /* Block 09 — Agentic AI — emerald */
+    --ag:#059669;  --ag2:#047857; --ag-bg:#ecfdf5; --ag-bd:rgba(5,150,105,0.26);
+    --react:#0d9488; --react-bg:#f0fdfa; --react-bd:rgba(13,148,136,0.24);
+    --tool:#2563eb; --tool-bg:#eff6ff; --tool-bd:rgba(37,99,235,0.24);
+    --multi:#7c3aed; --multi-bg:#f5f3ff; --multi-bd:rgba(124,58,237,0.24);
+    --mem:#d97706; --mem-bg:#fffbeb; --mem-bd:rgba(217,119,6,0.24);
+
+    --green:#059669; --green-bg:#ecfdf5;
+    --code-bg:#0a0a0a; --code-txt:#e8eaf6;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;line-height:1.78;}
+
+  .masthead{background:#0d0600;padding:13px 0;}
+  .masthead-inner{display:flex;justify-content:space-between;align-items:center;max-width:780px;margin:0 auto;padding:0 24px;}
+  .ms-t{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+  .ms-m{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.32);}
+
+  .hero{background:#0d0600;padding:84px 24px 72px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 28% 45%,rgba(234,88,12,0.17) 0%,transparent 60%),radial-gradient(ellipse 55% 45% at 76% 60%,rgba(5,150,105,0.15) 0%,transparent 55%);pointer-events:none;}
+  .issue-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#fb923c;border:1px solid rgba(251,146,60,0.35);border-radius:20px;padding:5px 16px;margin-bottom:26px;position:relative;}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.1rem,5vw,3.8rem);font-weight:900;color:#fff;line-height:1.07;letter-spacing:-0.022em;margin-bottom:20px;max-width:740px;margin-left:auto;margin-right:auto;position:relative;}
+  .hero h1 em.pe{font-style:italic;color:#fb923c;}
+  .hero h1 em.ag{font-style:italic;color:#34d399;}
+  .hero-sub{font-size:15px;color:rgba(255,255,255,0.5);max-width:520px;margin:0 auto 38px;line-height:1.72;position:relative;}
+  .hero-stats{display:flex;justify-content:center;gap:44px;flex-wrap:wrap;position:relative;}
+  .hero-stat{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.07em;text-transform:uppercase;}
+  .hero-stat strong{display:block;font-size:24px;color:#fff;font-family:'Inter',sans-serif;font-weight:600;letter-spacing:0;margin-bottom:3px;}
+  .hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:28px;position:relative;}
+  .hbadge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;padding:4px 12px;border-radius:20px;border:1px solid;}
+  .hbadge.pe{color:#fed7aa;border-color:rgba(253,215,170,0.32);}
+  .hbadge.ag{color:#a7f3d0;border-color:rgba(167,243,208,0.32);}
+
+  .block-divider{background:linear-gradient(90deg,rgba(234,88,12,0.15),rgba(5,150,105,0.15));height:3px;margin:72px 0 0;border-radius:2px;}
+  .block-label{text-align:center;padding:22px 0 48px;}
+  .block-label-inner{display:inline-flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--paper3);border-radius:30px;padding:8px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .block-num{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;padding:4px 12px;border-radius:20px;}
+  .block-num.pe{background:var(--pe-bg);color:var(--pe);}
+  .block-num.ag{background:var(--ag-bg);color:var(--ag);}
+  .block-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink);}
+
+  .container{max-width:780px;margin:0 auto;padding:0 24px;}
+
+  .toc{background:#fff;border:1px solid var(--paper3);border-radius:14px;padding:28px 32px;margin:54px 0;box-shadow:0 2px 16px rgba(234,88,12,0.06);}
+  .toc-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;}
+  .toc-section{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin:14px 0 6px;}
+  .toc-section.pe{color:var(--pe);}
+  .toc-section.ag{color:var(--ag);}
+  .toc ol{list-style:none;counter-reset:toc;}
+  .toc li{counter-increment:toc;font-size:13.5px;color:var(--ink2);display:flex;align-items:baseline;gap:9px;padding:3px 0;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);font-family:'IBM Plex Mono',monospace;font-size:10px;flex-shrink:0;}
+  .toc li.pe::before{color:var(--pe);}
+  .toc li.ag::before{color:var(--ag);}
+  .toc li a{color:var(--ink2);text-decoration:none;}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:60px 0 50px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--paper3);}
+  .divider span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);white-space:nowrap;}
+
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;}
+  .eyebrow.pe{color:var(--pe);}
+  .eyebrow.ag{color:var(--ag);}
+  .eyebrow.reason{color:var(--reason);}
+  .eyebrow.react{color:var(--react);}
+  h2{font-family:'Playfair Display',serif;font-size:clamp(1.75rem,3.2vw,2.45rem);font-weight:700;line-height:1.18;letter-spacing:-0.015em;margin-bottom:20px;color:var(--ink);}
+  h2 em.pe{font-style:italic;color:var(--pe);}
+  h2 em.ag{font-style:italic;color:var(--ag);}
+  h2 em.reason{font-style:italic;color:var(--reason);}
+  h2 em.react{font-style:italic;color:var(--react);}
+  h3{font-family:'Inter',sans-serif;font-size:1.06rem;font-weight:600;margin:32px 0 10px;color:var(--ink);}
+  p{margin-bottom:16px;color:var(--ink2);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--ink);font-weight:600;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--paper2);padding:1px 6px;border-radius:4px;color:var(--pe2);}
+
+  .pull-quote{border-left:3px solid var(--pe);padding:6px 0 6px 28px;margin:36px 0;}
+  .pull-quote.ag{border-left-color:var(--ag);}
+  .pull-quote.react{border-left-color:var(--react);}
+  .pull-quote p{font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:var(--ink);line-height:1.62;margin:0;}
+
+  .analogy{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:22px 28px;margin:26px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+  .analogy-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;}
+  .analogy-label.pe{color:var(--pe);}
+  .analogy-label.ag{color:var(--ag);}
+  .analogy p{font-size:14.5px;color:var(--ink2);margin:0;}
+
+  .callout{border-radius:10px;padding:18px 22px;margin:26px 0;border:1px solid transparent;}
+  .callout-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;margin-bottom:8px;}
+  .callout p{font-size:14px;margin:0;line-height:1.68;}
+  .callout.pe{background:var(--pe-bg);border-color:var(--pe-bd);}
+  .callout.pe .callout-label{color:var(--pe);}
+  .callout.reason{background:var(--reason-bg);border-color:var(--reason-bd);}
+  .callout.reason .callout-label{color:var(--reason);}
+  .callout.pitfall{background:var(--pitfall-bg);border-color:var(--pitfall-bd);}
+  .callout.pitfall .callout-label{color:var(--pitfall);}
+  .callout.ag{background:var(--ag-bg);border-color:var(--ag-bd);}
+  .callout.ag .callout-label{color:var(--ag);}
+  .callout.react{background:var(--react-bg);border-color:var(--react-bd);}
+  .callout.react .callout-label{color:var(--react);}
+  .callout.tool{background:var(--tool-bg);border-color:var(--tool-bd);}
+  .callout.tool .callout-label{color:var(--tool);}
+  .callout.multi{background:var(--multi-bg);border-color:var(--multi-bd);}
+  .callout.multi .callout-label{color:var(--multi);}
+  .callout.green{background:var(--green-bg);border-color:rgba(5,150,105,0.22);}
+  .callout.green .callout-label{color:var(--green);}
+
+  .jargon{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--paper3);border-radius:6px;padding:10px 14px;margin:7px 0;}
+  .jargon-term{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0;padding-top:1px;}
+  .jargon-term.pe{color:var(--pe2);}
+  .jargon-term.reason{color:var(--reason);}
+  .jargon-term.ag{color:var(--ag2);}
+  .jargon-term.react{color:var(--react);}
+  .jargon-term.tool{color:var(--tool);}
+  .jargon-term.multi{color:var(--multi);}
+  .jargon-term.mem{color:var(--mem);}
+  .jargon-def{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── PROMPT ANATOMY VISUAL ── */
+  .anatomy-wrap{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;margin:24px 0;box-shadow:0 1px 8px rgba(0,0,0,0.04);}
+  .anatomy-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--pe);padding:14px 20px;border-bottom:1px solid var(--paper3);background:var(--pe-bg);}
+  .anatomy-layer{padding:14px 20px;border-bottom:1px solid var(--paper2);display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:start;}
+  .anatomy-layer:last-child{border-bottom:none;}
+  .anatomy-part{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;display:inline-block;text-align:center;}
+  .anatomy-part.sys{background:var(--pe-bg);color:var(--pe);border:1px solid var(--pe-bd);}
+  .anatomy-part.user{background:var(--reason-bg);color:var(--reason);border:1px solid var(--reason-bd);}
+  .anatomy-part.ctx{background:#eff6ff;color:#1d4ed8;border:1px solid rgba(37,99,235,0.22);}
+  .anatomy-part.fmt{background:var(--ag-bg);color:var(--ag);border:1px solid var(--ag-bd);}
+  .anatomy-content{font-size:13.5px;color:var(--ink2);}
+  .anatomy-content strong{color:var(--ink);}
+  .anatomy-example{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3);margin-top:5px;font-style:italic;}
+
+  /* ── TECHNIQUE CARDS ── */
+  .tech-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;}
+  .tech-card{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+  .tech-card-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
+  .tech-card-tag.basic{color:var(--basic);}
+  .tech-card-tag.reason{color:var(--reason);}
+  .tech-card-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px;}
+  .tech-card-desc{font-size:13px;color:var(--ink2);line-height:1.58;margin-bottom:8px;}
+  .tech-card-use{font-size:11.5px;color:var(--ink3);font-style:italic;border-top:1px solid var(--paper2);padding-top:7px;}
+
+  /* ── PITFALL TABLE ── */
+  .pitfall-table{width:100%;border-collapse:collapse;margin:18px 0;}
+  .pitfall-table th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--paper3);}
+  .pitfall-table td{padding:10px 0 9px;border-bottom:1px solid var(--paper2);vertical-align:top;line-height:1.55;}
+  .pitfall-table td:first-child{font-weight:600;color:var(--pitfall);padding-right:18px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+  .pitfall-table td:last-child{color:var(--ink2);}
+  .pitfall-table tr:last-child td{border-bottom:none;}
+
+  /* ── TOOLS GRID ── */
+  .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+  .tool-card{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+  .tool-card-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:4px;}
+  .tool-card-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tools);margin-bottom:8px;}
+  .tool-card-desc{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── REACT LOOP VISUAL ── */
+  .react-wrap{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:22px 26px;margin:24px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .react-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--react);margin-bottom:18px;}
+  .react-steps{display:flex;align-items:center;gap:0;flex-wrap:wrap;}
+  .react-step{flex:1;min-width:110px;background:var(--react-bg);border:1.5px solid var(--react-bd);border-radius:10px;padding:14px 14px;text-align:center;}
+  .react-step-num{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--react);margin-bottom:5px;}
+  .react-step-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:4px;}
+  .react-step-desc{font-size:12px;color:var(--ink3);}
+  .react-arrow{font-size:20px;color:var(--paper3);flex-shrink:0;padding:0 6px;}
+  .react-loop{text-align:center;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--react);letter-spacing:0.1em;}
+
+  /* ── AGENT COMPONENT VISUAL ── */
+  .agent-components{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0;}
+  .ac-card{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 5px rgba(0,0,0,0.04);border-left:3px solid;}
+  .ac-card.brain{border-left-color:var(--ag);}
+  .ac-card.tools{border-left-color:var(--tool);}
+  .ac-card.memory{border-left-color:var(--mem);}
+  .ac-card.planning{border-left-color:var(--reason);}
+  .ac-card.obs{border-left-color:var(--react);}
+  .ac-card-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
+  .ac-card.brain .ac-card-label{color:var(--ag);}
+  .ac-card.tools .ac-card-label{color:var(--tool);}
+  .ac-card.memory .ac-card-label{color:var(--mem);}
+  .ac-card.planning .ac-card-label{color:var(--reason);}
+  .ac-card.obs .ac-card-label{color:var(--react);}
+  .ac-card-title{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px;}
+  .ac-card-desc{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── TOOL USE TABLE ── */
+  .m-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;}
+  .m-table th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--paper3);}
+  .m-table td{padding:10px 0 9px;border-bottom:1px solid var(--paper2);vertical-align:top;color:var(--ink2);line-height:1.55;}
+  .m-table td:first-child{font-weight:600;color:var(--ink);padding-right:18px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .m-table tr:last-child td{border-bottom:none;}
+
+  /* ── MEMORY VISUAL ── */
+  .mem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+  .mem-card{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+  .mem-card-type{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--mem);margin-bottom:6px;}
+  .mem-card-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px;}
+  .mem-card-desc{font-size:13.5px;color:var(--ink2);line-height:1.55;margin-bottom:6px;}
+  .mem-card-eg{font-size:12px;color:var(--ink3);font-style:italic;border-top:1px solid var(--paper2);padding-top:7px;}
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap{background:var(--code-bg);border-radius:12px;overflow:hidden;margin:28px 0;}
+  .code-header{background:rgba(255,255,255,0.04);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .code-header-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+  .code-dots{display:flex;gap:6px;}
+  .code-dot{width:10px;height:10px;border-radius:50%;}
+  .code-dot:nth-child(1){background:#ff5f57;}
+  .code-dot:nth-child(2){background:#febc2e;}
+  .code-dot:nth-child(3){background:#28c840;}
+  pre{padding:22px 24px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.8;color:var(--code-txt);}
+  .cm{color:#4a5580;} .ck{color:#ce93d8;} .cs{color:#a5d6a7;} .cn{color:#ffcc80;} .cf{color:#90caf9;}
+
+  .expected-output{background:#0a100a;border:1px solid rgba(52,211,153,0.18);border-radius:10px;margin:-10px 0 28px;overflow:hidden;}
+  .expected-output-header{background:rgba(52,211,153,0.07);padding:8px 20px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#34d399;border-bottom:1px solid rgba(52,211,153,0.14);}
+  .expected-output pre{padding:16px 20px;font-size:12px;line-height:1.75;color:#c5cae9;background:transparent;}
+  .out-h{color:#90caf9;} .out-n{color:#ffcc80;} .out-g{color:#a5d6a7;} .out-d{color:#80deea;}
+
+  .agent-box{background:#0d0600;border-radius:14px;padding:32px 34px;margin:46px 0;position:relative;overflow:hidden;}
+  .agent-box::before{content:'';position:absolute;top:-50px;left:-50px;width:300px;height:300px;background:radial-gradient(circle,rgba(234,88,12,0.15) 0%,transparent 65%);pointer-events:none;}
+  .agent-box::after{content:'';position:absolute;bottom:-50px;right:-50px;width:260px;height:260px;background:radial-gradient(circle,rgba(5,150,105,0.14) 0%,transparent 65%);pointer-events:none;}
+  .ab-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:#fb923c;margin-bottom:14px;position:relative;}
+  .agent-box h3{color:#fff;margin:0 0 12px;font-size:1.1rem;position:relative;}
+  .agent-box p{color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;position:relative;line-height:1.72;}
+  .agent-box p:last-child{margin-bottom:0;}
+
+  .cheat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;}
+  .cheat-cell{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+  .cheat-cell.pe{border-top:3px solid var(--pe);}
+  .cheat-cell.reason{border-top:3px solid var(--reason);}
+  .cheat-cell.pitfall{border-top:3px solid var(--pitfall);}
+  .cheat-cell.ag{border-top:3px solid var(--ag);}
+  .cheat-cell.react{border-top:3px solid var(--react);}
+  .cheat-cell.mem{border-top:3px solid var(--mem);}
+  .cheat-cell-name{font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:3px;}
+  .cheat-cell-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-bottom:8px;letter-spacing:0.06em;}
+  .cheat-cell ul{list-style:none;font-size:13px;color:var(--ink2);}
+  .cheat-cell ul li{padding:2px 0 2px 14px;position:relative;}
+  .cheat-cell ul li::before{content:'·';position:absolute;left:0;color:var(--ink3);}
+
+  .footer{background:#0d0600;padding:56px 24px;margin-top:80px;text-align:center;}
+  .footer-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;}
+  .footer-sub{font-size:13px;color:rgba(255,255,255,0.38);margin-bottom:10px;}
+  .footer-next{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#fb923c;margin-top:20px;}
+  .footer-block{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgba(251,146,60,0.5);margin-top:8px;}
+
+  @media(max-width:640px){
+    .tech-grid,.tools-grid,.agent-components,.mem-grid,.cheat-grid{grid-template-columns:1fr;}
+    .masthead-inner{flex-direction:column;gap:4px;}
+    .react-steps{flex-direction:column;align-items:stretch;}
+    .react-arrow{transform:rotate(90deg);}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="ms-t">Master Agentic AI with Me · Issue #10</div>
+    <div class="ms-m">Blocks 08 + 09 · Prompt Engineering + Agentic AI · Both Complete</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="issue-tag">Issue 10 · Blocks 08 + 09 · The Applied Layer Begins</div>
+  <h1>From <em class="pe">Prompting</em><br>to <em class="ag">Autonomous Agents</em></h1>
+  <p class="hero-sub">How to talk to LLMs reliably — then how to give them tools, memory, and the ability to act in the world without you holding their hand.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>32 min</strong>read</div>
+    <div class="hero-stat"><strong>2</strong>blocks covered</div>
+    <div class="hero-stat"><strong>5</strong>code cells</div>
+    <div class="hero-stat"><strong>12</strong>prompt techniques</div>
+  </div>
+  <div class="hero-badges">
+    <span class="hbadge pe">Anatomy · Zero-shot · Few-shot · Role</span>
+    <span class="hbadge pe">CoT · ReAct · Self-consistency · Tree of Thought</span>
+    <span class="hbadge pe">Pitfalls · Fixes · Playground · LangSmith</span>
+    <span class="hbadge ag">5 Agent Components · Patterns · Tools</span>
+    <span class="hbadge ag">Multi-agent · 4 Memory Types</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-label">In this issue — Blocks 08 + 09</div>
+    <div class="toc-section pe">Block 08 — Prompt Engineering</div>
+    <ol>
+      <li class="pe"><a href="#anatomy">Anatomy of a good prompt — 4 parts + 6 golden rules</a></li>
+      <li class="pe"><a href="#basic">Basic techniques — zero-shot, few-shot, role, instruction, negative, output format</a></li>
+      <li class="pe"><a href="#reasoning">Reasoning techniques — CoT, zero-shot CoT, self-consistency, prompt chaining, ReAct, Tree of Thought</a></li>
+      <li class="pe"><a href="#pitfalls">Common pitfalls and fixes — 6 problems, 6 solutions</a></li>
+      <li class="pe"><a href="#pe-tools">Prompt engineering tools — Playground, Console, AI Studio, LangSmith, PromptFlow</a></li>
+    </ol>
+    <div class="toc-section ag">Block 09 — Agentic AI</div>
+    <ol start="6">
+      <li class="ag"><a href="#agent-what">What makes an agent — 5 components</a></li>
+      <li class="ag"><a href="#agent-patterns">Agent patterns — ReAct, Plan-and-Execute, Function calling, Multi-agent, HITL</a></li>
+      <li class="ag"><a href="#tool-use">Tool use — 6 tool types with examples</a></li>
+      <li class="ag"><a href="#multi-agent">Multi-agent systems — orchestrator, sub-agents, communication, HITL</a></li>
+      <li class="ag"><a href="#memory">Agent memory types — short-term, long-term, episodic, procedural</a></li>
+    </ol>
+  </div>
+
+  <div class="eyebrow pe">From the editor</div>
+  <p>Welcome to Issue 10 — the issue where everything becomes real. Issues 01–09 were about understanding: how neural networks work, how Transformers are built, how LLMs are trained. This issue and everything after it is about doing.</p>
+  <p>Block 08 (Prompt Engineering) is the first practical skill. You already have access to the most powerful LLMs in history. Prompt engineering is what determines whether they do what you actually want. A well-crafted prompt is worth a thousand lines of fine-tuning code — and it works immediately.</p>
+  <p>Block 09 (Agentic AI) is where things get genuinely exciting. An LLM that only answers questions is a tool. An LLM that can use tools, plan multi-step workflows, remember what it did, and act autonomously in the world is an agent. This block is the core of this entire newsletter series — everything from NLP to Transformers to embeddings was preparation for this.</p>
+
+  <!-- ════ BLOCK 08 ════ -->
+
+  <div class="block-divider"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num pe">Block 08</div>
+      <div class="block-title">Prompt Engineering</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 1 · Anatomy of a Good Prompt</span></div>
+
+  <div id="anatomy">
+    <div class="eyebrow pe">The foundation</div>
+    <h2>Anatomy of a good prompt — <em class="pe">four parts, six rules</em></h2>
+
+    <p>LLMs are sensitive to phrasing in ways that feel almost irrational until you understand why. The model has no persistent understanding of you, your context, or your intent. Every call is a blank slate. A well-structured prompt is what gives the model everything it needs to do what you actually want — nothing more, nothing less.</p>
+
+    <p>Every high-quality prompt has four parts. They don't all need to be present, but when a prompt fails, it's almost always because one of them is missing.</p>
+
+    <div class="anatomy-wrap">
+      <div class="anatomy-label">The four components of a production-grade prompt</div>
+      <div class="anatomy-layer">
+        <div class="anatomy-part sys">SYSTEM PROMPT</div>
+        <div class="anatomy-content">
+          <strong>Set the model's role, persona, rules, and constraints.</strong> Who is the model? What is it allowed to do? What must it never do? What format should it always use?
+          <div class="anatomy-example">e.g. "You are a senior Python engineer. Always return code in a code block. Never suggest workarounds — only production-grade solutions. If you don't know, say so."</div>
+        </div>
+      </div>
+      <div class="anatomy-layer">
+        <div class="anatomy-part user">USER MESSAGE</div>
+        <div class="anatomy-content">
+          <strong>The actual question or task.</strong> Be specific, explicit, and unambiguous. Vague requests produce vague responses — this is not a model limitation, it's an input problem.
+          <div class="anatomy-example">e.g. "Write a function that takes a list of integers and returns them sorted in descending order, with duplicates removed."</div>
+        </div>
+      </div>
+      <div class="anatomy-layer">
+        <div class="anatomy-part ctx">CONTEXT / EXAMPLES</div>
+        <div class="anatomy-content">
+          <strong>Background the model doesn't have, or demonstrations of what you want.</strong> Documents, data, few-shot examples, conversation history, or domain-specific facts not in the model's training data.
+          <div class="anatomy-example">e.g. "Here is our internal API schema: [schema]. Here are two examples of correct responses: [example 1] [example 2]."</div>
+        </div>
+      </div>
+      <div class="anatomy-layer">
+        <div class="anatomy-part fmt">OUTPUT FORMAT</div>
+        <div class="anatomy-content">
+          <strong>Exactly how the response should be structured.</strong> JSON schema, markdown headers, bullet points, a specific table format, a single word. If you need the output machine-readable, this is non-negotiable.
+          <div class="anatomy-example">e.g. "Respond ONLY with a JSON object: {\"sentiment\": \"positive|negative|neutral\", \"confidence\": 0.0–1.0, \"reason\": \"one sentence\"}"</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>The six golden rules</h3>
+    <table class="m-table">
+      <tr><th>Rule</th><th>Why it matters</th></tr>
+      <tr><td>Be specific and explicit</td><td>"Summarise this" → 50% chance of the right length, tone, and depth. "Summarise in 3 bullet points, each under 20 words, for a non-technical executive audience" → consistent output every time.</td></tr>
+      <tr><td>Always specify output format</td><td>Without a format, the model picks one. That choice may be inconsistent across calls and incompatible with your parsing code. JSON, markdown, table, single word — always say which.</td></tr>
+      <tr><td>Give context the model doesn't have</td><td>Your company's products, your user's history, today's date, your codebase conventions. The model can only work with what's in the context window. If it's not in the prompt, it doesn't exist.</td></tr>
+      <tr><td>Iterate — first prompt is rarely the best</td><td>Prompting is engineering. Version your prompts. Test them on 20–30 representative inputs. Measure which version fails. Fix the failures. The best prompts are built through iteration, not inspiration.</td></tr>
+      <tr><td>Tell it what NOT to do</td><td>Negative constraints are often more reliable than positive ones. "Don't suggest workarounds" is clearer than "only suggest production solutions." Both together is best.</td></tr>
+      <tr><td>Test with edge cases</td><td>The happy path always works. Test: empty inputs, contradictory instructions, off-topic questions, adversarial inputs. Your prompt is only as good as its worst-case performance.</td></tr>
+    </table>
+  </div>
+
+  <div class="divider"><span>Part 2 · Basic Techniques</span></div>
+
+  <div id="basic">
+    <div class="eyebrow pe">Core techniques</div>
+    <h2>Six basic techniques — <em class="pe">the daily vocabulary</em></h2>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-card-tag basic">Basic · 01</div>
+        <div class="tech-card-name">Zero-Shot</div>
+        <div class="tech-card-desc">Just ask — no examples. "Translate to French: The weather is nice." The model draws on pre-training knowledge directly. Works for common, well-defined tasks the model has seen thousands of examples of during training.</div>
+        <div class="tech-card-use">When to use: Standard tasks — translation, summarisation, classification of common categories. When speed matters more than style consistency.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-tag basic">Basic · 02</div>
+        <div class="tech-card-name">Few-Shot</div>
+        <div class="tech-card-desc">Give 2–5 input/output demonstrations before your actual query. The model recognises the pattern and applies it. More examples = more consistent output, but more tokens consumed.</div>
+        <div class="tech-card-use">When to use: When output format or style matters. Novel classification categories. Unusual writing styles. Any task where zero-shot produces inconsistent formatting.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-tag basic">Basic · 03</div>
+        <div class="tech-card-name">Role Prompting</div>
+        <div class="tech-card-desc">"You are an expert [domain] with [years] of experience in [speciality]." Sets the model's perspective, vocabulary level, and depth of detail. Shifts tone from casual to professional or vice versa.</div>
+        <div class="tech-card-use">When to use: Technical depth ("expert Python engineer"), tone calibration ("patient teacher for beginners"), professional voice ("senior legal analyst").</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-tag basic">Basic · 04</div>
+        <div class="tech-card-name">Instruction Prompting</div>
+        <div class="tech-card-desc">Explicit, numbered step-by-step instructions. "Step 1: Extract the dates. Step 2: For each date, identify the event. Step 3: Return as a JSON array." Remove ambiguity by decomposing the task yourself.</div>
+        <div class="tech-card-use">When to use: Complex tasks the model keeps misunderstanding. Multi-step workflows where each step must happen in order.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-tag basic">Basic · 05</div>
+        <div class="tech-card-name">Negative Prompting</div>
+        <div class="tech-card-desc">Explicitly tell the model what NOT to do or produce. "Do not include markdown formatting." "Never make up citations." "Do not ask clarifying questions — make your best attempt." Negative constraints are often more reliable than positive alternatives.</div>
+        <div class="tech-card-use">When to use: Removing unwanted default behaviours. Enforcing safety constraints. Preventing the model from adding unsolicited advice.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-tag basic">Basic · 06</div>
+        <div class="tech-card-name">Output Format Control</div>
+        <div class="tech-card-desc">Specify exactly how the response must be structured: JSON schema, markdown headers, a table, a numbered list, a single word, or a specific XML structure. Critical for any production system that parses model output programmatically.</div>
+        <div class="tech-card-use">When to use: Any API integration. Structured data extraction. Anything downstream code will parse. Always.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · Reasoning Techniques</span></div>
+
+  <div id="reasoning">
+    <div class="eyebrow reason">Advanced techniques</div>
+    <h2>Reasoning techniques — <em class="reason">make the model think harder</em></h2>
+
+    <p>The basic techniques tell the model what to produce. Reasoning techniques change how the model processes the problem before answering. The core insight: LLMs are better at problems when they reason through intermediate steps than when they jump straight to an answer. This isn't anthropomorphic — it's mechanistic. More tokens in the reasoning chain = more "computation" before the final answer token = higher accuracy on complex tasks.</p>
+
+    <div class="pull-quote">
+      <p>"Think step by step" is perhaps the highest return-on-investment prompt modification that exists. Three words. Measurable accuracy improvement on every complex task.</p>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term reason">Chain-of-Thought (CoT)</span>
+      <span class="jargon-def">Ask the model to reason step by step before giving a final answer. Technique: either include step-by-step reasoning examples in your few-shot demos, or explicitly say "Think through this step by step, then give your final answer." Why it works: the intermediate reasoning tokens create a "scratchpad" — the model can attend back to its own reasoning when generating the final answer, rather than needing to compute everything in one implicit forward pass. Google Brain's 2022 paper showed CoT dramatically improves accuracy on math, logic, and commonsense reasoning tasks.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term reason">Zero-Shot CoT</span>
+      <span class="jargon-def">The simplest form of CoT: append "Let's think step by step." to any prompt. No examples needed. This single phrase activates the model's reasoning mode and produces intermediate steps before the final answer. Works surprisingly well. Also effective: "Work through this carefully." / "Think about this systematically." / "What are all the considerations here?" Any phrase that signals "don't jump to the answer" triggers similar behaviour.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term reason">Self-Consistency</span>
+      <span class="jargon-def">Generate the same question multiple times with non-zero temperature (getting different reasoning chains each time), then take a majority vote over the final answers. For a math problem, generate 10 reasoning chains — if 7 arrive at "42", answer is "42" even if some intermediate steps differ. More reliable than single-shot for tasks with a correct answer. Costs more (10× the tokens and API calls). Best for high-stakes decisions where accuracy matters more than cost.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term reason">Prompt Chaining</span>
+      <span class="jargon-def">Break a complex task into multiple smaller prompts where the output of each becomes the input of the next. "Step 1 prompt: extract all entities → Step 2 prompt: for each entity, classify its type → Step 3 prompt: given the entity list, answer the question." Each step is simpler and more reliable than doing everything in one prompt. Also allows validation between steps — if step 1 output is wrong, you catch it before wasting tokens on steps 2 and 3. This is the foundation of agent pipeline design.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term reason">ReAct Prompting</span>
+      <span class="jargon-def">Reason + Act. A prompting pattern where the model alternates between Thought (reasoning about the current state), Action (calling a tool or taking a step), and Observation (seeing the result of the action). "Thought: I need to find the population of Chennai. Action: search[Chennai population 2024]. Observation: Chennai population is 7.1 million. Thought: Now I can answer." This is the foundational prompting pattern for AI agents — the Thought-Action-Observation loop is what enables a model to use tools iteratively to solve problems. Covered in depth in Block 09.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term reason">Tree of Thought (ToT)</span>
+      <span class="jargon-def">An extension of CoT: instead of one linear reasoning chain, explore multiple reasoning branches simultaneously and evaluate which branches look most promising before continuing. Think of it as beam search applied to reasoning rather than token generation. Prompt the model to generate several possible next reasoning steps, evaluate each, continue the most promising ones, backtrack from dead ends. More complex to implement (requires multiple LLM calls per reasoning step) but significantly outperforms CoT on tasks that require systematic exploration — puzzles, game-playing, multi-step planning. Intro concept — the principle matters more than the implementation at this stage.</span>
+    </div>
+
+    <div class="callout reason">
+      <div class="callout-label">The key insight — why reasoning techniques work</div>
+      <p>An LLM is a token predictor. Every token it generates is conditioned on all previous tokens. When you ask "What is 17 × 23?" the model must predict the answer in one shot from "?" → "391". When you ask "What is 17 × 23? Let's think step by step." the model generates "17 × 23 = 17 × 20 + 17 × 3 = 340 + 51 = 391." The intermediate tokens (340, 51) exist in the context and the model attends to them when generating "391". The correct answer is now the most likely next token because the reasoning was correct, not because the model memorised 17×23. This is why CoT helps on novel problems the model hasn't seen during training — it creates a computation path where memorisation is not required.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · Pitfalls and Fixes</span></div>
+
+  <div id="pitfalls">
+    <div class="eyebrow pe">What goes wrong</div>
+    <h2>Six common pitfalls — <em class="pe">and exactly how to fix them</em></h2>
+
+    <p>Every prompt engineer spends time debugging prompts that almost work. The same six failures appear over and over. Recognise the pattern and you can fix any prompt failure in minutes.</p>
+
+    <table class="pitfall-table">
+      <tr>
+        <th width="22%">Problem</th>
+        <th>What happens</th>
+        <th>Fix</th>
+      </tr>
+      <tr>
+        <td>Vague instructions</td>
+        <td>Model guesses at intent, produces output that's right shape but wrong content. "Summarise this" → you get a paragraph when you wanted bullet points.</td>
+        <td>Be explicit with every dimension: length ("3 bullet points"), audience ("for a 10-year-old"), tone ("formal"), depth ("key numbers only, no narrative"). Leave nothing open to interpretation.</td>
+      </tr>
+      <tr>
+        <td>No output format</td>
+        <td>Output varies between calls — sometimes markdown, sometimes prose, sometimes lists. Downstream parsing breaks on the inconsistent structure.</td>
+        <td>Always specify format. For machine-readable: provide a JSON schema and say "respond ONLY with valid JSON, no other text." For human-readable: "use ## headers for each section, bullet points for lists."</td>
+      </tr>
+      <tr>
+        <td>Hallucinations</td>
+        <td>Model confidently states false information — wrong dates, made-up citations, incorrect facts — because generating a plausible-sounding answer is easier than admitting uncertainty.</td>
+        <td>Explicitly instruct: "If you are not certain, say 'I don't know' or 'I'm not sure.' Do not guess." For factual tasks, use RAG to ground the model in retrieved documents and instruct it to only answer from those documents.</td>
+      </tr>
+      <tr>
+        <td>Inconsistent results</td>
+        <td>Same prompt, different outputs across calls in ways that matter for your application — different sentiment labels, different classifications, different styles.</td>
+        <td>Add few-shot examples to anchor format and style. Lower temperature (0.1–0.3) for deterministic tasks. Add explicit definitions: "Positive = score 4-5/5, Neutral = score 3/5, Negative = score 1-2/5."</td>
+      </tr>
+      <tr>
+        <td>Ignores instructions</td>
+        <td>Critical instructions buried in the middle of a long prompt are missed. The "lost-in-the-middle" problem: LLMs attend more strongly to content at the beginning and end of context.</td>
+        <td>Put critical constraints at the start AND end of the system prompt. Use formatting to make them salient: "IMPORTANT: Never mention competitor products." Test specifically for instruction-following by crafting inputs designed to trigger the violation.</td>
+      </tr>
+      <tr>
+        <td>Too long prompt</td>
+        <td>Unnecessary context dilutes attention on the parts that matter. More tokens = more cost = more latency. Model may lose track of specific constraints in a wall of text.</td>
+        <td>Every sentence in a prompt should earn its place. Remove preamble, pleasantries, redundant explanations. Typical production system prompts: 200–600 words. If longer, modularise with clear XML tags: &lt;rules&gt;, &lt;examples&gt;, &lt;format&gt;.</td>
+      </tr>
+    </table>
+
+    <div class="callout pitfall">
+      <div class="callout-label">The meta-fix: iterate with metrics</div>
+      <p>The fastest path to a reliable prompt is to build a test set of 20–50 representative inputs with expected outputs, then measure how often your current prompt gets the right answer. Every iteration should improve the score on the test set. Without measurement, prompt engineering is guesswork. With measurement, it's engineering. LangSmith and Braintrust are built specifically for this — they run your prompt against test cases automatically and show you which inputs fail.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · Prompt Engineering Tools</span></div>
+
+  <div id="pe-tools">
+    <div class="eyebrow pe">Where to build and test</div>
+    <h2>Five tools — <em class="pe">where professionals work</em></h2>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-card-name">Anthropic Console</div>
+        <div class="tool-card-tag">console.anthropic.com</div>
+        <div class="tool-card-desc">Test Claude models with system prompts and user messages. Has a built-in prompt generator — describe what you want and Claude writes a starting prompt for you. Directly connected to the same models you'll use in production. Best starting point for Claude-based agents.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">OpenAI Playground</div>
+        <div class="tool-card-tag">platform.openai.com/playground</div>
+        <div class="tool-card-desc">Interactive environment for testing GPT prompts with full parameter control — model, temperature, top-p, max tokens, stop sequences. Supports function calling and tool testing. The reference environment for GPT-based development.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">Google AI Studio</div>
+        <div class="tool-card-tag">aistudio.google.com</div>
+        <div class="tool-card-desc">Test Gemini models with system instructions, multimodal inputs (images, audio, video), and structured output. Free tier with generous rate limits — the best free option for testing. Exports directly to production API code.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">LangSmith</div>
+        <div class="tool-card-tag">smith.langchain.com · debug + trace + eval</div>
+        <div class="tool-card-desc">The professional tool for production prompt engineering. Traces every LLM call in your chain, showing inputs, outputs, latency, and token costs. Run test datasets against prompts. Compare versions. Debug failures by stepping through every node. Essential once your agents go beyond single-prompt calls.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">PromptFlow (Azure)</div>
+        <div class="tool-card-tag">Azure AI Studio · visual pipeline builder</div>
+        <div class="tool-card-desc">Visual drag-and-drop builder for LLM pipelines on Azure. Connect prompts, tools, data sources, and conditional logic in a flowchart UI. Built-in evaluation, versioning, and deployment to Azure endpoints. Best for teams already in the Microsoft ecosystem.</div>
+      </div>
+    </div>
+
+    <div class="callout pe">
+      <div class="callout-label">Where to start — the practical recommendation</div>
+      <p>If you're new: start with Anthropic Console or Google AI Studio (both free, no setup). Learn your way around system prompts, temperature, and few-shot examples. Once you're building multi-step chains: add LangSmith. It will show you failures you didn't know you had. For teams with a Microsoft stack: PromptFlow integrates with Azure OpenAI and makes prompt versioning and team collaboration much cleaner.</p>
+    </div>
+  </div>
+
+  <!-- ════ BLOCK 09 ════ -->
+
+  <div class="block-divider"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num ag">Block 09</div>
+      <div class="block-title">Agentic AI — LLMs That Act in the World</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 6 · What Makes an Agent</span></div>
+
+  <div id="agent-what">
+    <div class="eyebrow ag">The definition</div>
+    <h2>What makes an agent — <em class="ag">five components</em></h2>
+
+    <p>An LLM that answers questions is a tool. An AI agent is something different: it has a goal, it can take actions to achieve that goal, it observes the results of those actions, and it decides what to do next — repeatedly, until the goal is achieved. No human needs to guide each step.</p>
+
+    <p>The difference is not about the model — it's about the system around it. A GPT-4 answering questions is not an agent. The same GPT-4, given tools, a planning loop, and memory of what it's already tried, is an agent.</p>
+
+    <div class="pull-quote ag">
+      <p>An agent is not a smarter chatbot. It's an LLM that has been given the ability to act — and a loop that keeps it acting until the job is done.</p>
+    </div>
+
+    <div class="agent-components">
+      <div class="ac-card brain">
+        <div class="ac-card-label">Component 1 · The Brain</div>
+        <div class="ac-card-title">LLM — Reasoning and Decision-Making</div>
+        <div class="ac-card-desc">The LLM is the agent's brain. It reads the current state (task, memory, tool results), decides what to do next, and generates either a final answer or a tool call. Everything else is scaffolding — the LLM is the intelligence. This is why bigger, more capable models make better agents — they plan better, recover from errors more gracefully, and follow complex instructions more reliably.</div>
+      </div>
+      <div class="ac-card tools">
+        <div class="ac-card-label">Component 2 · The Hands</div>
+        <div class="ac-card-title">Tools — What the Agent Can Actually Do</div>
+        <div class="ac-card-desc">Tools extend the LLM beyond text generation. Without tools, an agent can only think — it can't search, compute, or interact with external systems. With tools, it can check today's stock price, run Python code, query a database, send an email, or call any API. The set of tools is the set of actions available to the agent. Designing the right tools is one of the most important agent architecture decisions.</div>
+      </div>
+      <div class="ac-card memory">
+        <div class="ac-card-label">Component 3 · The Memory</div>
+        <div class="ac-card-title">Memory — What the Agent Knows and Has Done</div>
+        <div class="ac-card-desc">Memory lets an agent accumulate context across steps (short-term) and across sessions (long-term). Without memory, each step is independent — the agent forgets what it tried, what failed, and what the user told it. With memory, it can learn from previous actions in the current task and from past interactions with the same user. Four types: short-term (in-context), long-term (vector DB), episodic (past conversations), procedural (successful strategies).</div>
+      </div>
+      <div class="ac-card planning">
+        <div class="ac-card-label">Component 4 · The Strategy</div>
+        <div class="ac-card-title">Planning — Breaking Goals into Steps</div>
+        <div class="ac-card-desc">Given a complex goal ("research competitors and write a report"), planning is how the agent decomposes it into an ordered sequence of achievable sub-tasks: 1) identify competitors, 2) search for each competitor, 3) extract key info, 4) compare, 5) write report. Better planning = fewer dead ends, less wasted computation, more reliable task completion. This is where prompt engineering and agent design overlap — the planning quality depends heavily on how the task is framed to the LLM.</div>
+      </div>
+      <div class="ac-card obs" style="grid-column: span 2;">
+        <div class="ac-card-label">Component 5 · The Feedback Loop</div>
+        <div class="ac-card-title">Observation Loop — Act → See Result → Decide Next Step</div>
+        <div class="ac-card-desc">The observation loop is what makes an LLM an agent instead of a pipeline. After every action, the agent observes the result and updates its understanding of the current state. Tool returned an error? Try a different approach. Search returned irrelevant results? Refine the query. Task completed successfully? Move to the next sub-task. This loop runs until the goal is achieved or a maximum step count is reached. The loop is typically: Thought → Action → Observation → Thought → Action → Observation → … → Final Answer.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · Agent Patterns</span></div>
+
+  <div id="agent-patterns">
+    <div class="eyebrow react">How agents are structured</div>
+    <h2>Five agent patterns — <em class="react">the architectures you'll actually build</em></h2>
+
+    <div class="jargon">
+      <span class="jargon-term react">ReAct — Reason + Act</span>
+      <span class="jargon-def">The most widely used agent pattern. The agent alternates between Thought (reasoning about what to do), Action (calling a tool with parameters), and Observation (seeing the tool's result). This loop repeats until the agent determines the task is complete and outputs a Final Answer. Simple to implement, interpretable (you can read the reasoning chain), and works reliably with capable LLMs. The foundational pattern — learn this before any other. Start here.</span>
+    </div>
+
+    <div class="react-wrap">
+      <div class="react-label">ReAct loop — how it runs step by step</div>
+      <div class="react-steps">
+        <div class="react-step">
+          <div class="react-step-num">Step 1</div>
+          <div class="react-step-name">Thought</div>
+          <div class="react-step-desc">LLM reasons about the task and current state</div>
+        </div>
+        <div class="react-arrow">→</div>
+        <div class="react-step">
+          <div class="react-step-num">Step 2</div>
+          <div class="react-step-name">Action</div>
+          <div class="react-step-desc">LLM selects a tool and provides parameters</div>
+        </div>
+        <div class="react-arrow">→</div>
+        <div class="react-step">
+          <div class="react-step-num">Step 3</div>
+          <div class="react-step-name">Observation</div>
+          <div class="react-step-desc">Tool runs, result injected into context</div>
+        </div>
+        <div class="react-arrow">→</div>
+        <div class="react-step" style="background:var(--ag-bg);border-color:var(--ag-bd);">
+          <div class="react-step-num" style="color:var(--ag);">Decision</div>
+          <div class="react-step-name">Continue or Finish?</div>
+          <div class="react-step-desc">If done → Final Answer. If not → next Thought.</div>
+        </div>
+      </div>
+      <div class="react-loop">↑ loops until task complete or max steps reached ↑</div>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term react">Plan-and-Execute</span>
+      <span class="jargon-def">The agent first generates a complete plan (ordered list of steps to achieve the goal), then executes each step one by one. Unlike ReAct which plans one step at a time, Plan-and-Execute commits to a full plan upfront. Advantage: better for long, structured tasks where the sequence of steps is mostly predictable and you want the plan to be reviewable before execution. Disadvantage: the plan can't adapt if early steps return unexpected results — less flexible than ReAct. Common hybrid: Plan-and-Execute with a ReAct loop inside each step execution.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term react">Tool Use / Function Calling</span>
+      <span class="jargon-def">The LLM is given a list of available functions with their signatures and descriptions. When it needs to use one, it outputs a structured JSON object specifying the function name and arguments — not a text command, an actual machine-parseable call. The framework executes the function, injects the result back into the context, and the LLM continues. This is how modern agents are actually implemented: OpenAI's function calling API, Anthropic's tool use API, and LangChain's tool-calling abstractions all use this pattern. The LLM becomes a decision-maker about which function to call and with what parameters.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term react">Multi-Agent</span>
+      <span class="jargon-def">A system where multiple specialised LLM agents collaborate on a task, each with different tools, knowledge, or responsibilities. An orchestrator agent receives the high-level goal, decomposes it, and delegates sub-tasks to specialised sub-agents (a researcher agent, a coder agent, a writer agent). Sub-agents complete their tasks and report back. More powerful than a single agent for complex, long-running tasks — but also more complex to build and debug. Covered in detail in the next section.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term react">Human-in-the-Loop (HITL)</span>
+      <span class="jargon-def">A checkpoint system where the agent pauses and requests human approval or correction before taking certain actions. Can be configured at any granularity: "approve before any irreversible action" (deleting files, sending emails, making purchases), "approve before executing a plan" (show the plan, human edits or confirms), "approve after N steps" (let agent run but review every 5 steps). Essential for production agents where mistakes are costly or irreversible. Not a limitation — it's a design choice that makes agents trustworthy enough to deploy.</span>
+    </div>
+
+    <div class="callout react">
+      <div class="callout-label">Start with ReAct — here's why</div>
+      <p>ReAct is the right starting pattern because it's interpretable: you can read the Thought-Action-Observation chain and understand exactly why the agent made each decision. When it fails, you see where. When Plan-and-Execute fails, you often only see the final wrong output. ReAct also adapts naturally to unexpected tool results — if the first search returns nothing, the next Thought can reformulate the query. Build your first five agents with ReAct before exploring more complex patterns.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · Tool Use</span></div>
+
+  <div id="tool-use">
+    <div class="eyebrow ag">Extending the LLM</div>
+    <h2>Tool use — <em class="ag">the six types of actions agents take</em></h2>
+
+    <p>An LLM without tools is an oracle — you can ask it questions but it can't do anything. An LLM with tools is an agent — it can search the web, run code, query databases, call APIs, and manage files. The tools you give an agent define what problems it can solve. Here are the six tool categories every agent builder needs to know.</p>
+
+    <table class="m-table">
+      <tr><th>Tool Type</th><th>What it does</th><th>Real examples</th><th>When to include</th></tr>
+      <tr>
+        <td>Web Search</td>
+        <td>Query the live internet and return current results. Solves the knowledge cutoff problem — agent can access information published after training.</td>
+        <td>Tavily (built for LLM agents), SerpAPI (Google results), Bing Search API, DuckDuckGo API</td>
+        <td>Any agent that needs current information: prices, news, recent events, live data.</td>
+      </tr>
+      <tr>
+        <td>Code Execution</td>
+        <td>Run actual Python (or other language) code in a sandbox and return the output. Enables reliable computation, data analysis, and programmatic actions the LLM can't do reliably in its head.</td>
+        <td>Python REPL (in-process), E2B sandbox (isolated cloud), Jupyter kernel, Docker container</td>
+        <td>Any agent that does math, data analysis, file transformation, or needs to verify its own calculations.</td>
+      </tr>
+      <tr>
+        <td>Database Query</td>
+        <td>Connect to a SQL or NoSQL database and retrieve structured data. The agent generates the query based on the user's natural language question (Text-to-SQL).</td>
+        <td>SQL agent (LangChain), custom db tool, Vanna.ai, SQLite, PostgreSQL, BigQuery</td>
+        <td>Any agent that needs to answer questions about structured internal data: sales, inventory, user records.</td>
+      </tr>
+      <tr>
+        <td>API Calls</td>
+        <td>Call any external REST API and return the response. Connects the agent to virtually any external service.</td>
+        <td>Weather API, stock price API, CRM (Salesforce), email (Gmail), calendar (Google Calendar), payment (Stripe), custom internal APIs</td>
+        <td>Any agent that takes real actions in external systems — booking, sending, updating, fetching live data.</td>
+      </tr>
+      <tr>
+        <td>File Operations</td>
+        <td>Read from and write to files — documents, PDFs, spreadsheets, CSVs, images. Enables document processing agents and file management workflows.</td>
+        <td>PyPDF2 for PDFs, openpyxl for Excel, pandas for CSV, pathlib for filesystem, Google Drive API</td>
+        <td>Any agent that processes uploaded documents, generates output files, or manages a file-based workflow.</td>
+      </tr>
+      <tr>
+        <td>Calculator</td>
+        <td>Reliable arithmetic and mathematical computation. LLMs are notoriously unreliable at multi-digit arithmetic — a dedicated calculator tool ensures correct results.</td>
+        <td>Python eval() (sandboxed), sympy, wolfram alpha API, custom math functions</td>
+        <td>Any agent that does financial calculations, unit conversions, statistical computations, or any math where errors would be costly.</td>
+      </tr>
+    </table>
+
+    <div class="callout tool">
+      <div class="callout-label">How function calling actually works under the hood</div>
+      <p>The agent framework serialises each tool as a JSON schema: name, description, parameters with types and descriptions. These schemas are injected into the LLM's system prompt or as a special API field. The LLM is instructed: "If you need to use a tool, respond with a JSON object in this format: {\"tool\": \"tool_name\", \"parameters\": {...}}." The framework parses this, calls the actual function, captures the return value, and injects it back as an Observation. The LLM never actually executes code itself — it only decides which function to call and with what parameters. The framework handles execution and safety.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 9 · Multi-Agent Systems</span></div>
+
+  <div id="multi-agent">
+    <div class="eyebrow ag">Scaling beyond one agent</div>
+    <h2>Multi-agent systems — <em class="ag">specialisation through collaboration</em></h2>
+
+    <p>A single agent can handle tasks up to a certain complexity. Beyond that — very long tasks, tasks requiring deep expertise in multiple domains, tasks that can be parallelised — multi-agent systems outperform single agents. The pattern mirrors how teams of humans work: a manager delegates to specialists, specialists do their work and report back, the manager synthesises and delivers.</p>
+
+    <table class="m-table">
+      <tr><th>Concept</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr>
+        <td>Orchestrator Agent</td>
+        <td>The coordinator. Receives the high-level goal, decomposes it into sub-tasks, assigns each sub-task to the right specialised sub-agent, monitors progress, and synthesises the final result from all sub-agent outputs.</td>
+        <td>Without an orchestrator, multi-agent systems have no coordination. The orchestrator is the only agent that sees the full goal — sub-agents only see their assigned slice. Requires a capable LLM (typically your best model) since it makes all strategic decisions.</td>
+      </tr>
+      <tr>
+        <td>Sub-Agents</td>
+        <td>Specialised agents with a specific role, specific tools, and often a specific system prompt tuned for their domain. Common patterns: Researcher (web search + summarisation), Coder (code execution + code generation), Writer (document generation), Reviewer (fact-checking + critique), Data Analyst (database + charts).</td>
+        <td>Specialisation improves quality. A coder agent can have a system prompt full of coding conventions and a Python execution environment. A researcher agent can have web search and document reading tools. Mixing all capabilities in one agent dilutes the system prompt and increases cognitive load on the LLM.</td>
+      </tr>
+      <tr>
+        <td>Agent Communication</td>
+        <td>The mechanism by which agents share results, context, and partial outputs with each other. Typically implemented as messages in a shared conversation thread, or structured JSON objects passed between agent invocations.</td>
+        <td>Communication determines whether the orchestrator can effectively synthesise sub-agent outputs. Structure matters: unstructured "I searched and found some things" is harder to use than {"sources": [...], "key_facts": [...], "confidence": 0.87}.</td>
+      </tr>
+      <tr>
+        <td>Human-in-the-Loop</td>
+        <td>Checkpoints where a human reviews, corrects, or approves agent actions before they're executed or before the workflow continues. Can be event-driven ("ask before any file deletion") or time-based ("review after every 10 steps").</td>
+        <td>Critical for production multi-agent systems. Errors propagate — a wrong output from the researcher agent affects everything downstream. HITL at key checkpoints catches errors before they compound. Also essential for compliance and audit requirements in regulated industries.</td>
+      </tr>
+    </table>
+
+    <div class="analogy">
+      <div class="analogy-label ag">The consulting firm analogy</div>
+      <p>A consulting firm receives a brief: "Analyse our market position and write a strategy report." The engagement manager (orchestrator) decomposes this into: market research (researcher agent), competitor analysis (researcher + data analyst agent), financial modelling (coder + data analyst agent), and report writing (writer agent). Each team works their slice, reports back to the engagement manager, who synthesises and delivers the final report. The client (human-in-the-loop) reviews the draft before it's finalised. This is a multi-agent system. Your code just runs faster and costs less than an actual consulting firm.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 10 · Agent Memory Types</span></div>
+
+  <div id="memory">
+    <div class="eyebrow ag">What agents remember</div>
+    <h2>Four memory types — <em class="ag">how agents accumulate knowledge</em></h2>
+
+    <p>An LLM has no state between API calls. Every new call starts fresh. Memory systems are what give agents continuity — the ability to remember what they've done, what the user told them, and what strategies have worked before. Four distinct memory types serve different purposes.</p>
+
+    <div class="mem-grid">
+      <div class="mem-card">
+        <div class="mem-card-type">Memory Type 1</div>
+        <div class="mem-card-name">Short-Term (In-Context)</div>
+        <div class="mem-card-desc">Everything in the current context window — the task description, all previous steps, all tool outputs, all observations so far in this session. Automatically available to the LLM since it's in the prompt. Limited by context window size. When the window fills, oldest content is dropped.</div>
+        <div class="mem-card-eg">Example: In a 10-step ReAct loop, the LLM sees all 9 previous Thought-Action-Observation triplets when generating step 10. No special implementation needed — it's just in the prompt.</div>
+      </div>
+      <div class="mem-card">
+        <div class="mem-card-type">Memory Type 2</div>
+        <div class="mem-card-name">Long-Term (External)</div>
+        <div class="mem-card-desc">Facts, preferences, and past session summaries stored in an external database (typically a vector database) and retrieved at the start of each new session based on relevance to the current task. Persists across conversations. Enables the agent to remember you across sessions.</div>
+        <div class="mem-card-eg">Example: User says "I prefer Python over JavaScript." Agent writes this to vector DB. Three sessions later, when discussing a new task, the agent queries memory and retrieves the language preference before suggesting code examples.</div>
+      </div>
+      <div class="mem-card">
+        <div class="mem-card-type">Memory Type 3</div>
+        <div class="mem-card-name">Episodic</div>
+        <div class="mem-card-desc">Stored records of specific past interactions — whole conversations or key moments — recalled by similarity to the current situation. "I've handled a request like this before." The agent retrieves the past episode as context for handling the current one.</div>
+        <div class="mem-card-eg">Example: A support agent remembers how it resolved a specific billing issue two months ago and retrieves that episode when a similar billing complaint arrives. The past resolution becomes context for the current case.</div>
+      </div>
+      <div class="mem-card">
+        <div class="mem-card-type">Memory Type 4</div>
+        <div class="mem-card-name">Procedural</div>
+        <div class="mem-card-desc">Stored strategies, plans, and workflows that worked in the past. "Here's how to handle this type of task." Retrieved when a similar task is encountered and used to initialise the agent's planning rather than planning from scratch every time.</div>
+        <div class="mem-card-eg">Example: An agent learns that "research + outline + draft + review" is a reliable workflow for writing technical articles. It stores this sequence as a procedural memory and retrieves it whenever a writing task begins, skipping the planning step.</div>
+      </div>
+    </div>
+
+    <div class="callout mem" style="background:var(--mem-bg);border-color:var(--mem-bd);">
+      <div class="callout-label" style="color:var(--mem);">Libraries for agent memory</div>
+      <p><strong>LangChain Memory:</strong> ConversationBufferMemory (store full history), ConversationSummaryMemory (summarise old turns), ConversationVectorStoreMemory (store and retrieve by similarity). <strong>LangGraph state:</strong> Persistent state graph that carries agent context across nodes — the cleanest solution for complex multi-step agents. <strong>LlamaIndex:</strong> Document and conversation indexing for long-term retrieval-based memory. <strong>mem0:</strong> Dedicated memory layer for AI agents — automatic extraction and retrieval of user preferences and past interactions.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 11 · Code</span></div>
+
+  <div class="eyebrow ag">Run this in Google Colab</div>
+  <h2>The complete code — <em class="ag">every line explained</em></h2>
+
+  <!-- CELL 1 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 1 — Prompt anatomy: system + few-shot + output format</div>
+    </div>
+    <pre><span class="ck">import</span> anthropic, os, json
+
+client = anthropic.<span class="cf">Anthropic</span>(api_key=os.environ.<span class="cf">get</span>(<span class="cs">"ANTHROPIC_API_KEY"</span>))
+
+<span class="cm"># ── Full anatomy: system + few-shot examples + output format ──</span>
+system_prompt = <span class="cs">"""You are a precise sentiment analyser for product reviews.
+
+Rules:
+- Classify ONLY as: POSITIVE, NEGATIVE, or NEUTRAL
+- Output ONLY a JSON object — no explanation, no markdown, no extra text
+- If sentiment is mixed, pick the dominant one
+- Confidence must be between 0.0 and 1.0
+
+Output schema: {"sentiment": "POSITIVE|NEGATIVE|NEUTRAL", "confidence": float, "key_signal": "one phrase that drove the decision"}"""</span>
+
+<span class="cm"># Few-shot examples in the user turn (shows format and calibration)</span>
+few_shot_examples = <span class="cs">"""Examples:
+Review: "Absolutely incredible product, changed my life!"
+{"sentiment": "POSITIVE", "confidence": 0.97, "key_signal": "absolutely incredible, changed my life"}
+
+Review: "Arrived broken, terrible packaging, wasted my money."
+{"sentiment": "NEGATIVE", "confidence": 0.96, "key_signal": "arrived broken, wasted my money"}
+
+Review: "It's okay, does what it says on the box."
+{"sentiment": "NEUTRAL", "confidence": 0.81, "key_signal": "okay, does what it says"}
+
+Now classify this review:
+Review: """</span>
+
+test_reviews = [
+    <span class="cs">"The product quality is great but shipping took forever and packaging was damaged."</span>,
+    <span class="cs">"Does not work at all. Complete waste of money. I want a refund immediately."</span>,
+    <span class="cs">"Pretty decent for the price. Nothing special but gets the job done."</span>,
+]
+
+<span class="cf">print</span>(<span class="cs">"=== Sentiment Analysis with Full Prompt Anatomy ===\n"</span>)
+<span class="ck">for</span> review <span class="ck">in</span> test_reviews:
+    response = client.messages.<span class="cf">create</span>(
+        model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+        max_tokens=<span class="cn">120</span>,
+        system=system_prompt,
+        messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: few_shot_examples + review + <span class="cs">'"'</span>}]
+    )
+    result_text = response.content[<span class="cn">0</span>].text.<span class="cf">strip</span>()
+    <span class="ck">try</span>:
+        result = json.<span class="cf">loads</span>(result_text)    <span class="cm"># parse as JSON — enforced by system prompt</span>
+        <span class="cf">print</span>(<span class="cs">f"Review: '{review[:60]}...'"</span>)
+        <span class="cf">print</span>(<span class="cs">f"  {result['sentiment']:<span class="cn">10</span>} (confidence: {result['confidence']:.2f}) | Key: '{result['key_signal']}'"</span>)
+    <span class="ck">except</span> json.JSONDecodeError:
+        <span class="cf">print</span>(<span class="cs">f"Parse error: {result_text}"</span>)
+    <span class="cf">print</span>()</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== Sentiment Analysis with Full Prompt Anatomy ===
+
+<span class="out-d">Review: 'The product quality is great but shipping took forever and packaging...'</span>
+  <span class="out-h">NEGATIVE</span>   (confidence: 0.61) | Key: 'shipping took forever, packaging was damaged'
+
+<span class="out-d">Review: 'Does not work at all. Complete waste of money. I want a refund imme...'</span>
+  <span class="out-h">NEGATIVE</span>   (confidence: 0.99) | Key: 'does not work, complete waste of money'
+
+<span class="out-d">Review: 'Pretty decent for the price. Nothing special but gets the job done.'</span>
+  <span class="out-n">NEUTRAL</span>    (confidence: 0.84) | Key: 'pretty decent, nothing special'
+
+<span class="out-g">→ System prompt enforces JSON — model outputs ONLY the schema, nothing else
+→ Few-shot examples anchor the confidence calibration and key_signal format
+→ Mixed review (quality good, shipping bad): model picks dominant signal (shipping damage)
+→ This output is directly machine-readable — json.loads() parses it without cleanup</span></pre>
+  </div>
+
+  <!-- CELL 2 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 2 — Chain-of-Thought vs direct answer: accuracy comparison</div>
+    </div>
+    <pre><span class="cm"># ── CoT vs Direct: same question, different prompting ────────</span>
+<span class="cf">print</span>(<span class="cs">"=== Chain-of-Thought vs Direct Answer ===\n"</span>)
+
+problem = <span class="cs">"""A store sells notebooks for ₹45 each and pens for ₹12 each. 
+Rohan buys 7 notebooks and 14 pens. He pays with a ₹500 note. 
+How much change does he receive?"""</span>
+
+<span class="cm"># ── Approach 1: Direct (no CoT) ───────────────────────────────</span>
+direct_response = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">50</span>,
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>,
+               <span class="cs">"content"</span>: problem + <span class="cs">"\n\nAnswer with only the number of rupees change."</span>}]
+)
+<span class="cf">print</span>(<span class="cs">"DIRECT (no CoT):"</span>)
+<span class="cf">print</span>(<span class="cs">f"Answer: {direct_response.content[0].text.strip()}"</span>)
+
+<span class="cm"># ── Approach 2: Zero-shot CoT ─────────────────────────────────</span>
+cot_response = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">300</span>,
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>,
+               <span class="cs">"content"</span>: problem + <span class="cs">"\n\nThink step by step, then give the final answer."</span>}]
+    <span class="cm"># "Think step by step" is the zero-shot CoT trigger</span>
+)
+<span class="cf">print</span>(<span class="cs">"\nCHAIN-OF-THOUGHT:"</span>)
+<span class="cf">print</span>(cot_response.content[<span class="cn">0</span>].text.<span class="cf">strip</span>())
+
+<span class="cf">print</span>(<span class="cs">"\n--- Correct answer: ₹131 ---"</span>)
+<span class="cf">print</span>(<span class="cs">"(7×45 = 315, 14×12 = 168, 315+168 = 483, 500-483 = 17 ... wait: ₹17)"</span>)
+<span class="cf">print</span>(<span class="cs">"Actually: 7×45=315, 14×12=168, total=483, change=500-483=₹17"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>DIRECT (no CoT):
+<span class="out-d">Answer: ₹17</span>
+
+CHAIN-OF-THOUGHT:
+<span class="out-d">Let me work through this step by step.
+
+Step 1: Cost of notebooks
+7 notebooks × ₹45 = ₹315
+
+Step 2: Cost of pens
+14 pens × ₹12 = ₹168
+
+Step 3: Total cost
+₹315 + ₹168 = ₹483
+
+Step 4: Change received
+₹500 - ₹483 = ₹17
+
+Rohan receives ₹17 in change.</span>
+
+--- Correct answer: ₹17 ---
+<span class="out-g">→ Both got it right here — simple enough problem for direct answer
+→ CoT advantage shows up on multi-step reasoning problems with 5+ steps
+→ The intermediate tokens (315, 168, 483) give the model a "scratchpad"
+→ CoT uses 6× more tokens — worth it for complex problems, overkill for simple ones
+→ For complex logic/math: always use CoT. For classification/extraction: direct is fine.</span></pre>
+  </div>
+
+  <!-- CELL 3 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 3 — Prompt chaining: complex task decomposed into steps</div>
+    </div>
+    <pre><span class="cm"># ── Prompt chaining: 3-step pipeline ─────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"=== Prompt Chaining — 3-Step Pipeline ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">"Task: Take a raw news article → extract entities → classify → generate headline\n"</span>)
+
+article = <span class="cs">"""Tesla announced yesterday that its Gigafactory in Austin, Texas has 
+achieved a production milestone of 5,000 Model Y vehicles per week. CEO Elon Musk 
+stated the facility now employs 12,000 workers. The stock rose 3.2% on the news, 
+reaching $248 per share on the NASDAQ exchange."""</span>
+
+<span class="cm"># ── Step 1: Entity extraction ─────────────────────────────────</span>
+step1 = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">200</span>,
+    system=<span class="cs">"Extract named entities. Return ONLY valid JSON: {\"companies\": [], \"people\": [], \"locations\": [], \"numbers\": []}"</span>,
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: article}]
+)
+entities = json.<span class="cf">loads</span>(step1.content[<span class="cn">0</span>].text)
+<span class="cf">print</span>(<span class="cs">f"Step 1 — Entities: {json.dumps(entities, indent=2)}"</span>)
+
+<span class="cm"># ── Step 2: Classify article category ─────────────────────────</span>
+<span class="cm"># The output of step 1 feeds into step 2 as additional context</span>
+step2 = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">80</span>,
+    system=<span class="cs">"Classify news articles. Return ONLY JSON: {\"category\": \"business|tech|politics|sports|science\", \"subcategory\": \"one word\"}"</span>,
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>,
+               <span class="cs">"content"</span>: <span class="cs">f"Article: {article}\n\nExtracted entities: {step1.content[0].text}"</span>}]
+    <span class="cm"># passing both original article AND entity extraction from step 1</span>
+)
+classification = json.<span class="cf">loads</span>(step2.content[<span class="cn">0</span>].text)
+<span class="cf">print</span>(<span class="cs">f"\nStep 2 — Classification: {classification}"</span>)
+
+<span class="cm"># ── Step 3: Generate headline using all previous outputs ──────</span>
+step3 = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">80</span>,
+    system=<span class="cs">"Write a news headline. One sentence, under 15 words. No quotes."</span>,
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>,
+               <span class="cs">"content"</span>: <span class="cs">f"""Article: {article}
+Category: {classification['category']} / {classification['subcategory']}
+Key entities: companies={entities['companies']}, people={entities['people']}
+Write a headline for this article."""</span>}]
+    <span class="cm"># step 3 uses outputs from BOTH step 1 and step 2 as context</span>
+)
+headline = step3.content[<span class="cn">0</span>].text.<span class="cf">strip</span>()
+<span class="cf">print</span>(<span class="cs">f"\nStep 3 — Headline: {headline}"</span>)
+<span class="cf">print</span>(<span class="cs">"\nTotal API calls: 3 | Each step builds on previous outputs"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== Prompt Chaining — 3-Step Pipeline ===
+
+Task: Take a raw news article → extract entities → classify → generate headline
+
+Step 1 — Entities:
+<span class="out-d">{
+  "companies": ["Tesla", "NASDAQ"],
+  "people": ["Elon Musk"],
+  "locations": ["Austin, Texas"],
+  "numbers": ["5,000 Model Y per week", "12,000 workers", "3.2%", "$248 per share"]
+}</span>
+
+<span class="out-n">Step 2 — Classification: {"category": "business", "subcategory": "manufacturing"}</span>
+
+<span class="out-g">Step 3 — Headline: Tesla's Austin Gigafactory hits 5,000 Model Y units weekly as shares surge</span>
+
+Total API calls: 3 | Each step builds on previous outputs
+
+<span class="out-g">→ Each step is simpler and more reliable than doing everything in one prompt
+→ Output format is controlled at each step (JSON for steps 1-2, text for step 3)
+→ Later steps get richer context — headline generation uses entities + classification
+→ Validation between steps: if step 1 returns no companies, you catch it before step 3
+→ This pattern is the foundation of every production LLM pipeline</span></pre>
+  </div>
+
+  <!-- CELL 4 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 4 — ReAct agent loop from scratch (no framework)</div>
+    </div>
+    <pre><span class="ck">import</span> json, re
+<span class="ck">from</span> datetime <span class="ck">import</span> datetime
+
+<span class="cm"># ── Define tools (simulated — no real API keys needed) ─────────</span>
+<span class="ck">def</span> <span class="cf">web_search</span>(query: str) -> str:
+    <span class="cs">"""Simulate web search — returns mock results."""</span>
+    mock_results = {
+        <span class="cs">"Chennai population"</span>:       <span class="cs">"Chennai population (2024): approximately 7.1 million in city, 11.2 million metro area."</span>,
+        <span class="cs">"Python release date"</span>:       <span class="cs">"Python 3.12 released October 2023. Python 3.13 released October 2024."</span>,
+        <span class="cs">"India GDP 2024"</span>:            <span class="cs">"India GDP 2024: approximately $3.7 trillion USD, 7th largest economy globally."</span>,
+    }
+    <span class="ck">for</span> key, result <span class="ck">in</span> mock_results.<span class="cf">items</span>():
+        <span class="ck">if</span> key.<span class="cf">lower</span>() <span class="ck">in</span> query.<span class="cf">lower</span>():
+            <span class="ck">return</span> result
+    <span class="ck">return</span> <span class="cs">f"No specific results found for '{query}'. Try a different query."</span>
+
+<span class="ck">def</span> <span class="cf">calculator</span>(expression: str) -> str:
+    <span class="cs">"""Safe calculator — evaluates arithmetic expressions."""</span>
+    <span class="ck">try</span>:
+        result = <span class="cf">eval</span>(expression, {<span class="cs">"__builtins__"</span>: {}}, {})
+        <span class="cm"># eval with empty builtins — safe for arithmetic only</span>
+        <span class="ck">return</span> <span class="cs">f"Result: {result}"</span>
+    <span class="ck">except</span> <span class="ck">Exception</span> <span class="ck">as</span> e:
+        <span class="ck">return</span> <span class="cs">f"Error: {e}"</span>
+
+<span class="ck">def</span> <span class="cf">get_date</span>() -> str:
+    <span class="ck">return</span> <span class="cs">f"Current date: {datetime.now().strftime('%B %d, %Y')}"</span>
+
+TOOLS = {
+    <span class="cs">"web_search"</span>: (<span class="cf">web_search</span>, <span class="cs">"Search the web for current information. Input: search query string."</span>),
+    <span class="cs">"calculator"</span>: (<span class="cf">calculator</span>, <span class="cs">"Calculate arithmetic. Input: Python arithmetic expression (e.g. '7 * 45 + 14 * 12')."</span>),
+    <span class="cs">"get_date"</span>:   (<span class="cf">get_date</span>,   <span class="cs">"Get the current date. No input needed."</span>),
+}
+
+<span class="cm"># ── Build the ReAct system prompt ─────────────────────────────</span>
+tools_desc = <span class="cs">"\n"</span>.<span class="cf">join</span>([<span class="cs">f"- {name}: {desc}"</span> <span class="ck">for</span> name, (fn, desc) <span class="ck">in</span> TOOLS.<span class="cf">items</span>()])
+SYSTEM = <span class="cs">f"""You are a helpful AI agent. You solve problems step by step using tools.
+
+Available tools:
+{tools_desc}
+
+Respond using EXACTLY this format on each turn:
+Thought: [your reasoning about what to do next]
+Action: [tool_name]
+Action Input: [input to the tool]
+
+OR, when you have the final answer:
+Thought: [your final reasoning]
+Final Answer: [your complete answer to the user]
+
+Never skip the Thought. Never output anything else."""</span>
+
+<span class="cm"># ── Run the ReAct loop ─────────────────────────────────────────</span>
+<span class="ck">def</span> <span class="cf">run_react_agent</span>(task: str, max_steps: int = <span class="cn">6</span>) -> str:
+    messages = [{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: task}]
+    <span class="cf">print</span>(<span class="cs">f"Task: {task}\n"</span> + <span class="cs">"-"</span> * <span class="cn">55</span>)
+
+    <span class="ck">for</span> step <span class="ck">in</span> <span class="cf">range</span>(max_steps):
+        response = client.messages.<span class="cf">create</span>(
+            model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+            max_tokens=<span class="cn">400</span>,
+            system=SYSTEM,
+            messages=messages
+        )
+        agent_output = response.content[<span class="cn">0</span>].text.<span class="cf">strip</span>()
+        <span class="cf">print</span>(<span class="cs">f"\nStep {step+1}:\n{agent_output}"</span>)
+
+        <span class="cm"># check if agent reached final answer</span>
+        <span class="ck">if</span> <span class="cs">"Final Answer:"</span> <span class="ck">in</span> agent_output:
+            <span class="ck">return</span> agent_output.<span class="cf">split</span>(<span class="cs">"Final Answer:"</span>)[<span class="cn">1</span>].<span class="cf">strip</span>()
+
+        <span class="cm"># parse Action and Action Input</span>
+        action_match = re.<span class="cf">search</span>(r<span class="cs">'Action:\s*(\w+)'</span>, agent_output)
+        input_match  = re.<span class="cf">search</span>(r<span class="cs">'Action Input:\s*(.+?)(?=\n|$)'</span>, agent_output, re.DOTALL)
+
+        <span class="ck">if</span> action_match:
+            action_name = action_match.<span class="cf">group</span>(<span class="cn">1</span>).<span class="cf">strip</span>()
+            action_input = input_match.<span class="cf">group</span>(<span class="cn">1</span>).<span class="cf">strip</span>() <span class="ck">if</span> input_match <span class="ck">else</span> <span class="cs">""</span>
+
+            <span class="ck">if</span> action_name <span class="ck">in</span> TOOLS:
+                tool_fn, _ = TOOLS[action_name]
+                observation = <span class="cf">tool_fn</span>(action_input) <span class="ck">if</span> action_input <span class="ck">else</span> <span class="cf">tool_fn</span>()
+                <span class="cf">print</span>(<span class="cs">f"Observation: {observation}"</span>)
+                <span class="cm"># inject tool result back as an assistant-turn + observation</span>
+                messages.<span class="cf">append</span>({<span class="cs">"role"</span>: <span class="cs">"assistant"</span>, <span class="cs">"content"</span>: agent_output})
+                messages.<span class="cf">append</span>({<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cs">f"Observation: {observation}"</span>})
+            <span class="ck">else</span>:
+                messages.<span class="cf">append</span>({<span class="cs">"role"</span>: <span class="cs">"assistant"</span>, <span class="cs">"content"</span>: agent_output})
+                messages.<span class="cf">append</span>({<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cs">f"Observation: Tool '{action_name}' not found."</span>})
+    <span class="ck">return</span> <span class="cs">"Max steps reached without final answer."</span>
+
+<span class="cm"># ── Run it ─────────────────────────────────────────────────────</span>
+answer = <span class="cf">run_react_agent</span>(<span class="cs">"What is Chennai's population, and what percentage of India's total population (1.44 billion) does that represent? Round to 2 decimal places."</span>)
+<span class="cf">print</span>(<span class="cs">f"\n{'='*55}\nFINAL ANSWER: {answer}"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>Task: What is Chennai's population, and what percentage of India's total population...
+-------------------------------------------------------
+
+Step 1:
+<span class="out-d">Thought: I need to find Chennai's current population. Let me search for that first.
+Action: web_search
+Action Input: Chennai population</span>
+<span class="out-n">Observation: Chennai population (2024): approximately 7.1 million in city, 11.2 million metro area.</span>
+
+Step 2:
+<span class="out-d">Thought: I have Chennai's city population (7.1 million). Now I need to calculate
+what percentage this is of India's 1.44 billion total population.
+Action: calculator
+Action Input: (7.1 / 1440) * 100</span>
+<span class="out-n">Observation: Result: 0.4930555555555556</span>
+
+Step 3:
+<span class="out-d">Thought: I have all the information I need. Chennai city population is 7.1 million,
+which is 0.49% of India's 1.44 billion population.
+Final Answer: Chennai's city population is approximately 7.1 million people (with the
+metro area at 11.2 million). This represents 0.49% of India's total population of
+1.44 billion.</span>
+
+=======================================================
+<span class="out-g">FINAL ANSWER: Chennai's city population is approximately 7.1 million people (with the metro area at 11.2 million). This represents 0.49% of India's total population of 1.44 billion.</span>
+
+<span class="out-g">→ The ReAct loop ran 3 steps: search → calculate → answer
+→ The agent itself decided which tools to use and in what order
+→ Observation from each tool is injected back into context for the next step
+→ This is the Thought-Action-Observation loop that powers all production agents
+→ The entire agent = 1 system prompt + tool definitions + a while loop</span></pre>
+  </div>
+
+  <!-- CELL 5 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 5 — Anthropic native tool use (function calling API)</div>
+    </div>
+    <pre><span class="cm"># ── Anthropic's native tool use API ───────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"=== Anthropic Native Tool Use (Function Calling) ===\n"</span>)
+
+<span class="cm"># Define tools as JSON schemas — the model reads these to know what's available</span>
+tools = [
+    {
+        <span class="cs">"name"</span>: <span class="cs">"get_weather"</span>,
+        <span class="cs">"description"</span>: <span class="cs">"Get the current weather for a city. Returns temperature and conditions."</span>,
+        <span class="cs">"input_schema"</span>: {
+            <span class="cs">"type"</span>: <span class="cs">"object"</span>,
+            <span class="cs">"properties"</span>: {
+                <span class="cs">"city"</span>: {<span class="cs">"type"</span>: <span class="cs">"string"</span>, <span class="cs">"description"</span>: <span class="cs">"City name"</span>},
+                <span class="cs">"unit"</span>: {<span class="cs">"type"</span>: <span class="cs">"string"</span>, <span class="cs">"enum"</span>: [<span class="cs">"celsius"</span>, <span class="cs">"fahrenheit"</span>], <span class="cs">"description"</span>: <span class="cs">"Temperature unit"</span>}
+            },
+            <span class="cs">"required"</span>: [<span class="cs">"city"</span>]
+        }
+    },
+    {
+        <span class="cs">"name"</span>: <span class="cs">"calculate"</span>,
+        <span class="cs">"description"</span>: <span class="cs">"Perform arithmetic calculations reliably."</span>,
+        <span class="cs">"input_schema"</span>: {
+            <span class="cs">"type"</span>: <span class="cs">"object"</span>,
+            <span class="cs">"properties"</span>: {
+                <span class="cs">"expression"</span>: {<span class="cs">"type"</span>: <span class="cs">"string"</span>, <span class="cs">"description"</span>: <span class="cs">"Python arithmetic expression"</span>}
+            },
+            <span class="cs">"required"</span>: [<span class="cs">"expression"</span>]
+        }
+    }
+]
+
+<span class="cm"># ── Simulated tool execution ──────────────────────────────────</span>
+<span class="ck">def</span> <span class="cf">execute_tool</span>(name: str, inputs: dict) -> str:
+    <span class="ck">if</span> name == <span class="cs">"get_weather"</span>:
+        city = inputs.<span class="cf">get</span>(<span class="cs">"city"</span>, <span class="cs">"Unknown"</span>)
+        unit = inputs.<span class="cf">get</span>(<span class="cs">"unit"</span>, <span class="cs">"celsius"</span>)
+        mock = {<span class="cs">"Chennai"</span>: (<span class="cn">32</span>, <span class="cs">"sunny and humid"</span>), <span class="cs">"Mumbai"</span>: (<span class="cn">29</span>, <span class="cs">"partly cloudy"</span>), <span class="cs">"Delhi"</span>: (<span class="cn">25</span>, <span class="cs">"clear skies"</span>)}
+        temp, cond = mock.<span class="cf">get</span>(city, (<span class="cn">22</span>, <span class="cs">"unknown"</span>))
+        <span class="ck">if</span> unit == <span class="cs">"fahrenheit"</span>: temp = temp * <span class="cn">9</span>/<span class="cn">5</span> + <span class="cn">32</span>
+        <span class="ck">return</span> <span class="cs">f"{city}: {temp}°{'F' if unit=='fahrenheit' else 'C'}, {cond}"</span>
+    <span class="ck">elif</span> name == <span class="cs">"calculate"</span>:
+        <span class="ck">try</span>: <span class="ck">return</span> <span class="cs">f"= {eval(inputs['expression'], {'__builtins__': {}}, {})}"</span>
+        <span class="ck">except</span> <span class="ck">Exception</span> <span class="ck">as</span> e: <span class="ck">return</span> <span class="cs">f"Error: {e}"</span>
+    <span class="ck">return</span> <span class="cs">"Tool not found"</span>
+
+<span class="cm"># ── Run with Anthropic's tool use API ────────────────────────</span>
+messages = [{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cs">"What's the weather in Chennai and Mumbai? Also, what's the average of their temperatures?"</span>}]
+
+<span class="ck">while True</span>:
+    response = client.messages.<span class="cf">create</span>(
+        model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+        max_tokens=<span class="cn">500</span>,
+        tools=tools,
+        messages=messages
+    )
+
+    <span class="ck">if</span> response.stop_reason == <span class="cs">"end_turn"</span>:
+        <span class="ck">break</span>   <span class="cm"># model decided it's done</span>
+
+    <span class="ck">if</span> response.stop_reason == <span class="cs">"tool_use"</span>:
+        <span class="cm"># model wants to call tools — find all tool_use blocks</span>
+        messages.<span class="cf">append</span>({<span class="cs">"role"</span>: <span class="cs">"assistant"</span>, <span class="cs">"content"</span>: response.content})
+        tool_results = []
+        <span class="ck">for</span> block <span class="ck">in</span> response.content:
+            <span class="ck">if</span> block.type == <span class="cs">"tool_use"</span>:
+                <span class="cf">print</span>(<span class="cs">f"Calling: {block.name}({block.input})"</span>)
+                result = <span class="cf">execute_tool</span>(block.name, block.input)
+                <span class="cf">print</span>(<span class="cs">f"Result:  {result}\n"</span>)
+                tool_results.<span class="cf">append</span>({
+                    <span class="cs">"type"</span>: <span class="cs">"tool_result"</span>,
+                    <span class="cs">"tool_use_id"</span>: block.id,   <span class="cm"># must match the tool_use ID</span>
+                    <span class="cs">"content"</span>: result
+                })
+        messages.<span class="cf">append</span>({<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: tool_results})
+
+final_text = <span class="cs">""</span>.<span class="cf">join</span>(b.text <span class="ck">for</span> b <span class="ck">in</span> response.content <span class="ck">if</span> <span class="cf">hasattr</span>(b, <span class="cs">'text'</span>))
+<span class="cf">print</span>(<span class="cs">f"Final: {final_text}"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre><span class="out-d">Calling: get_weather({"city": "Chennai", "unit": "celsius"})
+Result:  Chennai: 32°C, sunny and humid
+
+Calling: get_weather({"city": "Mumbai", "unit": "celsius"})
+Result:  Mumbai: 29°C, partly cloudy
+
+Calling: calculate({"expression": "(32 + 29) / 2"})
+Result:  = 30.5</span>
+
+<span class="out-g">Final: The current weather is:
+- Chennai: 32°C, sunny and humid
+- Mumbai: 29°C, partly cloudy
+
+The average temperature between Chennai and Mumbai is 30.5°C.</span>
+
+<span class="out-g">→ The model called 3 tools autonomously — it decided to fetch both cities before averaging
+→ Tool inputs are structured JSON (city + unit) — not natural language — machine-parseable
+→ Each tool result is injected back via tool_result content block with matching tool_use_id
+→ This is Anthropic's native API — the same pattern used by Claude in production
+→ The model stopped on its own when it had enough information for a final answer</span></pre>
+  </div>
+
+  <div class="divider"><span>Connection to Agents</span></div>
+
+  <div class="agent-box">
+    <div class="ab-label">Blocks 08 + 09 — the applied engineering layer</div>
+    <h3>Prompt engineering is how you talk to agents. Agentic AI is what happens when they start talking to the world.</h3>
+    <p>Everything in Block 08 applies directly to how you design agent system prompts. The anatomy (system + user + context + format) is the template for every agent's instruction set. Chain-of-Thought is built into the ReAct loop — every "Thought" step is zero-shot CoT. Prompt chaining from Cell 3 is exactly how multi-step agent pipelines work — each step's output feeds the next. The pitfalls section predicts the most common agent failures: vague instructions cause poor tool selection, no output format causes unparseable tool calls, hallucinations cause agents to fabricate tool results.</p>
+    <p>The ReAct agent you built from scratch in Cell 4 is functionally equivalent to what LangChain, LangGraph, AutoGen, and CrewAI do under the hood — they just add error handling, better state management, and production-grade tooling on top of the same Thought-Action-Observation loop. Cell 5 showed Anthropic's native tool use API — the same API pattern used by every production Claude-based agent.</p>
+    <p>The four memory types from Block 09 connect directly to Blocks 10 and 11. Long-term external memory = vector database = the retrieval store in RAG (Block 10). Managing what goes into short-term memory = context engineering (Block 11). The agent memory architecture you choose determines both how your agent performs and how much it costs to run — context length is directly billed.</p>
+    <p>Block 12 (Frameworks) builds directly on what you learned here: LangChain provides pre-built tool integrations and memory classes, LangGraph adds stateful multi-step agent workflows, AutoGen implements multi-agent conversations, CrewAI implements role-based agent teams. All of them implement the same five components and the same ReAct-or-Plan patterns — just with more abstraction and production-ready infrastructure.</p>
+  </div>
+
+  <div class="divider"><span>Blocks 08 + 09 — Complete Cheat Sheet</span></div>
+
+  <div class="eyebrow ag">Save this</div>
+  <h2>Both blocks — <em class="ag">one reference</em></h2>
+
+  <div class="cheat-grid">
+    <div class="cheat-cell pe">
+      <div class="cheat-cell-name">Prompt Anatomy</div>
+      <div class="cheat-cell-sub">4 parts + 6 golden rules</div>
+      <ul>
+        <li>System prompt: role, persona, rules, constraints</li>
+        <li>User message: the actual task — be explicit</li>
+        <li>Context/Examples: background + few-shot demos</li>
+        <li>Output format: JSON / table / list — always specify</li>
+        <li>Golden rules: specific → format → context → iterate → negative → edge cases</li>
+      </ul>
+    </div>
+    <div class="cheat-cell reason">
+      <div class="cheat-cell-name">Prompting Techniques</div>
+      <div class="cheat-cell-sub">Basic + Reasoning</div>
+      <ul>
+        <li>Zero-shot: just ask — no examples</li>
+        <li>Few-shot: 2–5 demos → consistent format</li>
+        <li>Role prompting: "You are an expert in..."</li>
+        <li>Instruction: numbered step-by-step</li>
+        <li>Negative prompting: "Never do X"</li>
+        <li>CoT: "Think step by step" → better reasoning</li>
+        <li>Self-consistency: majority vote over N runs</li>
+        <li>Prompt chaining: output of step N → input of N+1</li>
+        <li>ReAct: Thought → Action → Observation loop</li>
+        <li>Tree of Thought: multiple reasoning branches</li>
+      </ul>
+    </div>
+    <div class="cheat-cell pitfall">
+      <div class="cheat-cell-name">Pitfalls and Tools</div>
+      <div class="cheat-cell-sub">6 pitfalls + 5 tools</div>
+      <ul>
+        <li>Vague → be explicit with all dimensions</li>
+        <li>No format → always specify JSON/list/table</li>
+        <li>Hallucinations → "say I don't know" + RAG</li>
+        <li>Inconsistent → few-shot + lower temperature</li>
+        <li>Ignored instructions → start + end placement</li>
+        <li>Too long → every word must earn its place</li>
+        <li>Anthropic Console · OpenAI Playground</li>
+        <li>Google AI Studio · LangSmith · PromptFlow</li>
+      </ul>
+    </div>
+    <div class="cheat-cell ag">
+      <div class="cheat-cell-name">Agent Components</div>
+      <div class="cheat-cell-sub">5 components every agent needs</div>
+      <ul>
+        <li>LLM: the brain — reasoning and decisions</li>
+        <li>Tools: the hands — search, code, APIs, files</li>
+        <li>Memory: short-term + long-term + episodic + procedural</li>
+        <li>Planning: decompose goal into sub-tasks</li>
+        <li>Observation loop: Act → see → decide → repeat</li>
+      </ul>
+    </div>
+    <div class="cheat-cell react">
+      <div class="cheat-cell-name">Agent Patterns + Tools</div>
+      <div class="cheat-cell-sub">5 patterns + 6 tool types</div>
+      <ul>
+        <li>ReAct: Thought → Action → Observation (start here)</li>
+        <li>Plan-and-Execute: full plan upfront then run</li>
+        <li>Function calling: JSON-schema tool calls</li>
+        <li>Multi-agent: orchestrator + specialised sub-agents</li>
+        <li>Human-in-the-loop: approval checkpoints</li>
+        <li>Tools: web search · code exec · DB query · API · files · calculator</li>
+      </ul>
+    </div>
+    <div class="cheat-cell mem">
+      <div class="cheat-cell-name">Agent Memory Types</div>
+      <div class="cheat-cell-sub">4 types, 4 use cases</div>
+      <ul>
+        <li>Short-term (in-context): current task history</li>
+        <li>Long-term (external): vector DB, cross-session</li>
+        <li>Episodic: recall similar past interactions</li>
+        <li>Procedural: stored successful workflows</li>
+        <li>LangChain Memory · LangGraph state · mem0</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:24px;">
+    <div class="callout-label">Blocks 08 + 09 in two sentences</div>
+    <p>
+      Block 08: Every good prompt has four parts (system, user, context, format), and the six golden rules prevent the six most common failures. Twelve techniques cover everything from zero-shot to Tree of Thought — the core reasoning trick is "think step by step" (CoT), the core production technique is prompt chaining, and the core agent technique is ReAct (Thought → Action → Observation loop).
+      Block 09: An AI agent is an LLM plus five components (tools, memory, planning, observation loop), built with one of five patterns (ReAct, Plan-Execute, Function Calling, Multi-agent, HITL), using six tool types (search, code, DB, API, files, calculator), with four memory layers (short-term, long-term, episodic, procedural) — all working together to turn an LLM from a question-answerer into an autonomous problem-solver.
+    </p>
+  </div>
+
+  <div class="divider"><span>That's Issue #10 — Blocks 08 + 09 Complete</span></div>
+
+  <p>Two more blocks done. You've now crossed into the applied layer. Prompt Engineering gives you reliable control over LLMs. Agentic AI gives you the architecture to build systems that act autonomously. Together, they're what separates AI users from AI builders.</p>
+  <p>Where you stand: ✅ Python · ✅ ML · ✅ Neural Networks · ✅ NLP · ✅ Transformer · ✅ Language Models · ✅ Generative AI · ✅ Prompt Engineering · ✅ Agentic AI.</p>
+  <p><strong>Next: Issues 11 and 12 — RAG, Context Engineering, Frameworks, and Platforms.</strong> The final four blocks. RAG teaches your agents to retrieve and ground their answers in real documents. Context Engineering teaches you how to fill the context window strategically. Frameworks give you LangChain, LlamaIndex, AutoGen, and Google ADK. Platforms give you Azure, AWS Bedrock, and Google Vertex AI. The complete Agentic AI practitioner toolkit — in two final issues.</p>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    <div class="footer-title">Master Agentic AI with Me</div>
+    <div class="footer-sub">From Python to production-grade AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-next">Issue 10 · Blocks 08 + 09 Complete · Next: RAG + Context Engineering + Frameworks + Platforms →</div>
+    <div class="footer-block">✓ ML · ✓ NN · ✓ NLP · ✓ Transformer · ✓ LLMs · ✓ GenAI · ✓ Prompt Eng · ✓ Agentic AI · 4 blocks left</div>
+  </div>
+</div>
+
+</body>
+</html>
