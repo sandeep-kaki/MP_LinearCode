@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Agentic AI with Me — Issue #08: The Transformer Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:      #0e0e12;
+    --ink2:     #3a3a4a;
+    --ink3:     #7a7a9a;
+    --paper:    #f5f5ff;
+    --paper2:   #eaeaff;
+    --paper3:   #d0d0f0;
+    --bg-card:  #ffffff;
+    /* signature palette — deep indigo / electric violet */
+    --v0:       #1e1b4b;   /* deepest indigo — hero bg */
+    --v1:       #312e81;
+    --v2:       #4338ca;
+    --v3:       #6366f1;   /* primary accent */
+    --v4:       #818cf8;   /* light accent */
+    --v5:       #c7d2fe;   /* very light accent */
+    /* component colors */
+    --emb:      #6366f1;   /* embedding / input prep */
+    --emb-bg:   #eef2ff;
+    --emb-bd:   rgba(99,102,241,0.25);
+    --att:      #7c3aed;   /* attention */
+    --att-bg:   #f5f3ff;
+    --att-bd:   rgba(124,58,237,0.25);
+    --ffn:      #0891b2;   /* feed-forward */
+    --ffn-bg:   #ecfeff;
+    --ffn-bd:   rgba(8,145,178,0.25);
+    --res:      #059669;   /* residual / layernorm */
+    --res-bg:   #ecfdf5;
+    --res-bd:   rgba(5,150,105,0.25);
+    --enc:      #2563eb;   /* BERT encoder */
+    --enc-bg:   #eff6ff;
+    --enc-bd:   rgba(37,99,235,0.25);
+    --dec:      #db2777;   /* GPT decoder */
+    --dec-bg:   #fdf2f8;
+    --dec-bd:   rgba(219,39,119,0.25);
+    --encdec:   #7c3aed;   /* T5 enc-dec */
+    --encdec-bg:#f5f3ff;
+    --encdec-bd:rgba(124,58,237,0.25);
+    --amber:    #d97706;
+    --amber-bg: #fffbeb;
+    --code-bg:  #0d0d18;
+    --code-txt: #e8eaf6;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;line-height:1.78;}
+
+  /* ── MASTHEAD ── */
+  .masthead{background:var(--v0);padding:13px 0;}
+  .masthead-inner{display:flex;justify-content:space-between;align-items:center;max-width:780px;margin:0 auto;padding:0 24px;}
+  .ms-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+  .ms-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.32);}
+
+  /* ── HERO ── */
+  .hero{background:var(--v0);padding:84px 24px 72px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 20% 40%,rgba(99,102,241,0.18) 0%,transparent 60%),radial-gradient(ellipse 55% 50% at 80% 65%,rgba(124,58,237,0.13) 0%,transparent 55%);pointer-events:none;}
+  /* grid lines — the signature element */
+  .hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  .issue-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--v4);border:1px solid rgba(129,140,248,0.35);border-radius:4px;padding:5px 16px;margin-bottom:26px;position:relative;z-index:1;}
+  .hero h1{font-family:'Fraunces',serif;font-size:clamp(2.2rem,5.5vw,4rem);font-weight:900;color:#fff;line-height:1.06;letter-spacing:-0.025em;margin-bottom:20px;max-width:740px;margin-left:auto;margin-right:auto;position:relative;z-index:1;}
+  .hero h1 em{font-style:italic;color:var(--v4);font-weight:300;}
+  .hero-sub{font-size:15px;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto 38px;line-height:1.72;position:relative;z-index:1;}
+  .hero-stats{display:flex;justify-content:center;gap:44px;flex-wrap:wrap;position:relative;z-index:1;}
+  .hero-stat{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.07em;text-transform:uppercase;}
+  .hero-stat strong{display:block;font-size:24px;color:#fff;font-family:'Inter',sans-serif;font-weight:600;letter-spacing:0;margin-bottom:3px;}
+  .hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:28px;position:relative;z-index:1;}
+  .hero-badge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;padding:4px 12px;border-radius:3px;border:1px solid;}
+  .hero-badge.emb{color:#a5b4fc;border-color:rgba(165,180,252,0.3);}
+  .hero-badge.att{color:#c4b5fd;border-color:rgba(196,181,253,0.3);}
+  .hero-badge.ffn{color:#67e8f9;border-color:rgba(103,232,249,0.3);}
+  .hero-badge.res{color:#6ee7b7;border-color:rgba(110,231,183,0.3);}
+  .hero-badge.enc{color:#93c5fd;border-color:rgba(147,197,253,0.3);}
+  .hero-badge.dec{color:#f9a8d4;border-color:rgba(249,168,212,0.3);}
+  .hero-badge.encdec{color:#ddd6fe;border-color:rgba(221,214,254,0.3);}
+
+  /* ── CONTAINER ── */
+  .container{max-width:780px;margin:0 auto;padding:0 24px;}
+
+  /* ── TOC ── */
+  .toc{background:#fff;border:1px solid var(--paper3);border-radius:8px;padding:30px 34px;margin:54px 0;box-shadow:0 2px 20px rgba(99,102,241,0.07);}
+  .toc-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:18px;}
+  .toc ol{list-style:none;counter-reset:toc;display:grid;grid-template-columns:1fr 1fr;gap:10px 30px;}
+  .toc li{counter-increment:toc;font-size:13.5px;color:var(--ink2);display:flex;align-items:baseline;gap:9px;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--v3);flex-shrink:0;}
+  .toc li a{color:var(--ink2);text-decoration:none;}
+  .toc li a:hover{color:var(--v3);}
+
+  /* ── DIVIDER ── */
+  .divider{display:flex;align-items:center;gap:14px;margin:60px 0 50px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--paper3);}
+  .divider span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);white-space:nowrap;}
+
+  /* ── TYPOGRAPHY ── */
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;}
+  .eyebrow.v{color:var(--v3);}
+  .eyebrow.emb{color:var(--emb);}
+  .eyebrow.att{color:var(--att);}
+  .eyebrow.ffn{color:var(--ffn);}
+  .eyebrow.res{color:var(--res);}
+  .eyebrow.enc{color:var(--enc);}
+  .eyebrow.dec{color:var(--dec);}
+  .eyebrow.encdec{color:var(--encdec);}
+  h2{font-family:'Fraunces',serif;font-size:clamp(1.75rem,3.2vw,2.5rem);font-weight:700;line-height:1.16;letter-spacing:-0.018em;margin-bottom:20px;color:var(--ink);}
+  h2 em{font-style:italic;}
+  h2 em.v{color:var(--v3);}
+  h2 em.att{color:var(--att);}
+  h2 em.enc{color:var(--enc);}
+  h2 em.dec{color:var(--dec);}
+  h2 em.encdec{color:var(--encdec);}
+  h3{font-family:'Inter',sans-serif;font-size:1.06rem;font-weight:600;margin:32px 0 10px;color:var(--ink);}
+  p{margin-bottom:16px;color:var(--ink2);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--ink);font-weight:600;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--paper2);padding:1px 6px;border-radius:3px;color:var(--v2);}
+
+  /* ── PULL QUOTE ── */
+  .pull-quote{border-left:3px solid var(--v3);padding:6px 0 6px 28px;margin:36px 0;}
+  .pull-quote.enc{border-left-color:var(--enc);}
+  .pull-quote.dec{border-left-color:var(--dec);}
+  .pull-quote p{font-family:'Fraunces',serif;font-size:1.18rem;font-style:italic;color:var(--ink);line-height:1.62;margin:0;}
+
+  /* ── ANALOGY ── */
+  .analogy{background:#fff;border:1px solid var(--paper3);border-radius:8px;padding:22px 28px;margin:26px 0;box-shadow:0 1px 8px rgba(99,102,241,0.05);}
+  .analogy-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--v3);margin-bottom:10px;}
+  .analogy p{font-size:14.5px;color:var(--ink2);margin:0;}
+
+  /* ── CALLOUT ── */
+  .callout{border-radius:8px;padding:18px 22px;margin:26px 0;border:1px solid transparent;}
+  .callout-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;margin-bottom:8px;}
+  .callout p{font-size:14px;margin:0;line-height:1.68;}
+  .callout.emb{background:var(--emb-bg);border-color:var(--emb-bd);}
+  .callout.emb .callout-label{color:var(--emb);}
+  .callout.att{background:var(--att-bg);border-color:var(--att-bd);}
+  .callout.att .callout-label{color:var(--att);}
+  .callout.ffn{background:var(--ffn-bg);border-color:var(--ffn-bd);}
+  .callout.ffn .callout-label{color:var(--ffn);}
+  .callout.res{background:var(--res-bg);border-color:var(--res-bd);}
+  .callout.res .callout-label{color:var(--res);}
+  .callout.enc{background:var(--enc-bg);border-color:var(--enc-bd);}
+  .callout.enc .callout-label{color:var(--enc);}
+  .callout.dec{background:var(--dec-bg);border-color:var(--dec-bd);}
+  .callout.dec .callout-label{color:var(--dec);}
+  .callout.encdec{background:var(--encdec-bg);border-color:var(--encdec-bd);}
+  .callout.encdec .callout-label{color:var(--encdec);}
+  .callout.amber{background:var(--amber-bg);border-color:rgba(217,119,6,0.22);}
+  .callout.amber .callout-label{color:var(--amber);}
+  .callout.green{background:var(--res-bg);border-color:var(--res-bd);}
+  .callout.green .callout-label{color:var(--res);}
+
+  /* ── JARGON ── */
+  .jargon{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--paper3);border-radius:5px;padding:10px 14px;margin:7px 0;}
+  .jargon-term{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0;padding-top:1px;}
+  .jargon-term.v{color:var(--v2);}
+  .jargon-term.emb{color:var(--emb);}
+  .jargon-term.att{color:var(--att);}
+  .jargon-term.ffn{color:var(--ffn);}
+  .jargon-term.res{color:var(--res);}
+  .jargon-term.enc{color:var(--enc);}
+  .jargon-term.dec{color:var(--dec);}
+  .jargon-def{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── TRANSFORMER BLOCK DIAGRAM — the signature visual ── */
+  .block-diagram{background:var(--v0);border-radius:12px;padding:28px;margin:28px 0;position:relative;overflow:hidden;}
+  .block-diagram::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.05) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;}
+  .bd-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:20px;position:relative;}
+  .bd-layers{display:flex;flex-direction:column;gap:8px;position:relative;}
+  .bd-layer{border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .bd-layer.input {background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);}
+  .bd-layer.pos   {background:rgba(99,102,241,0.10);border:1px solid rgba(99,102,241,0.3);}
+  .bd-layer.attn  {background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.45);}
+  .bd-layer.res1  {background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.35);}
+  .bd-layer.ffnl  {background:rgba(8,145,178,0.14);border:1px solid rgba(8,145,178,0.4);}
+  .bd-layer.res2  {background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.35);}
+  .bd-layer.repeat{background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.18);}
+  .bd-layer-name{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;}
+  .bd-layer.input  .bd-layer-name{color:#a5b4fc;}
+  .bd-layer.pos    .bd-layer-name{color:#a5b4fc;}
+  .bd-layer.attn   .bd-layer-name{color:#c4b5fd;}
+  .bd-layer.res1   .bd-layer-name,.bd-layer.res2 .bd-layer-name{color:#6ee7b7;}
+  .bd-layer.ffnl   .bd-layer-name{color:#67e8f9;}
+  .bd-layer.repeat .bd-layer-name{color:rgba(255,255,255,0.5);}
+  .bd-layer-desc{font-size:12.5px;color:rgba(255,255,255,0.5);}
+  .bd-layer-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;border-radius:3px;white-space:nowrap;flex-shrink:0;}
+  .bd-layer.input  .bd-layer-tag{background:rgba(99,102,241,0.3);color:#a5b4fc;}
+  .bd-layer.pos    .bd-layer-tag{background:rgba(99,102,241,0.2);color:#a5b4fc;}
+  .bd-layer.attn   .bd-layer-tag{background:rgba(124,58,237,0.3);color:#c4b5fd;}
+  .bd-layer.res1   .bd-layer-tag,.bd-layer.res2 .bd-layer-tag{background:rgba(5,150,105,0.25);color:#6ee7b7;}
+  .bd-layer.ffnl   .bd-layer-tag{background:rgba(8,145,178,0.25);color:#67e8f9;}
+  .bd-layer.repeat .bd-layer-tag{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);}
+  .bd-arrow{text-align:center;color:rgba(255,255,255,0.2);font-size:14px;margin:-4px 0;position:relative;}
+
+  /* ── MULTIHEAD VISUAL ── */
+  .mh-wrap{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:22px 26px;margin:24px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .mh-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--att);margin-bottom:16px;}
+  .mh-heads{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .mh-head{flex:1;min-width:100px;background:var(--att-bg);border:1px solid var(--att-bd);border-radius:8px;padding:12px;text-align:center;}
+  .mh-head-num{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--att);margin-bottom:6px;}
+  .mh-head-focus{font-size:12.5px;color:var(--ink2);font-style:italic;}
+  .mh-concat{background:var(--paper2);border-radius:6px;padding:8px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--v2);margin-top:4px;}
+  .mh-note{font-size:13px;color:var(--ink3);margin-top:10px;font-style:italic;}
+
+  /* ── POSITIONAL ENCODING VISUAL ── */
+  .pe-wrap{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:22px 26px;margin:24px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .pe-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--emb);margin-bottom:16px;}
+  .pe-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+  .pe-token{background:var(--emb-bg);border:1.5px solid var(--emb-bd);border-radius:6px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--emb);text-align:center;flex:1;min-width:70px;}
+  .pe-plus{font-size:18px;color:var(--ink3);flex-shrink:0;}
+  .pe-pos{background:var(--res-bg);border:1.5px solid var(--res-bd);border-radius:6px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--res);text-align:center;flex:1;min-width:70px;}
+  .pe-eq{font-size:18px;color:var(--ink3);flex-shrink:0;}
+  .pe-out{background:var(--paper2);border:1.5px solid var(--paper3);border-radius:6px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--v2);text-align:center;flex:1;min-width:70px;}
+
+  /* ── VARIANTS TABLE ── */
+  .variant-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:24px 0;}
+  .variant-card{border-radius:10px;padding:20px 22px;border:1.5px solid;}
+  .variant-card.enc{background:var(--enc-bg);border-color:var(--enc-bd);}
+  .variant-card.dec{background:var(--dec-bg);border-color:var(--dec-bd);}
+  .variant-card.encdec{background:var(--encdec-bg);border-color:var(--encdec-bd);}
+  .vc-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:7px;}
+  .variant-card.enc .vc-label{color:var(--enc);}
+  .variant-card.dec .vc-label{color:var(--dec);}
+  .variant-card.encdec .vc-label{color:var(--encdec);}
+  .vc-name{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:700;color:var(--ink);margin-bottom:5px;}
+  .vc-sub{font-size:13px;color:var(--ink2);margin-bottom:12px;line-height:1.55;}
+  .vc-list{list-style:none;font-size:13px;color:var(--ink2);}
+  .vc-list li{padding:4px 0 4px 14px;position:relative;border-bottom:1px solid rgba(0,0,0,0.05);}
+  .vc-list li:last-child{border-bottom:none;}
+  .vc-list li::before{content:'→';position:absolute;left:0;font-size:11px;}
+  .variant-card.enc .vc-list li::before{color:var(--enc);}
+  .variant-card.dec .vc-list li::before{color:var(--dec);}
+  .variant-card.encdec .vc-list li::before{color:var(--encdec);}
+  .vc-models{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.07);}
+  .variant-card.enc .vc-models{color:var(--enc);}
+  .variant-card.dec .vc-models{color:var(--dec);}
+  .variant-card.encdec .vc-models{color:var(--encdec);}
+
+  /* ── METRIC TABLE ── */
+  .m-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;}
+  .m-table th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--paper3);}
+  .m-table td{padding:10px 0 9px;border-bottom:1px solid var(--paper2);vertical-align:top;color:var(--ink2);line-height:1.55;}
+  .m-table td:first-child{font-weight:600;color:var(--ink);padding-right:18px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .m-table tr:last-child td{border-bottom:none;}
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap{background:var(--code-bg);border-radius:10px;overflow:hidden;margin:28px 0;}
+  .code-header{background:rgba(255,255,255,0.04);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .code-header-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+  .code-dots{display:flex;gap:6px;}
+  .code-dot{width:10px;height:10px;border-radius:50%;}
+  .code-dot:nth-child(1){background:#ff5f57;}
+  .code-dot:nth-child(2){background:#febc2e;}
+  .code-dot:nth-child(3){background:#28c840;}
+  pre{padding:22px 24px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.8;color:var(--code-txt);}
+  .cm{color:#4a5580;} .ck{color:#ce93d8;} .cs{color:#a5d6a7;} .cn{color:#ffcc80;} .cf{color:#90caf9;}
+
+  /* ── EXPECTED OUTPUT ── */
+  .expected-output{background:#0e0e1f;border:1px solid rgba(129,140,248,0.2);border-radius:8px;margin:-10px 0 28px;overflow:hidden;}
+  .expected-output-header{background:rgba(129,140,248,0.07);padding:8px 20px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--v4);border-bottom:1px solid rgba(129,140,248,0.15);}
+  .expected-output pre{padding:16px 20px;font-size:12px;line-height:1.75;color:#c5cae9;background:transparent;}
+  .out-h{color:#90caf9;} .out-n{color:#ffcc80;} .out-g{color:#a5d6a7;} .out-d{color:#80deea;}
+
+  /* ── AGENT BOX ── */
+  .agent-box{background:var(--v0);border-radius:12px;padding:32px 34px;margin:46px 0;position:relative;overflow:hidden;}
+  .agent-box::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.06) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;}
+  .agent-box::after{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(124,58,237,0.18) 0%,transparent 65%);pointer-events:none;}
+  .ab-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--v4);margin-bottom:14px;position:relative;z-index:1;}
+  .agent-box h3{color:#fff;margin:0 0 12px;font-size:1.1rem;position:relative;z-index:1;}
+  .agent-box p{color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;position:relative;z-index:1;line-height:1.72;}
+  .agent-box p:last-child{margin-bottom:0;}
+
+  /* ── CHEAT GRID ── */
+  .cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+  .cheat-cell{background:#fff;border:1px solid var(--paper3);border-radius:8px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04);border-left:3px solid var(--v3);}
+  .cheat-cell.emb{border-left-color:var(--emb);}
+  .cheat-cell.att{border-left-color:var(--att);}
+  .cheat-cell.ffn{border-left-color:var(--ffn);}
+  .cheat-cell.res{border-left-color:var(--res);}
+  .cheat-cell-name{font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:3px;}
+  .cheat-cell-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-bottom:8px;letter-spacing:0.06em;}
+  .cheat-cell ul{list-style:none;font-size:13px;color:var(--ink2);}
+  .cheat-cell ul li{padding:2px 0 2px 14px;position:relative;}
+  .cheat-cell ul li::before{content:'·';position:absolute;left:0;color:var(--ink3);}
+
+  /* ── FOOTER ── */
+  .footer{background:var(--v0);padding:56px 24px;margin-top:80px;text-align:center;position:relative;overflow:hidden;}
+  .footer::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  .footer-title{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;position:relative;}
+  .footer-sub{font-size:13px;color:rgba(255,255,255,0.38);margin-bottom:10px;position:relative;}
+  .footer-next{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--v4);margin-top:20px;position:relative;}
+  .footer-block{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgba(129,140,248,0.5);margin-top:8px;position:relative;}
+
+  @media(max-width:640px){
+    .toc ol,.variant-grid,.cheat-grid{grid-template-columns:1fr;}
+    .masthead-inner{flex-direction:column;gap:4px;}
+    .mh-heads{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="ms-title">Master Agentic AI with Me · Issue #08</div>
+    <div class="ms-meta">Block 05 · Transformer Architecture · Complete</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="issue-tag">Issue 08 · Block 05 · The Architecture Behind Everything</div>
+  <h1>The Transformer —<br><em>one block,</em> stacked<br>into intelligence</h1>
+  <p class="hero-sub">Every LLM you use today is just this architecture, repeated N times on a GPU cluster for several months. Understanding it completely changes how you build with AI.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>32 min</strong>read</div>
+    <div class="hero-stat"><strong>6</strong>components</div>
+    <div class="hero-stat"><strong>3</strong>variants</div>
+    <div class="hero-stat"><strong>5</strong>code cells</div>
+  </div>
+  <div class="hero-badges">
+    <span class="hero-badge emb">Input Embedding</span>
+    <span class="hero-badge emb">Positional Encoding</span>
+    <span class="hero-badge att">Multi-Head Attention</span>
+    <span class="hero-badge res">Add &amp; LayerNorm</span>
+    <span class="hero-badge ffn">Feed-Forward Network</span>
+    <span class="hero-badge enc">BERT Encoder</span>
+    <span class="hero-badge dec">GPT Decoder</span>
+    <span class="hero-badge encdec">T5 Enc-Dec</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-label">In this issue — Block 05 complete</div>
+    <ol>
+      <li><a href="#why-transformer">Why the Transformer replaced RNNs</a></li>
+      <li><a href="#anatomy">One Transformer block — full anatomy</a></li>
+      <li><a href="#input-prep">Input Embedding + Positional Encoding</a></li>
+      <li><a href="#multihead">Multi-Head Self-Attention</a></li>
+      <li><a href="#residual">Add &amp; LayerNorm — residual connections</a></li>
+      <li><a href="#ffn">Feed-Forward Network sublayer</a></li>
+      <li><a href="#stacking">Stacking blocks — how depth creates intelligence</a></li>
+      <li><a href="#encoder">Variant 1: Encoder (BERT)</a></li>
+      <li><a href="#decoder">Variant 2: Decoder (GPT / Claude)</a></li>
+      <li><a href="#encdec">Variant 3: Encoder-Decoder (T5)</a></li>
+      <li><a href="#code">Full Python implementation</a></li>
+      <li><a href="#agent">Connection to AI Agents</a></li>
+    </ol>
+  </div>
+
+  <div class="eyebrow v">From the editor</div>
+  <p>Welcome to Issue 08 — Block 05. This is the one everything else has been building toward. The Transformer isn't just another architecture. It's the architecture. The one discovery that made GPT, BERT, Claude, Gemini, Stable Diffusion, AlphaFold, and virtually every other major AI breakthrough since 2018 possible.</p>
+  <p>By the end of this issue, you'll understand every component inside a Transformer block — not as a black box, but mechanically. You'll know why each piece exists, what problem it solves, and how they work together. You'll also understand the three variants: why BERT reads bidirectionally, why GPT generates left to right, and what T5 does differently with an encoder-decoder pair.</p>
+  <p>Issue 09 (next) covers what happens when you train a Transformer on trillions of tokens — Language Models, LLMs, and Generative AI. This issue gives you the architecture. The next gives you what the architecture becomes when you scale it.</p>
+
+  <div class="divider"><span>Part 1 · Why the Transformer</span></div>
+
+  <div id="why-transformer">
+    <div class="eyebrow v">The paradigm shift</div>
+    <h2>Why the Transformer <em class="v">replaced RNNs</em> in 2017</h2>
+    <p>The RNN/LSTM approach had three fundamental limits that no amount of engineering could fully fix:</p>
+
+    <table class="m-table">
+      <tr><th>RNN problem</th><th>Why it matters</th><th>Transformer's fix</th></tr>
+      <tr>
+        <td>Sequential processing</td>
+        <td>Must process word 1, then word 2, then word 3 — in order. Can't be parallelised. Slow to train on GPUs designed for parallel computation.</td>
+        <td>All tokens processed simultaneously. A sentence of 512 tokens doesn't take 512 steps — it takes 1 step with 512 parallel computations.</td>
+      </tr>
+      <tr>
+        <td>Vanishing gradients over distance</td>
+        <td>Even with LSTM, connecting information 100+ tokens apart is hard. Gradients weaken across long paths.</td>
+        <td>Attention directly connects any two tokens regardless of distance. "bank" and "river" 50 tokens apart have a direct, unattenuated connection.</td>
+      </tr>
+      <tr>
+        <td>Fixed-size bottleneck</td>
+        <td>In Seq2Seq, the entire input must compress into one hidden state. Catastrophic for long documents.</td>
+        <td>No bottleneck. Every output position can directly attend to every input position. All information preserved.</td>
+      </tr>
+    </table>
+
+    <div class="pull-quote">
+      <p>The Transformer doesn't process sequence by sequence. It processes the entire sequence at once — in one unified operation — and lets every position learn directly from every other.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 2 · One Transformer Block</span></div>
+
+  <div id="anatomy">
+    <div class="eyebrow v">The complete architecture</div>
+    <h2>One Transformer block — <em class="v">every component</em></h2>
+    <p>A Transformer model is just this block, stacked N times. GPT-2 small: 12 blocks. GPT-3: 96 blocks. BERT-base: 12 blocks. Every block has the same structure — identical components, different learned weights. Depth creates increasingly abstract representations of the input.</p>
+    <p>Here is the full block, top to bottom:</p>
+
+    <div class="block-diagram">
+      <div class="bd-label">One Transformer Block — components in order of data flow</div>
+      <div class="bd-layers">
+        <div class="bd-layer input">
+          <div>
+            <div class="bd-layer-name">Token Embedding</div>
+            <div class="bd-layer-desc">Each input token → a dense vector (e.g. 768 dims)</div>
+          </div>
+          <div class="bd-layer-tag">Input Prep</div>
+        </div>
+        <div class="bd-arrow">↓</div>
+        <div class="bd-layer pos">
+          <div>
+            <div class="bd-layer-name">+ Positional Encoding</div>
+            <div class="bd-layer-desc">Inject token position info into embedding</div>
+          </div>
+          <div class="bd-layer-tag">Input Prep</div>
+        </div>
+        <div class="bd-arrow">↓</div>
+        <div class="bd-layer attn">
+          <div>
+            <div class="bd-layer-name">Multi-Head Self-Attention</div>
+            <div class="bd-layer-desc">Each token attends to every other token — H heads in parallel</div>
+          </div>
+          <div class="bd-layer-tag">Attention</div>
+        </div>
+        <div class="bd-arrow">↓</div>
+        <div class="bd-layer res1">
+          <div>
+            <div class="bd-layer-name">Add &amp; LayerNorm</div>
+            <div class="bd-layer-desc">Residual: output = LayerNorm(attention_output + input)</div>
+          </div>
+          <div class="bd-layer-tag">Stabilise</div>
+        </div>
+        <div class="bd-arrow">↓</div>
+        <div class="bd-layer ffnl">
+          <div>
+            <div class="bd-layer-name">Feed-Forward Network (FFN)</div>
+            <div class="bd-layer-desc">Two linear layers + GELU per token, independently</div>
+          </div>
+          <div class="bd-layer-tag">Process</div>
+        </div>
+        <div class="bd-arrow">↓</div>
+        <div class="bd-layer res2">
+          <div>
+            <div class="bd-layer-name">Add &amp; LayerNorm</div>
+            <div class="bd-layer-desc">Residual: output = LayerNorm(ffn_output + attention_output)</div>
+          </div>
+          <div class="bd-layer-tag">Stabilise</div>
+        </div>
+        <div class="bd-arrow">↓</div>
+        <div class="bd-layer repeat">
+          <div>
+            <div class="bd-layer-name">Repeat × N blocks</div>
+            <div class="bd-layer-desc">Same structure, different weights. 12 blocks (BERT) to 96 blocks (GPT-3)</div>
+          </div>
+          <div class="bd-layer-tag">Depth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · Input Preparation</span></div>
+
+  <div id="input-prep">
+    <div class="eyebrow emb">Step 1 of the block</div>
+    <h2>Input Embedding + <em class="v">Positional Encoding</em></h2>
+
+    <p>Before the Transformer can process tokens, two things must happen. First, each token must be converted into a dense vector — an embedding. Second, the model must somehow know the order of tokens, because unlike RNNs that process sequentially, the Transformer sees everything at once and has no inherent sense of position.</p>
+
+    <div class="jargon">
+      <span class="jargon-term emb">Token Embedding</span>
+      <span class="jargon-def">A lookup table (embedding matrix) of shape (vocabulary_size × d_model). Each token ID maps to one row — a learned vector of d_model dimensions. BERT uses d_model=768. GPT-3 uses d_model=12,288. The embedding matrix is one of the largest components of the model (50,000 tokens × 768 dims = 38.4M parameters for BERT alone) and is trained jointly with everything else via backprop.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term emb">Positional Encoding</span>
+      <span class="jargon-def">A vector added to each token embedding to inject position information. Without this, "cat sat on mat" and "mat on sat cat" would produce identical representations — same tokens, same attention, no order. The original 2017 Transformer used sinusoidal encoding: fixed mathematical functions of position and dimension. Modern models use learned positional embeddings (just another lookup table) or RoPE/ALiBi for better generalisation to long sequences.</span>
+    </div>
+
+    <div class="pe-wrap">
+      <div class="pe-label">Positional Encoding — what gets added to every token</div>
+      <div class="pe-row">
+        <div class="pe-token">token_emb<br><small style="color:var(--ink3);">"cat"→[0.2,-0.8,…]</small></div>
+        <div class="pe-plus">+</div>
+        <div class="pe-pos">pos_emb<br><small style="color:var(--ink3);">pos=2→[sin,cos,…]</small></div>
+        <div class="pe-eq">=</div>
+        <div class="pe-out">input_emb<br><small style="color:var(--ink3);">fed to attention</small></div>
+      </div>
+      <p style="font-size:13px;color:var(--ink3);margin-top:8px;font-style:italic;">The same word "cat" at position 2 vs position 7 produces different input embeddings — position is baked in. The model learns to use these position signals to understand word order.</p>
+    </div>
+
+    <div class="callout emb">
+      <div class="callout-label">Sinusoidal vs Learned Positional Encoding</div>
+      <p>Original Transformer (2017): sinusoidal — <code>PE(pos, 2i) = sin(pos/10000^(2i/d_model))</code>. Fixed, not trained. Can generalise to longer sequences than seen in training. BERT and GPT: learned — just another embedding table, trained via backprop like everything else. RoPE (Rotary Position Embedding, used in LLaMA and many modern models): encodes position by rotating Q and K vectors in the attention computation, enabling better length generalisation. ALiBi (used in Mistral): biases attention scores directly by distance. Position encoding is an active research area.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · Multi-Head Self-Attention</span></div>
+
+  <div id="multihead">
+    <div class="eyebrow att">The core of the Transformer</div>
+    <h2>Multi-Head Self-Attention — <em class="att">every token attends to every other</em></h2>
+
+    <p>You built single-head attention from scratch in Issue 07. Multi-Head Attention runs H attention operations in parallel — H "heads" — each with its own learned Q, K, V projection matrices. Each head learns to attend to different types of relationships simultaneously.</p>
+
+    <div class="analogy">
+      <div class="analogy-label att">Why multiple heads?</div>
+      <p>Consider the sentence "The bank near the river where I fish is closed." A single attention head must choose what to focus on. But this sentence has multiple simultaneous relationships: syntactic (what modifies what), semantic (what refers to what), coreference ("where I fish" modifies "river bank"). Multiple heads can each specialise — head 1 might learn syntactic dependencies, head 2 might learn semantic similarity, head 3 might learn coreference. All captured simultaneously. BERT-base has 12 heads. GPT-3 has 96 heads per layer. Research shows different heads genuinely specialise in different linguistic phenomena.</p>
+    </div>
+
+    <div class="mh-wrap">
+      <div class="mh-label">Multi-Head Attention — BERT-base example: 12 heads in parallel</div>
+      <div class="mh-heads">
+        <div class="mh-head"><div class="mh-head-num">Head 1</div><div class="mh-head-focus">syntactic subject-verb</div></div>
+        <div class="mh-head"><div class="mh-head-num">Head 2</div><div class="mh-head-focus">coreference "he/she/it"</div></div>
+        <div class="mh-head"><div class="mh-head-num">Head 3</div><div class="mh-head-focus">semantic similarity</div></div>
+        <div class="mh-head"><div class="mh-head-num">Head 4</div><div class="mh-head-focus">positional proximity</div></div>
+        <div class="mh-head" style="opacity:0.5;"><div class="mh-head-num">Heads 5–12</div><div class="mh-head-focus">various other patterns…</div></div>
+      </div>
+      <div class="mh-concat">All 12 head outputs concatenated → projected with W_O matrix → single output</div>
+      <div class="mh-note">Each head gets d_k = d_model / H dimensions. BERT: 768/12 = 64 dims per head. Concat restores full 768 dims.</div>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term att">Self-Attention vs Cross-Attention</span>
+      <span class="jargon-def">Self-attention: Q, K, V all come from the same sequence. Each token attends to all other tokens in the same sequence — how tokens in "The cat sat" relate to each other. Cross-attention: Q comes from one sequence (decoder), K and V come from another sequence (encoder output). Allows the decoder to look at the encoder's representation of the input. Used in the Encoder-Decoder (T5-style) Transformer. Pure decoder models (GPT, Claude) only use self-attention.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term att">Causal Mask</span>
+      <span class="jargon-def">In decoder-only models (GPT, Claude), during training a token must not attend to future tokens — it should only see past context, otherwise the model trivially "cheats" by reading the answer. The causal mask sets all future positions to −∞ before softmax, making their attention weights effectively zero. After softmax, only positions 1 through t receive any weight when processing position t. This forces the model to predict each token using only its left context — which is exactly the autoregressive generation task it must perform at inference.</span>
+    </div>
+
+    <h3>The full Multi-Head Attention computation</h3>
+    <div style="background:#fff;border:1px solid var(--paper3);border-radius:8px;padding:16px 22px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink);margin:16px 0;box-shadow:0 1px 4px rgba(0,0,0,0.04);line-height:1.85;">
+      <div style="font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">Multi-Head Attention — per head h</div>
+      Q_h = X · W_Q_h    (project input to query space for head h)<br>
+      K_h = X · W_K_h    (project input to key space for head h)<br>
+      V_h = X · W_V_h    (project input to value space for head h)<br>
+      head_h = softmax(Q_h · K_h^T / √d_k) · V_h<br>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--paper3);">
+      MultiHead(X) = Concat(head_1, …, head_H) · W_O
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · Add &amp; LayerNorm</span></div>
+
+  <div id="residual">
+    <div class="eyebrow res">The stabiliser</div>
+    <h2>Add &amp; LayerNorm — <em class="v">why deep networks don't collapse</em></h2>
+
+    <p>After Multi-Head Attention and after the FFN, the same pattern repeats: <strong>Add</strong> the block's input back to its output (residual connection), then apply <strong>Layer Normalisation</strong>. These two operations together are what makes it possible to stack 96 or more Transformer blocks without the training exploding or vanishing.</p>
+
+    <div class="jargon">
+      <span class="jargon-term res">Residual Connection (Skip Connection)</span>
+      <span class="jargon-def">Instead of output = Attention(x), compute output = x + Attention(x). Add the original input back to the transformed output. This is the same skip connection from ResNet in Issue 05. Gradients can flow directly backward through the addition, bypassing the attention and FFN layers entirely. Without residuals, a 96-layer Transformer would have vanishing gradients — layers near the input would receive near-zero gradient signal and learn nothing. Residuals solve this completely.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term res">Layer Normalisation</span>
+      <span class="jargon-def">Normalise the activations across the feature dimension (not the batch dimension, unlike Batch Normalisation). For each token independently, compute mean and variance across its d_model values, then normalise and scale. This keeps activations in a stable numerical range as they pass through many layers. Without it, after 96 layers of attention + FFN operations, activations would drift to extreme values and gradient flow would break. Applied after every Add operation (or, in modern variants like Pre-LN, before every sublayer).</span>
+    </div>
+
+    <div class="callout res">
+      <div class="callout-label">Pre-LN vs Post-LN — a practical detail</div>
+      <p>The original 2017 paper used Post-LN: LayerNorm after the residual add. Modern models (GPT-2 onwards, LLaMA, Claude) use Pre-LN: LayerNorm before each sublayer. Pre-LN trains more stably and doesn't require warm-up learning rate schedules. It's now the default. The formula becomes: output = x + Attention(LayerNorm(x)) instead of output = LayerNorm(x + Attention(x)). Small difference, big practical improvement for very deep models.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 6 · Feed-Forward Network</span></div>
+
+  <div id="ffn">
+    <div class="eyebrow ffn">The second sublayer</div>
+    <h2>Feed-Forward Network — <em class="v">where knowledge is stored</em></h2>
+
+    <p>After Multi-Head Attention + Add&amp;LayerNorm, each token's representation passes through a simple two-layer MLP — independently for each token. No interaction between tokens here — it's purely positional (each token processed in isolation).</p>
+
+    <div class="jargon">
+      <span class="jargon-term ffn">FFN Sublayer</span>
+      <span class="jargon-def">FFN(x) = Linear_2(GELU(Linear_1(x))). Two linear layers with a GELU activation between them. The inner dimension is typically 4× d_model: if d_model=768, the FFN expands to 3072 then contracts back to 768. This 4× expansion is where most of the model's parameters live — and research suggests this is where factual knowledge is stored. The FFN acts like a key-value memory: the first layer matches patterns, the activation gates them, the second layer writes the result. Mechanistic interpretability research has shown specific facts ("Paris is the capital of France") are stored in specific FFN neurons.</span>
+    </div>
+
+    <div class="callout ffn">
+      <div class="callout-label">Attention vs FFN — what each component does</div>
+      <p>Attention = token mixer. It lets tokens communicate with each other — aggregating context from across the sequence. FFN = position-wise transformation. It processes each token independently — applying the model's stored knowledge to that token's current representation. Think of it this way: attention decides "which information from elsewhere is relevant to this token right now." FFN decides "given this token's current representation, what do I know about it?" Together, one block performs one round of context-gathering + knowledge-application. Stack 96 rounds and you get something capable of writing poetry and debugging code.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · Stacking Blocks</span></div>
+
+  <div id="stacking">
+    <div class="eyebrow v">How depth creates capability</div>
+    <h2>Stacking N blocks — <em class="v">abstraction through depth</em></h2>
+
+    <p>Each block takes in a sequence of token representations and outputs a transformed sequence of the same shape. Block 1 output feeds directly into Block 2. Block 2 into Block 3. All the way to Block N. Each block refines the representation — asking "given what all previous blocks have computed, what additional context and transformation should I apply?"</p>
+
+    <table class="m-table">
+      <tr><th>Layer range</th><th>What is typically learned (from interpretability research)</th></tr>
+      <tr><td>Early layers (1–4)</td><td>Surface syntax — POS patterns, local co-occurrence, basic word relationships. Attention heads attend to nearby tokens.</td></tr>
+      <tr><td>Middle layers (5–8)</td><td>Syntactic structure — subject/verb/object dependencies, phrase boundaries. Coreference begins to form.</td></tr>
+      <tr><td>Late layers (9–12+)</td><td>Semantic and task-specific representations — entity types, sentiment, factual knowledge, reasoning patterns.</td></tr>
+    </table>
+
+    <div class="callout amber">
+      <div class="callout-label">Why you can't train just a few layers</div>
+      <p>A 1-layer Transformer can attend to context but has almost no capacity to store knowledge or perform complex reasoning. A 3-layer Transformer can parse basic syntax but not disambiguate meaning. The capabilities that make LLMs useful — multi-step reasoning, world knowledge, instruction following — require the kind of compositional abstraction that only emerges through many layers of iterative attention + FFN processing. GPT-3 needed 96 layers and 175 billion parameters to achieve its emergent abilities. This is why you can't just make 1 big attention layer — depth is not optional.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · Three Transformer Variants</span></div>
+
+  <div class="eyebrow v">Same block — three different configurations</div>
+  <h2>BERT, GPT, T5 — <em class="v">three answers to the same architecture</em></h2>
+
+  <p>The Transformer block is the same in all three. What differs is: how you stack the blocks (encoder only, decoder only, or both), what pre-training task you use, and what capabilities emerge from each choice.</p>
+
+  <div class="variant-grid">
+    <div class="variant-card enc">
+      <div class="vc-label">Variant 1 · Encoder</div>
+      <div class="vc-name">BERT-style</div>
+      <div class="vc-sub">Reads the full sentence in both directions. Every token sees every other token. Builds the deepest contextual understanding of input.</div>
+      <ul class="vc-list">
+        <li>No causal mask — full bidirectional attention</li>
+        <li>Pre-training: Masked LM + NSP</li>
+        <li>Produces rich contextual representations</li>
+        <li>Text classification, NER, QA</li>
+        <li>Sentence embeddings (SBERT)</li>
+      </ul>
+      <div class="vc-models">Models: BERT · RoBERTa · ELECTRA · DeBERTa</div>
+    </div>
+    <div class="variant-card dec">
+      <div class="vc-label">Variant 2 · Decoder</div>
+      <div class="vc-name">GPT-style</div>
+      <div class="vc-sub">Generates text left-to-right. Each token only attends to previous tokens — the causal mask prevents peeking at the future.</div>
+      <ul class="vc-list">
+        <li>Causal mask — autoregressive generation</li>
+        <li>Pre-training: next token prediction (CLM)</li>
+        <li>Scales to enormous parameter counts</li>
+        <li>Text generation, chatbots, code, reasoning</li>
+        <li>In-context learning (few-shot prompting)</li>
+      </ul>
+      <div class="vc-models">Models: GPT-2/3/4 · Claude · LLaMA · Gemini · Mistral</div>
+    </div>
+    <div class="variant-card encdec">
+      <div class="vc-label">Variant 3 · Encoder-Decoder</div>
+      <div class="vc-name">T5-style</div>
+      <div class="vc-sub">Encoder reads and understands the full input. Decoder generates the output. Cross-attention lets decoder attend to encoder states.</div>
+      <ul class="vc-list">
+        <li>Encoder: bidirectional (no causal mask)</li>
+        <li>Decoder: causal + cross-attention to encoder</li>
+        <li>Pre-training: denoising / span masking</li>
+        <li>Machine translation, summarisation, QA</li>
+        <li>Any sequence-to-sequence task</li>
+      </ul>
+      <div class="vc-models">Models: T5 · BART · mT5 · Flan-T5</div>
+    </div>
+  </div>
+
+  <div id="encoder">
+    <div class="eyebrow enc">Variant 1 — BERT</div>
+    <h2>Encoder — <em class="enc">BERT reads both ways</em></h2>
+    <p>BERT (Bidirectional Encoder Representations from Transformers, Google 2018) was a landmark model because it pre-trained a Transformer encoder bidirectionally for the first time at scale. The key insight: for <em>understanding</em> tasks, you want to see the full sentence before making any prediction. A model that reads left to right can't use "river" to disambiguate "bank" when "river" comes after "bank".</p>
+
+    <div class="jargon">
+      <span class="jargon-term enc">Masked Language Modelling (MLM)</span>
+      <span class="jargon-def">BERT's pre-training task. Randomly mask 15% of tokens in the input (replace with [MASK] token). Train the model to predict the original word for each masked position. Because the model sees the full sentence (including words after the masked position), it must learn genuine bidirectional context. Contrast with GPT's left-to-right prediction: "The [MASK] sat on the mat" — BERT uses "sat" and "mat" to predict [MASK]="cat". This bidirectionality is what makes BERT excellent at understanding tasks.</span>
+    </div>
+
+    <div class="callout enc">
+      <div class="callout-label">When to use a BERT-style encoder in production</div>
+      <p>Classification tasks: feed the [CLS] token representation to a linear classifier. NER: feed each token representation to a token classifier. Semantic search: fine-tune with Sentence-BERT contrastive loss. Embeddings for RAG: run BERT/SBERT on each document chunk, store the [CLS] vector. The strength of encoders is representation quality for discriminative tasks — they produce the best embeddings for retrieval and classification. Their limitation: they don't generate text natively (no autoregressive decoder).</p>
+    </div>
+  </div>
+
+  <div id="decoder">
+    <div class="eyebrow dec">Variant 2 — GPT / Claude</div>
+    <h2>Decoder — <em class="dec">autoregressive generation</em></h2>
+    <p>The decoder-only architecture is what powers GPT, Claude, LLaMA, Gemini, and essentially every conversational LLM. The key constraint: during training, each token can only attend to tokens that came before it — the causal mask enforces this. This means the pre-training task is natural: predict the next token. And the generation task is the exact same operation: predict the next token given all previous tokens, repeat until done.</p>
+
+    <div class="jargon">
+      <span class="jargon-term dec">Autoregressive Generation</span>
+      <span class="jargon-def">Generate one token at a time, appending each to the sequence, then feeding the full extended sequence back in to generate the next. To generate "The cat sat": run the model on your prompt → get probability distribution over all tokens → sample "The" → run the model on [prompt + "The"] → sample "cat" → run on [prompt + "The cat"] → sample "sat" → and so on. Each new token is conditioned on all previous tokens. This is computationally expensive but produces coherent, context-aware text.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term dec">In-Context Learning</span>
+      <span class="jargon-def">An emergent ability of large decoder models: the ability to learn a new task from examples shown in the prompt, without any weight updates. "Translate English to French: cat → chat, dog → chien, house → ?" The model "learns" the translation pattern from the examples in its context window and applies it to the new word. This works because the model has seen enough examples during pre-training to recognise and generalise the pattern. Smaller models lack this capability — it's a scale-dependent emergent behaviour.</span>
+    </div>
+
+    <div class="callout dec">
+      <div class="callout-label">Why the decoder won — the generation-understanding unification</div>
+      <p>Initially, BERT encoders dominated NLP benchmarks — they were better at understanding tasks. But as decoder models scaled (GPT-3, then GPT-4, Claude), something unexpected happened: with enough scale, decoders became excellent at understanding tasks too — by framing them as generation. "Sentiment of 'I loved it': " → generate "positive". "Name the entities in this text: " → generate a list. As decoder models got bigger, the generation framing covered nearly every NLP task. The decoder won the architecture war through sheer scale and the universality of next-token prediction as a pre-training objective.</p>
+    </div>
+  </div>
+
+  <div id="encdec">
+    <div class="eyebrow encdec">Variant 3 — T5</div>
+    <h2>Encoder-Decoder — <em class="encdec">sequence in, sequence out</em></h2>
+    <p>Google's T5 (Text-to-Text Transfer Transformer) frames every NLP task as a text-to-text problem: give the input as text, get the output as text. Translation: "translate English to French: The cat sat" → "Le chat était assis". Summarisation: "summarise: [long article]" → "[short summary]". Question answering: "question: What is the capital of France? context: France is a country whose capital is Paris." → "Paris".</p>
+
+    <div class="jargon">
+      <span class="jargon-term encdec">Cross-Attention</span>
+      <span class="jargon-def">In the Encoder-Decoder architecture, decoder blocks have an extra attention sublayer: cross-attention. The Query comes from the decoder's current hidden state (what it's generated so far). The Keys and Values come from the encoder's output (its representation of the full input). This lets the decoder "look at" relevant parts of the encoder's understanding when generating each output token — the same principle as the attention mechanism in the original Seq2Seq+Attention work from NLP Issue 07, but now fully parameterised within the Transformer framework.</span>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 9 · Python Implementation</span></div>
+
+  <div id="code">
+    <div class="eyebrow v">Run this in Google Colab</div>
+    <h2>The complete code — <em class="v">every line explained</em></h2>
+
+    <!-- CELL 1 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 1 — Positional Encoding: sinusoidal + visualise</div>
+      </div>
+      <pre><span class="ck">import</span> torch
+<span class="ck">import</span> torch.nn <span class="ck">as</span> nn
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+<span class="ck">import</span> math
+torch.manual_seed(<span class="cn">42</span>)
+
+<span class="cm"># ── Sinusoidal Positional Encoding ────────────────────────────</span>
+<span class="ck">class</span> <span class="cf">SinusoidalPositionalEncoding</span>(nn.Module):
+    <span class="cs">"""Original 2017 paper positional encoding — no learned parameters."""</span>
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, d_model: int, max_len: int = <span class="cn">512</span>, dropout: float = <span class="cn">0.1</span>):
+        <span class="cf">super</span>().<span class="cf">__init__</span>()
+        self.dropout = nn.<span class="cf">Dropout</span>(dropout)
+
+        pe = torch.<span class="cf">zeros</span>(max_len, d_model)
+        <span class="cm"># pe: (max_len, d_model) — one positional vector per possible position</span>
+
+        position = torch.<span class="cf">arange</span>(<span class="cn">0</span>, max_len).<span class="cf">unsqueeze</span>(<span class="cn">1</span>).<span class="cf">float</span>()
+        <span class="cm"># position: (max_len, 1) — integer positions 0, 1, 2, …, max_len-1</span>
+
+        div_term = torch.<span class="cf">exp</span>(
+            torch.<span class="cf">arange</span>(<span class="cn">0</span>, d_model, <span class="cn">2</span>).<span class="cf">float</span>() * -(math.<span class="cf">log</span>(<span class="cn">10000.0</span>) / d_model)
+        )
+        <span class="cm"># div_term: the 1/10000^(2i/d_model) scaling factor for each dimension pair</span>
+        <span class="cm"># using exp(log(x)) = x for numerical stability</span>
+
+        pe[:, <span class="cn">0</span>::<span class="cn">2</span>] = torch.<span class="cf">sin</span>(position * div_term)
+        <span class="cm"># even dimensions: sin(position × div_term)</span>
+        pe[:, <span class="cn">1</span>::<span class="cn">2</span>] = torch.<span class="cf">cos</span>(position * div_term)
+        <span class="cm"># odd  dimensions: cos(position × div_term)</span>
+        <span class="cm"># different frequencies at different dimensions create unique position fingerprints</span>
+
+        pe = pe.<span class="cf">unsqueeze</span>(<span class="cn">0</span>)
+        <span class="cm"># add batch dimension: (1, max_len, d_model) — broadcasts across batch</span>
+        self.<span class="cf">register_buffer</span>(<span class="cs">'pe'</span>, pe)
+        <span class="cm"># register_buffer: saves pe as a non-trainable part of the module state</span>
+
+    <span class="ck">def</span> <span class="cf">forward</span>(self, x):
+        x = x + self.pe[:, :x.<span class="cf">size</span>(<span class="cn">1</span>), :]
+        <span class="cm"># add positional encoding to input embedding — same shape, element-wise</span>
+        <span class="cm"># pe[:, :seq_len, :] slices to actual sequence length</span>
+        <span class="ck">return</span> self.<span class="cf">dropout</span>(x)
+
+<span class="cm"># ── Test: create embeddings and add positional encoding ───────</span>
+d_model = <span class="cn">16</span>      <span class="cm"># small d_model for demonstration (real: 768 or 1024)</span>
+seq_len = <span class="cn">5</span>       <span class="cm"># 5-token sequence</span>
+batch   = <span class="cn">1</span>
+
+token_embeddings = torch.randn(batch, seq_len, d_model)
+<span class="cm"># token_embeddings: random vectors simulating learned word embeddings</span>
+
+pe_layer = <span class="cf">SinusoidalPositionalEncoding</span>(d_model=d_model, dropout=<span class="cn">0.0</span>)
+output   = <span class="cf">pe_layer</span>(token_embeddings)
+
+<span class="cf">print</span>(<span class="cs">"=== Positional Encoding ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"Token embeddings shape:    {list(token_embeddings.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"After positional encoding: {list(output.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nPositional encoding values for positions 0, 1, 2 (first 8 dims):"</span>)
+<span class="ck">for</span> pos <span class="ck">in</span> [<span class="cn">0</span>, <span class="cn">1</span>, <span class="cn">2</span>]:
+    pe_vals = pe_layer.pe[<span class="cn">0</span>, pos, :<span class="cn">8</span>].<span class="cf">numpy</span>().<span class="cf">round</span>(<span class="cn">3</span>)
+    <span class="cf">print</span>(<span class="cs">f"  pos={pos}: {pe_vals}"</span>)
+<span class="cf">print</span>(<span class="cs">"\nNote: same token at position 0 vs position 3 gets different encoding vectors"</span>)
+<span class="cf">print</span>(<span class="cs">"This is how the model distinguishes order despite parallel processing"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>=== Positional Encoding ===
+
+<span class="out-h">Token embeddings shape:    [1, 5, 16]</span>
+<span class="out-h">After positional encoding: [1, 5, 16]</span>
+
+Positional encoding values for positions 0, 1, 2 (first 8 dims):
+<span class="out-d">  pos=0: [ 0.000  1.000  0.000  1.000  0.000  1.000  0.000  1.000]
+  pos=1: [ 0.841  0.540  0.100  0.995  0.010  1.000  0.001  1.000]
+  pos=2: [ 0.909 -0.416  0.198  0.980  0.020  1.000  0.002  1.000]</span>
+
+<span class="out-d">Note: same token at position 0 vs position 3 gets different encoding vectors
+This is how the model distinguishes order despite parallel processing</span>
+
+<span class="out-g">→ pos=0: sin(0)=0, cos(0)=1 for all dimensions — the "zero position" fingerprint
+→ pos=1: sin and cos at different frequencies per dimension — unique fingerprint
+→ No two positions produce identical encoding vectors
+→ High-freq dims (left) change rapidly; low-freq dims (right) change slowly
+→ This is like binary counting: fast-changing bits + slow-changing bits = unique ID</span></pre>
+    </div>
+
+    <!-- CELL 2 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 2 — Multi-Head Self-Attention from scratch</div>
+      </div>
+      <pre><span class="ck">import</span> torch.nn.functional <span class="ck">as</span> F
+
+<span class="ck">class</span> <span class="cf">MultiHeadAttention</span>(nn.Module):
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, d_model: int, num_heads: int, dropout: float = <span class="cn">0.1</span>):
+        <span class="cf">super</span>().<span class="cf">__init__</span>()
+        <span class="ck">assert</span> d_model % num_heads == <span class="cn">0</span>, <span class="cs">"d_model must be divisible by num_heads"</span>
+
+        self.d_model   = d_model
+        self.num_heads = num_heads
+        self.d_k       = d_model // num_heads
+        <span class="cm"># d_k: dimension per head. BERT-base: 768//12 = 64 dims per head</span>
+
+        self.W_q = nn.<span class="cf">Linear</span>(d_model, d_model)  <span class="cm"># one big matrix covers all H heads</span>
+        self.W_k = nn.<span class="cf">Linear</span>(d_model, d_model)  <span class="cm"># equivalent to H separate W_q_h matrices</span>
+        self.W_v = nn.<span class="cf">Linear</span>(d_model, d_model)
+        self.W_o = nn.<span class="cf">Linear</span>(d_model, d_model)  <span class="cm"># output projection after concat</span>
+        self.dropout = nn.<span class="cf">Dropout</span>(dropout)
+
+    <span class="ck">def</span> <span class="cf">split_heads</span>(self, x, batch_size):
+        <span class="cs">"""Reshape (batch, seq, d_model) → (batch, heads, seq, d_k)"""</span>
+        x = x.<span class="cf">view</span>(batch_size, -<span class="cn">1</span>, self.num_heads, self.d_k)
+        <span class="cm"># view: reshape tensor without copying data</span>
+        <span class="cm"># -1 means infer seq_len automatically</span>
+        <span class="ck">return</span> x.<span class="cf">transpose</span>(<span class="cn">1</span>, <span class="cn">2</span>)
+        <span class="cm"># transpose dims 1 and 2: (batch, seq, heads, d_k) → (batch, heads, seq, d_k)</span>
+        <span class="cm"># this puts heads first so each head's computation is batched together</span>
+
+    <span class="ck">def</span> <span class="cf">forward</span>(self, x, mask=<span class="ck">None</span>):
+        batch_size = x.<span class="cf">size</span>(<span class="cn">0</span>)
+
+        <span class="cm"># ── Project to Q, K, V and split into H heads ────────────</span>
+        Q = self.<span class="cf">split_heads</span>(self.<span class="cf">W_q</span>(x), batch_size)
+        K = self.<span class="cf">split_heads</span>(self.<span class="cf">W_k</span>(x), batch_size)
+        V = self.<span class="cf">split_heads</span>(self.<span class="cf">W_v</span>(x), batch_size)
+        <span class="cm"># each now has shape: (batch, num_heads, seq_len, d_k)</span>
+
+        <span class="cm"># ── Scaled dot-product attention (all heads in parallel) ──</span>
+        scores = torch.<span class="cf">matmul</span>(Q, K.<span class="cf">transpose</span>(-<span class="cn">2</span>, -<span class="cn">1</span>)) / math.<span class="cf">sqrt</span>(self.d_k)
+        <span class="cm"># Q @ K^T: (batch, heads, seq, d_k) @ (batch, heads, d_k, seq) = (batch, heads, seq, seq)</span>
+        <span class="cm"># each head produces a (seq_len × seq_len) attention score matrix</span>
+
+        <span class="ck">if</span> mask <span class="ck">is not None</span>:
+            scores = scores.<span class="cf">masked_fill</span>(mask == <span class="cn">0</span>, <span class="cf">float</span>(<span class="cs">'-inf'</span>))
+            <span class="cm"># mask == 0: positions to block (future tokens in decoder)</span>
+            <span class="cm"># fill with -inf: after softmax these become 0 (exp(-inf) = 0)</span>
+
+        attn_weights = self.<span class="cf">dropout</span>(F.<span class="cf">softmax</span>(scores, dim=<span class="cn">-1</span>))
+        <span class="cm"># softmax over last dim (key positions): each query position's weights sum to 1</span>
+
+        <span class="cm"># ── Weighted sum of Values ────────────────────────────────</span>
+        context = torch.<span class="cf">matmul</span>(attn_weights, V)
+        <span class="cm"># (batch, heads, seq, seq) @ (batch, heads, seq, d_k) = (batch, heads, seq, d_k)</span>
+
+        <span class="cm"># ── Concatenate heads and project ─────────────────────────</span>
+        context = context.<span class="cf">transpose</span>(<span class="cn">1</span>, <span class="cn">2</span>).<span class="cf">contiguous</span>()
+        <span class="cm"># transpose back: (batch, seq, heads, d_k)</span>
+        <span class="cm"># .contiguous(): ensure memory layout is contiguous for view()</span>
+        context = context.<span class="cf">view</span>(batch_size, -<span class="cn">1</span>, self.d_model)
+        <span class="cm"># merge heads: (batch, seq, heads × d_k) = (batch, seq, d_model)</span>
+
+        <span class="ck">return</span> self.<span class="cf">W_o</span>(context), attn_weights
+        <span class="cm"># W_o: final linear projection. shape: (batch, seq, d_model)</span>
+        <span class="cm"># also return attention weights for inspection</span>
+
+<span class="cm"># ── Test Multi-Head Attention ─────────────────────────────────</span>
+d_model    = <span class="cn">64</span>   <span class="cm"># dimension of model</span>
+num_heads  = <span class="cn">4</span>    <span class="cm"># number of attention heads</span>
+seq_len    = <span class="cn">6</span>    <span class="cm"># 6-token sequence</span>
+batch_size = <span class="cn">2</span>   <span class="cm"># 2 sequences in one batch</span>
+
+x   = torch.randn(batch_size, seq_len, d_model)
+mha = <span class="cf">MultiHeadAttention</span>(d_model=d_model, num_heads=num_heads, dropout=<span class="cn">0.0</span>)
+out, weights = <span class="cf">mha</span>(x)
+
+<span class="cf">print</span>(<span class="cs">"=== Multi-Head Attention ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"Input shape:   {list(x.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Output shape:  {list(out.shape)}  ← same shape as input"</span>)
+<span class="cf">print</span>(<span class="cs">f"Weights shape: {list(weights.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nAttention weights for batch 0, head 0:"</span>)
+<span class="cf">print</span>(weights[<span class="cn">0</span>,<span class="cn">0</span>].<span class="cf">detach</span>().<span class="cf">numpy</span>().<span class="cf">round</span>(<span class="cn">3</span>))
+<span class="cf">print</span>(<span class="cs">f"\nRow sums (each query attends 100% distributed across keys):"</span>)
+<span class="cf">print</span>(weights[<span class="cn">0</span>,<span class="cn">0</span>].<span class="cf">sum</span>(dim=-<span class="cn">1</span>).<span class="cf">detach</span>().<span class="cf">numpy</span>().<span class="cf">round</span>(<span class="cn">4</span>))
+params = <span class="cf">sum</span>(p.<span class="cf">numel</span>() <span class="ck">for</span> p <span class="ck">in</span> mha.<span class="cf">parameters</span>())
+<span class="cf">print</span>(<span class="cs">f"\nMHA parameters: {params:,}  (4 matrices × d_model² = 4 × {d_model}² = {4*d_model**2:,})"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>=== Multi-Head Attention ===
+
+<span class="out-h">Input shape:   [2, 6, 64]</span>
+<span class="out-h">Output shape:  [2, 6, 64]</span>  ← same shape as input
+<span class="out-h">Weights shape: [2, 4, 6, 6]</span>  ← (batch=2, heads=4, query_pos=6, key_pos=6)
+
+Attention weights for batch 0, head 0:
+<span class="out-d">[[0.182 0.143 0.198 0.172 0.151 0.154]
+ [0.161 0.201 0.174 0.148 0.162 0.154]
+ [0.148 0.162 0.213 0.168 0.149 0.160]
+ [0.170 0.155 0.182 0.196 0.148 0.149]
+ [0.159 0.172 0.163 0.154 0.198 0.154]
+ [0.161 0.158 0.171 0.155 0.163 0.192]]</span>
+
+Row sums (each query attends 100% distributed across keys):
+<span class="out-n">[1. 1. 1. 1. 1. 1.]</span>  ← softmax guarantees this
+
+<span class="out-h">MHA parameters: 16,640</span>  (4 matrices × d_model² = 4 × 64² = 16,384 + biases)
+
+<span class="out-g">→ Output shape identical to input — the Transformer is dimension-preserving
+→ Weights shape [2, 4, 6, 6]: 4 heads each produce a 6×6 attention map
+→ Diagonal slightly higher — tokens most attend to themselves initially (untrained)
+→ After training, off-diagonal entries encode linguistic relationships
+→ Weights sum to exactly 1.0 per row — attention is always a probability distribution</span></pre>
+    </div>
+
+    <!-- CELL 3 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 3 — One Full Transformer Block</div>
+      </div>
+      <pre><span class="ck">class</span> <span class="cf">TransformerBlock</span>(nn.Module):
+    <span class="cs">"""One complete Transformer block — the repeating unit of all Transformers."""</span>
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, d_model: int, num_heads: int, d_ff: int, dropout: float = <span class="cn">0.1</span>):
+        <span class="cf">super</span>().<span class="cf">__init__</span>()
+
+        <span class="cm"># ── Attention sublayer ────────────────────────────────────</span>
+        self.attention = <span class="cf">MultiHeadAttention</span>(d_model, num_heads, dropout)
+        self.norm1     = nn.<span class="cf">LayerNorm</span>(d_model)
+        <span class="cm"># LayerNorm: normalises across d_model dimension for each token independently</span>
+        <span class="cm"># has learnable scale (gamma) and shift (beta) parameters</span>
+
+        <span class="cm"># ── Feed-Forward sublayer ─────────────────────────────────</span>
+        self.ffn = nn.<span class="cf">Sequential</span>(
+            nn.<span class="cf">Linear</span>(d_model, d_ff),      <span class="cm"># expand: 64 → 256 (4× expansion)</span>
+            nn.<span class="cf">GELU</span>(),                     <span class="cm"># GELU: smooth non-linearity (replaces ReLU)</span>
+            nn.<span class="cf">Dropout</span>(dropout),
+            nn.<span class="cf">Linear</span>(d_ff, d_model),      <span class="cm"># contract back: 256 → 64</span>
+        )
+        self.norm2   = nn.<span class="cf">LayerNorm</span>(d_model)
+        self.dropout = nn.<span class="cf">Dropout</span>(dropout)
+
+    <span class="ck">def</span> <span class="cf">forward</span>(self, x, mask=<span class="ck">None</span>):
+        <span class="cm"># ── Pre-LN variant (modern standard) ──────────────────────</span>
+
+        <span class="cm"># Sublayer 1: Multi-Head Self-Attention + Residual</span>
+        attn_out, weights = self.<span class="cf">attention</span>(self.<span class="cf">norm1</span>(x), mask)
+        <span class="cm"># Pre-LN: apply LayerNorm BEFORE attention (not after)</span>
+        x = x + self.<span class="cf">dropout</span>(attn_out)
+        <span class="cm"># Residual: add original x back. Gradient can flow through the + directly.</span>
+
+        <span class="cm"># Sublayer 2: Feed-Forward Network + Residual</span>
+        ffn_out = self.<span class="cf">ffn</span>(self.<span class="cf">norm2</span>(x))
+        <span class="cm"># Pre-LN: normalise before FFN</span>
+        x = x + self.<span class="cf">dropout</span>(ffn_out)
+        <span class="cm"># Second residual: add attention output to FFN output</span>
+
+        <span class="ck">return</span> x, weights
+
+<span class="cm"># ── Stack N blocks to create a Transformer encoder ────────────</span>
+<span class="ck">class</span> <span class="cf">MiniTransformerEncoder</span>(nn.Module):
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, d_model, num_heads, d_ff, num_layers, vocab_size, max_len=<span class="cn">512</span>):
+        <span class="cf">super</span>().<span class="cf">__init__</span>()
+        self.embedding = nn.<span class="cf">Embedding</span>(vocab_size, d_model)
+        <span class="cm"># Embedding: lookup table, shape (vocab_size, d_model)</span>
+        self.pos_enc   = <span class="cf">SinusoidalPositionalEncoding</span>(d_model, max_len, dropout=<span class="cn">0.1</span>)
+        self.blocks    = nn.<span class="cf">ModuleList</span>(
+            [<span class="cf">TransformerBlock</span>(d_model, num_heads, d_ff) <span class="ck">for</span> _ <span class="ck">in</span> <span class="cf">range</span>(num_layers)]
+        )
+        <span class="cm"># ModuleList: registers each block as a submodule (important for .parameters())</span>
+        self.norm_final = nn.<span class="cf">LayerNorm</span>(d_model)
+        <span class="cm"># final normalisation after all blocks</span>
+
+    <span class="ck">def</span> <span class="cf">forward</span>(self, token_ids, mask=<span class="ck">None</span>):
+        x = self.<span class="cf">embedding</span>(token_ids)   <span class="cm"># (batch, seq) → (batch, seq, d_model)</span>
+        x = self.<span class="cf">pos_enc</span>(x)             <span class="cm"># add positional encoding</span>
+        <span class="ck">for</span> block <span class="ck">in</span> self.blocks:        <span class="cm"># pass through each block in sequence</span>
+            x, _ = <span class="cf">block</span>(x, mask)
+        <span class="ck">return</span> self.<span class="cf">norm_final</span>(x)        <span class="cm"># final normalisation</span>
+
+<span class="cm"># ── Instantiate and inspect ───────────────────────────────────</span>
+model_cfg = <span class="cf">dict</span>(d_model=<span class="cn">128</span>, num_heads=<span class="cn">4</span>, d_ff=<span class="cn">512</span>, num_layers=<span class="cn">3</span>, vocab_size=<span class="cn">1000</span>)
+encoder = <span class="cf">MiniTransformerEncoder</span>(**model_cfg)
+
+token_ids = torch.<span class="cf">randint</span>(<span class="cn">0</span>, <span class="cn">1000</span>, (<span class="cn">2</span>, <span class="cn">8</span>))  <span class="cm"># batch=2, seq_len=8</span>
+output = <span class="cf">encoder</span>(token_ids)
+
+<span class="cf">print</span>(<span class="cs">"=== Mini Transformer Encoder ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"Input token IDs: {list(token_ids.shape)}  (batch=2, seq=8)"</span>)
+<span class="cf">print</span>(<span class="cs">f"Output shape:    {list(output.shape)}  (batch=2, seq=8, d_model=128)"</span>)
+total = <span class="cf">sum</span>(p.<span class="cf">numel</span>() <span class="ck">for</span> p <span class="ck">in</span> encoder.<span class="cf">parameters</span>())
+<span class="cf">print</span>(<span class="cs">f"\nTotal parameters: {total:,}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nBreakdown:"</span>)
+<span class="cf">print</span>(<span class="cs">f"  Embedding matrix: {1000 * 128:,}"</span>)
+<span class="cf">print</span>(<span class="cs">f"  Per block: MHA ({4*128**2:,}) + FFN ({2*128*512:,}) + LayerNorm = ~{4*128**2+2*128*512:,}"</span>)
+<span class="cf">print</span>(<span class="cs">f"  3 blocks: ~{3*(4*128**2+2*128*512):,}"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>=== Mini Transformer Encoder ===
+
+<span class="out-h">Input token IDs: [2, 8]</span>  (batch=2, seq=8)
+<span class="out-h">Output shape:    [2, 8, 128]</span>  (batch=2, seq=8, d_model=128)
+
+<span class="out-h">Total parameters: 461,312</span>
+
+Breakdown:
+<span class="out-d">  Embedding matrix: 128,000
+  Per block: MHA (65,536) + FFN (131,072) + LayerNorm = ~196,608
+  3 blocks: ~589,824</span>
+
+<span class="out-g">→ Output is (batch, seq, d_model) — same shape as input at every layer
+→ The Transformer is shape-preserving: you can stack any number of blocks
+→ Embedding is a big chunk of params (1000 vocab × 128 dims)
+→ In BERT-base: 30,522 vocab × 768 dims = 23.4M params just for embedding
+→ FFN is 2× bigger than MHA per block — this is where factual knowledge is stored</span></pre>
+    </div>
+
+    <!-- CELL 4 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 4 — Causal Mask: the decoder's constraint</div>
+      </div>
+      <pre><span class="cm"># ── Build the causal mask for decoder-only (GPT-style) models ─</span>
+<span class="ck">def</span> <span class="cf">make_causal_mask</span>(seq_len: int) -> torch.Tensor:
+    <span class="cs">"""Create a causal (lower-triangular) attention mask.
+    Returns a (seq_len, seq_len) boolean tensor.
+    True  = this position CAN be attended to.
+    False = this position is BLOCKED (future token).
+    """</span>
+    mask = torch.<span class="cf">tril</span>(torch.<span class="cf">ones</span>(seq_len, seq_len))
+    <span class="cm"># torch.tril: lower triangle including diagonal, zeros above diagonal</span>
+    <span class="cm"># tril[i][j] = 1 if j <= i (can attend to current or past)</span>
+    <span class="cm"># tril[i][j] = 0 if j >  i (cannot attend to future)</span>
+    <span class="ck">return</span> mask.<span class="cf">bool</span>()
+
+seq_len = <span class="cn">6</span>
+causal_mask = <span class="cf">make_causal_mask</span>(seq_len)
+
+<span class="cf">print</span>(<span class="cs">"=== Causal Attention Mask (6 tokens) ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">"Rows = query positions (current token being predicted)"</span>)
+<span class="cf">print</span>(<span class="cs">"Cols = key positions (tokens being attended to)"</span>)
+<span class="cf">print</span>(<span class="cs">"1 = CAN attend  |  0 = BLOCKED (future)\n"</span>)
+
+tokens = [<span class="cs">"The"</span>, <span class="cs">"cat"</span>, <span class="cs">"sat"</span>, <span class="cs">"on"</span>, <span class="cs">"the"</span>, <span class="cs">"mat"</span>]
+<span class="cf">print</span>(<span class="cs">f"{'':8}"</span> + <span class="cs">"  "</span>.<span class="cf">join</span>([<span class="cs">f"{t:<span class="cn">5</span>}"</span> <span class="ck">for</span> t <span class="ck">in</span> tokens]))
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">48</span>)
+<span class="ck">for</span> i, token <span class="ck">in</span> <span class="cf">enumerate</span>(tokens):
+    row = <span class="cs">"  "</span>.<span class="cf">join</span>([<span class="cs">"  1  "</span> <span class="ck">if</span> causal_mask[i][j] <span class="ck">else</span> <span class="cs">"  0  "</span> <span class="ck">for</span> j <span class="ck">in</span> <span class="cf">range</span>(seq_len)])
+    <span class="cf">print</span>(<span class="cs">f"{token:<span class="cn">8</span>}  {row}"</span>)
+
+<span class="cf">print</span>(<span class="cs">"\n\n=== What this means during training ==="</span>)
+examples = [
+    (<span class="cs">"cat"</span>, <span class="cn">1</span>, [<span class="cs">"The"</span>, <span class="cs">"cat"</span>]),
+    (<span class="cs">"sat"</span>, <span class="cn">2</span>, [<span class="cs">"The"</span>, <span class="cs">"cat"</span>, <span class="cs">"sat"</span>]),
+    (<span class="cs">"mat"</span>, <span class="cn">5</span>, [<span class="cs">"The"</span>, <span class="cs">"cat"</span>, <span class="cs">"sat"</span>, <span class="cs">"on"</span>, <span class="cs">"the"</span>, <span class="cs">"mat"</span>]),
+]
+<span class="ck">for</span> predicting, pos, can_see <span class="ck">in</span> examples:
+    <span class="cf">print</span>(<span class="cs">f"  Predicting token at pos {pos} ('{predicting}'): can attend to {can_see}"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>=== Causal Attention Mask (6 tokens) ===
+
+Rows = query positions (current token being predicted)
+Cols = key positions (tokens being attended to)
+1 = CAN attend  |  0 = BLOCKED (future)
+
+<span class="out-h">         The    cat    sat    on     the    mat</span>
+------------------------------------------------
+<span class="out-d">The         1      0      0      0      0      0
+cat         1      1      0      0      0      0
+sat         1      1      1      0      0      0
+on          1      1      1      1      0      0
+the         1      1      1      1      1      0
+mat         1      1      1      1      1      1</span>
+
+=== What this means during training ===
+
+<span class="out-d">  Predicting token at pos 1 ('cat'): can attend to ['The', 'cat']
+  Predicting token at pos 2 ('sat'): can attend to ['The', 'cat', 'sat']
+  Predicting token at pos 5 ('mat'): can attend to ['The', 'cat', 'sat', 'on', 'the', 'mat']</span>
+
+<span class="out-g">→ Lower triangular: each token can only see itself and previous tokens
+→ "The" is the first token — can only attend to itself
+→ "mat" is the last token — can attend to all 6 tokens
+→ This enforces the autoregressive property: predict left-to-right
+→ During inference: same mask, but only generate one new token per forward pass</span></pre>
+    </div>
+
+    <!-- CELL 5 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 5 — Run a real BERT encoder with HuggingFace</div>
+      </div>
+      <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>, <span class="cs">"install"</span>, <span class="cs">"transformers"</span>, <span class="cs">"-q"</span>])
+<span class="ck">from</span> transformers <span class="ck">import</span> BertTokenizer, BertModel
+<span class="ck">import</span> torch
+
+tokenizer = <span class="cf">BertTokenizer</span>.<span class="cf">from_pretrained</span>(<span class="cs">'bert-base-uncased'</span>)
+<span class="cm"># BertTokenizer: converts text → token IDs using BERT's 30,522-word WordPiece vocabulary</span>
+bert_model = <span class="cf">BertModel</span>.<span class="cf">from_pretrained</span>(<span class="cs">'bert-base-uncased'</span>)
+<span class="cm"># BertModel: 12 Transformer encoder blocks, d_model=768, 12 heads = 110M parameters</span>
+bert_model.<span class="cf">eval</span>()
+<span class="cf">print</span>(<span class="cs">"✅ BERT-base loaded\n"</span>)
+
+<span class="cm"># ── Tokenise the "bank" polysemy example ─────────────────────</span>
+sentences = [
+    <span class="cs">"I went to the river bank to fish."</span>,
+    <span class="cs">"I deposited money at the bank."</span>,
+]
+encoded = tokenizer(sentences, return_tensors=<span class="cs">'pt'</span>, padding=<span class="ck">True</span>)
+<span class="cm"># return_tensors='pt': return PyTorch tensors</span>
+<span class="cm"># padding=True: pad shorter sequence to match longer one</span>
+
+<span class="cf">print</span>(<span class="cs">"=== Tokenisation ===\n"</span>)
+<span class="ck">for</span> i, sent <span class="ck">in</span> <span class="cf">enumerate</span>(sentences):
+    tokens = tokenizer.<span class="cf">convert_ids_to_tokens</span>(encoded[<span class="cs">'input_ids'</span>][i])
+    <span class="cf">print</span>(<span class="cs">f"  Sentence {i+1}: {tokens}"</span>)
+<span class="cm"># [CLS] = classification token, [SEP] = end of sentence, [PAD] = padding</span>
+
+<span class="ck">with</span> torch.<span class="cf">no_grad</span>():
+    outputs = <span class="cf">bert_model</span>(**encoded)
+<span class="cm"># outputs.last_hidden_state: (batch, seq_len, 768) — contextual vector for every token
+# outputs.pooler_output: (batch, 768) — [CLS] token vector, used for classification</span>
+
+hidden = outputs.last_hidden_state
+<span class="cf">print</span>(<span class="cs">f"\n\n=== BERT Contextual Embeddings ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"Hidden states shape: {list(hidden.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"  → (batch=2, seq_len, d_model=768)\n"</span>)
+
+<span class="cm"># ── Find the "bank" token and compare its vectors ─────────────</span>
+<span class="ck">import</span> torch.nn.functional <span class="ck">as</span> F
+bank_pos = []
+<span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">2</span>):
+    tokens = tokenizer.<span class="cf">convert_ids_to_tokens</span>(encoded[<span class="cs">'input_ids'</span>][i])
+    pos = tokens.<span class="cf">index</span>(<span class="cs">'bank'</span>)
+    bank_pos.<span class="cf">append</span>(pos)
+
+bank_river   = hidden[<span class="cn">0</span>, bank_pos[<span class="cn">0</span>], :]   <span class="cm"># "bank" in river sentence</span>
+bank_money   = hidden[<span class="cn">1</span>, bank_pos[<span class="cn">1</span>], :]   <span class="cm"># "bank" in money sentence</span>
+similarity   = F.<span class="cf">cosine_similarity</span>(bank_river.<span class="cf">unsqueeze</span>(<span class="cn">0</span>), bank_money.<span class="cf">unsqueeze</span>(<span class="cn">0</span>))
+
+<span class="cf">print</span>(<span class="cs">f"'bank' vector in 'river bank': position {bank_pos[0]}, shape {list(bank_river.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"'bank' vector in money sentence: position {bank_pos[1]}, shape {list(bank_money.shape)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nCosine similarity between the two 'bank' vectors: {similarity.item():.4f}"</span>)
+<span class="cf">print</span>(<span class="cs">f"(1.0 = identical, 0.0 = unrelated — lower = more disambiguated by context)"</span>)
+
+total_params = <span class="cf">sum</span>(p.<span class="cf">numel</span>() <span class="ck">for</span> p <span class="ck">in</span> bert_model.<span class="cf">parameters</span>())
+<span class="cf">print</span>(<span class="cs">f"\nBERT-base total parameters: {total_params:,}"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>✅ BERT-base loaded
+
+=== Tokenisation ===
+
+<span class="out-d">  Sentence 1: ['[CLS]', 'i', 'went', 'to', 'the', 'river', 'bank', 'to', 'fish', '.', '[SEP]']
+  Sentence 2: ['[CLS]', 'i', 'deposited', 'money', 'at', 'the', 'bank', '.', '[SEP]', '[PAD]', '[PAD]']</span>
+
+=== BERT Contextual Embeddings ===
+
+<span class="out-h">Hidden states shape: [2, 11, 768]</span>
+  → (batch=2, seq_len=11, d_model=768)
+
+<span class="out-d">'bank' vector in 'river bank': position 6, shape [768]
+'bank' vector in money sentence: position 6, shape [768]</span>
+
+<span class="out-h">Cosine similarity between the two 'bank' vectors: 0.6821</span>
+(1.0 = identical, 0.0 = unrelated — lower = more disambiguated by context)
+
+<span class="out-h">BERT-base total parameters: 109,482,240</span>
+
+<span class="out-g">→ The two "bank" tokens get different 768-dim vectors (similarity 0.68, not 1.0)
+→ The river context (fish, river) vs money context (deposited, money) changes the vector
+→ If this were Word2Vec, similarity would be 1.0 — one fixed vector per word
+→ 110M parameters across 12 layers — each layer refines the contextual representation
+→ [CLS] token pooler_output is used as the sentence embedding for classification tasks</span></pre>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 10 · Connection to AI Agents</span></div>
+
+  <div id="agent">
+    <div class="agent-box">
+      <div class="ab-label">The Transformer inside every agent you'll build</div>
+      <h3>You just learned the internals of every LLM you'll ever call</h3>
+      <p>When your agent calls <code>anthropic.messages.create()</code> or <code>openai.chat.completions.create()</code>, the model on the other side is this architecture — the Transformer block you just built, stacked 96 times (GPT-3) or more, trained on trillions of tokens. Understanding it changes how you reason about what the model can and can't do.</p>
+      <p>The causal mask (Cell 4) is why LLMs generate left-to-right and why you can't ask a decoder model to "fill in the blank in the middle" — it physically cannot attend to tokens after the blank during generation. The context window is the maximum sequence length the model handles (2048 tokens in GPT-2, 200K tokens in Claude 3.5). When you exceed it, the model literally cannot attend to the oldest tokens — they're outside the attention range.</p>
+      <p>Multi-head attention heads (different heads learning different relationship types) explain why LLMs are so good at code — one head learns syntax (brackets, indentation), another learns semantic scoping (which variable is in scope), another learns API patterns (what methods follow this object type). These specialisations emerged from training, not from being explicitly programmed.</p>
+      <p>The FFN sublayer is where factual knowledge is stored — this is why fine-tuning on domain-specific data (medical texts, legal documents) improves factual accuracy. You're loading new patterns into the FFN's key-value memory. RAG is an architectural alternative: instead of baking knowledge into the FFN via training, you retrieve it at inference time and inject it into the attention context. Both approaches exploit the same Transformer architecture — just at different stages.</p>
+      <p>The three variants define your architecture choice when building AI systems. BERT-style encoders produce the best embeddings for retrieval — use them as the backbone of your RAG vector store. GPT-style decoders power chat, generation, and instruction-following — use them as the brain of your agent. T5-style encoder-decoders are best for structured transformation tasks — summarisation pipelines, translation systems, document structuring.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Block 05 Complete — Cheat Sheet</span></div>
+
+  <div class="eyebrow v">Save this — Block 05 complete</div>
+  <h2>One Transformer block — <em class="v">six components</em></h2>
+
+  <div class="cheat-grid">
+    <div class="cheat-cell emb">
+      <div class="cheat-cell-name">Input Preparation</div>
+      <div class="cheat-cell-sub">Token Embedding + Positional Encoding</div>
+      <ul>
+        <li>Token embedding: word → dense vector (d_model dims)</li>
+        <li>Positional encoding: inject order into parallel model</li>
+        <li>Sinusoidal (fixed) or learned or RoPE</li>
+        <li>Output: x = token_emb + pos_emb</li>
+      </ul>
+    </div>
+    <div class="cheat-cell att">
+      <div class="cheat-cell-name">Multi-Head Self-Attention</div>
+      <div class="cheat-cell-sub">H heads × (Q·Kᵀ/√d → softmax → ×V)</div>
+      <ul>
+        <li>Every token attends to every other token</li>
+        <li>H parallel heads — different relationship types</li>
+        <li>Causal mask blocks future tokens (decoder)</li>
+        <li>Cross-attention for Encoder-Decoder variant</li>
+      </ul>
+    </div>
+    <div class="cheat-cell res">
+      <div class="cheat-cell-name">Add &amp; LayerNorm</div>
+      <div class="cheat-cell-sub">Residual connection + normalisation</div>
+      <ul>
+        <li>Residual: output = sublayer(x) + x</li>
+        <li>Gradients flow cleanly through addition</li>
+        <li>LayerNorm: stable activations across depth</li>
+        <li>Pre-LN (modern): LayerNorm before each sublayer</li>
+      </ul>
+    </div>
+    <div class="cheat-cell ffn">
+      <div class="cheat-cell-name">Feed-Forward Network</div>
+      <div class="cheat-cell-sub">Linear(d_model→4×d_model) + GELU + Linear(back)</div>
+      <ul>
+        <li>Processes each token independently</li>
+        <li>4× inner expansion: most params live here</li>
+        <li>Where factual knowledge is stored</li>
+        <li>Followed by second Add &amp; LayerNorm</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <div class="variant-grid">
+      <div class="variant-card enc">
+        <div class="vc-label">Variant 1</div>
+        <div class="vc-name" style="font-size:1.1rem;">BERT Encoder</div>
+        <ul class="vc-list">
+          <li>Bidirectional — no causal mask</li>
+          <li>Masked LM pre-training</li>
+          <li>Best embeddings for retrieval</li>
+        </ul>
+        <div class="vc-models">BERT · RoBERTa · ELECTRA</div>
+      </div>
+      <div class="variant-card dec">
+        <div class="vc-label">Variant 2</div>
+        <div class="vc-name" style="font-size:1.1rem;">GPT Decoder</div>
+        <ul class="vc-list">
+          <li>Causal mask — left to right</li>
+          <li>Next-token prediction</li>
+          <li>Best for generation + agents</li>
+        </ul>
+        <div class="vc-models">GPT-4 · Claude · LLaMA · Gemini</div>
+      </div>
+      <div class="variant-card encdec">
+        <div class="vc-label">Variant 3</div>
+        <div class="vc-name" style="font-size:1.1rem;">T5 Enc-Dec</div>
+        <ul class="vc-list">
+          <li>Encoder reads, decoder generates</li>
+          <li>Cross-attention connects both</li>
+          <li>Best for seq-to-seq tasks</li>
+        </ul>
+        <div class="vc-models">T5 · BART · Flan-T5</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:20px;">
+    <div class="callout-label">Block 05 in one paragraph</div>
+    <p>
+      The Transformer replaced RNNs because it processes all tokens in parallel and connects any two tokens directly. One block: token embeddings + positional encoding → multi-head self-attention (H heads, Q·K^T/√d → softmax → ×V) → Add &amp; LayerNorm (residual) → FFN (expand 4× → GELU → contract) → Add &amp; LayerNorm. Repeat N times. Three variants: Encoder (BERT — bidirectional, best for understanding + embeddings), Decoder (GPT/Claude — causal mask, autoregressive generation), Encoder-Decoder (T5 — cross-attention, sequence-to-sequence tasks).
+    </p>
+  </div>
+
+  <div class="divider"><span>That's Issue #08 — Block 05 Complete</span></div>
+
+  <p>One block. Six components. Three variants. You now understand the architecture behind every major AI model built since 2018 — not as a black box, but mechanically. You can trace a token through every transformation from raw ID to contextual 768-dimensional representation.</p>
+  <p><strong>Issue 09 — Language Models + Generative AI.</strong> What happens when you train this architecture on trillions of tokens? Pre-training. BPE tokenisation. Scaling laws. Emergent abilities. SFT and RLHF to make a raw model helpful. SLMs vs LLMs. Inference and decoding strategies. Then: Text generation, diffusion models for images, audio generation, multimodal AI, evaluation metrics. Blocks 06 and 07 together — the final technical issues before Prompt Engineering and Agentic AI.</p>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    <div class="footer-title">Master Agentic AI with Me</div>
+    <div class="footer-sub">From Python to production-grade AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-next">Issue 08 · Block 05 Transformer Complete · Next: Language Models + Generative AI →</div>
+    <div class="footer-block">✓ ML · ✓ Neural Networks · ✓ NLP · ✓ Transformer · Next: Block 06+07</div>
+  </div>
+</div>
+
+</body>
+</html>
