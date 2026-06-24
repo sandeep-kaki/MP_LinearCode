@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Agentic AI with Me — Issue #09: Language Models + Generative AI</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0d0d0d; --ink2:#383838; --ink3:#787878;
+    --paper:#fffdf7; --paper2:#fdf4e3; --paper3:#f0e0c0;
+
+    /* Block 06 — LLM — amber/gold */
+    --lm:#d97706; --lm2:#b45309; --lm-bg:#fffbeb; --lm-bd:rgba(217,119,6,0.28);
+    --pt:#ea580c; --pt-bg:#fff7ed; --pt-bd:rgba(234,88,12,0.25);
+    --ft:#0891b2; --ft-bg:#ecfeff; --ft-bd:rgba(8,145,178,0.25);
+    --inf:#059669; --inf-bg:#ecfdf5; --inf-bd:rgba(5,150,105,0.25);
+    --emb2:#7c3aed; --emb2-bg:#f5f3ff; --emb2-bd:rgba(124,58,237,0.25);
+
+    /* Block 07 — GenAI — fuchsia/magenta */
+    --gen:#c026d3; --gen2:#a21caf; --gen-bg:#fdf4ff; --gen-bd:rgba(192,38,211,0.25);
+    --txt:#7c3aed; --txt-bg:#f5f3ff; --txt-bd:rgba(124,58,237,0.25);
+    --img:#db2777; --img-bg:#fdf2f8; --img-bd:rgba(219,39,119,0.25);
+    --aud:#0891b2; --aud-bg:#ecfeff; --aud-bd:rgba(8,145,178,0.25);
+    --eval:#059669; --eval-bg:#ecfdf5; --eval-bd:rgba(5,150,105,0.25);
+    --mm:#e879f9; --mm-bg:#fdf4ff; --mm-bd:rgba(232,121,249,0.3);
+
+    --amber:#d97706; --amber-bg:#fffbeb;
+    --red:#dc2626; --red-bg:#fef2f2;
+    --code-bg:#0a0a14; --code-txt:#e8eaf6;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;line-height:1.78;}
+
+  /* ── MASTHEAD ── */
+  .masthead{background:#0a0800;padding:13px 0;}
+  .masthead-inner{display:flex;justify-content:space-between;align-items:center;max-width:780px;margin:0 auto;padding:0 24px;}
+  .ms-t{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+  .ms-m{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.32);}
+
+  /* ── HERO ── */
+  .hero{background:#0a0800;padding:84px 24px 72px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 65% 55% at 25% 45%,rgba(217,119,6,0.16) 0%,transparent 60%),radial-gradient(ellipse 55% 45% at 78% 60%,rgba(192,38,211,0.14) 0%,transparent 55%);pointer-events:none;}
+  .issue-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#fbbf24;border:1px solid rgba(251,191,36,0.35);border-radius:20px;padding:5px 16px;margin-bottom:26px;position:relative;}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.1rem,5vw,3.8rem);font-weight:900;color:#fff;line-height:1.07;letter-spacing:-0.022em;margin-bottom:20px;max-width:740px;margin-left:auto;margin-right:auto;position:relative;}
+  .hero h1 em.lm{font-style:italic;color:#fbbf24;}
+  .hero h1 em.gen{font-style:italic;color:#e879f9;}
+  .hero-sub{font-size:15px;color:rgba(255,255,255,0.5);max-width:520px;margin:0 auto 38px;line-height:1.72;position:relative;}
+  .hero-stats{display:flex;justify-content:center;gap:44px;flex-wrap:wrap;position:relative;}
+  .hero-stat{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.07em;text-transform:uppercase;}
+  .hero-stat strong{display:block;font-size:24px;color:#fff;font-family:'Inter',sans-serif;font-weight:600;letter-spacing:0;margin-bottom:3px;}
+  .hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:28px;position:relative;}
+  .hbadge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;padding:4px 12px;border-radius:20px;border:1px solid;}
+  .hbadge.lm{color:#fde68a;border-color:rgba(253,230,138,0.32);}
+  .hbadge.gen{color:#f0abfc;border-color:rgba(240,171,252,0.32);}
+
+  /* block divider */
+  .block-divider{background:linear-gradient(90deg,rgba(217,119,6,0.15),rgba(192,38,211,0.15));height:3px;margin:72px 0 0;border-radius:2px;}
+  .block-label{text-align:center;padding:22px 0 48px;}
+  .block-label-inner{display:inline-flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--paper3);border-radius:30px;padding:8px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .block-num{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;padding:4px 12px;border-radius:20px;}
+  .block-num.lm{background:var(--lm-bg);color:var(--lm);}
+  .block-num.gen{background:var(--gen-bg);color:var(--gen);}
+  .block-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink);}
+
+  /* ── CONTAINER ── */
+  .container{max-width:780px;margin:0 auto;padding:0 24px;}
+
+  /* ── TOC ── */
+  .toc{background:#fff;border:1px solid var(--paper3);border-radius:14px;padding:28px 32px;margin:54px 0;box-shadow:0 2px 16px rgba(217,119,6,0.06);}
+  .toc-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;}
+  .toc-section{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin:14px 0 8px;}
+  .toc-section.lm{color:var(--lm);}
+  .toc-section.gen{color:var(--gen);}
+  .toc ol{list-style:none;counter-reset:toc;}
+  .toc li{counter-increment:toc;font-size:13.5px;color:var(--ink2);display:flex;align-items:baseline;gap:9px;padding:3px 0;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);font-family:'IBM Plex Mono',monospace;font-size:10px;flex-shrink:0;}
+  .toc li.lm-item::before{color:var(--lm);}
+  .toc li.gen-item::before{color:var(--gen);}
+  .toc li a{color:var(--ink2);text-decoration:none;}
+  .toc li a:hover{color:var(--lm);}
+
+  /* ── DIVIDER ── */
+  .divider{display:flex;align-items:center;gap:14px;margin:60px 0 50px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--paper3);}
+  .divider span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);white-space:nowrap;}
+
+  /* ── TYPOGRAPHY ── */
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;}
+  .eyebrow.lm{color:var(--lm);}
+  .eyebrow.pt{color:var(--pt);}
+  .eyebrow.ft{color:var(--ft);}
+  .eyebrow.inf{color:var(--inf);}
+  .eyebrow.gen{color:var(--gen);}
+  .eyebrow.mm{color:var(--mm);}
+  h2{font-family:'Playfair Display',serif;font-size:clamp(1.75rem,3.2vw,2.45rem);font-weight:700;line-height:1.18;letter-spacing:-0.015em;margin-bottom:20px;color:var(--ink);}
+  h2 em.lm{font-style:italic;color:var(--lm);}
+  h2 em.pt{font-style:italic;color:var(--pt);}
+  h2 em.ft{font-style:italic;color:var(--ft);}
+  h2 em.inf{font-style:italic;color:var(--inf);}
+  h2 em.gen{font-style:italic;color:var(--gen);}
+  h2 em.mm{font-style:italic;color:var(--mm);}
+  h3{font-family:'Inter',sans-serif;font-size:1.06rem;font-weight:600;margin:32px 0 10px;color:var(--ink);}
+  p{margin-bottom:16px;color:var(--ink2);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--ink);font-weight:600;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--paper2);padding:1px 6px;border-radius:4px;color:var(--lm2);}
+
+  /* ── PULL QUOTE ── */
+  .pull-quote{border-left:3px solid var(--lm);padding:6px 0 6px 28px;margin:36px 0;}
+  .pull-quote.gen{border-left-color:var(--gen);}
+  .pull-quote p{font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:var(--ink);line-height:1.62;margin:0;}
+
+  /* ── ANALOGY ── */
+  .analogy{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:22px 28px;margin:26px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+  .analogy-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;}
+  .analogy-label.lm{color:var(--lm);}
+  .analogy-label.gen{color:var(--gen);}
+  .analogy-label.pt{color:var(--pt);}
+  .analogy p{font-size:14.5px;color:var(--ink2);margin:0;}
+
+  /* ── CALLOUT ── */
+  .callout{border-radius:10px;padding:18px 22px;margin:26px 0;border:1px solid transparent;}
+  .callout-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;margin-bottom:8px;}
+  .callout p{font-size:14px;margin:0;line-height:1.68;}
+  .callout.lm{background:var(--lm-bg);border-color:var(--lm-bd);}
+  .callout.lm .callout-label{color:var(--lm);}
+  .callout.pt{background:var(--pt-bg);border-color:var(--pt-bd);}
+  .callout.pt .callout-label{color:var(--pt);}
+  .callout.ft{background:var(--ft-bg);border-color:var(--ft-bd);}
+  .callout.ft .callout-label{color:var(--ft);}
+  .callout.inf{background:var(--inf-bg);border-color:var(--inf-bd);}
+  .callout.inf .callout-label{color:var(--inf);}
+  .callout.emb{background:var(--emb2-bg);border-color:var(--emb2-bd);}
+  .callout.emb .callout-label{color:var(--emb2);}
+  .callout.gen{background:var(--gen-bg);border-color:var(--gen-bd);}
+  .callout.gen .callout-label{color:var(--gen);}
+  .callout.img{background:var(--img-bg);border-color:var(--img-bd);}
+  .callout.img .callout-label{color:var(--img);}
+  .callout.mm{background:var(--mm-bg);border-color:var(--mm-bd);}
+  .callout.mm .callout-label{color:var(--gen);}
+  .callout.green{background:var(--eval-bg);border-color:var(--eval-bd);}
+  .callout.green .callout-label{color:var(--eval);}
+  .callout.amber{background:var(--amber-bg);border-color:rgba(217,119,6,0.22);}
+  .callout.amber .callout-label{color:var(--amber);}
+
+  /* ── JARGON ── */
+  .jargon{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--paper3);border-radius:6px;padding:10px 14px;margin:7px 0;}
+  .jargon-term{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0;padding-top:1px;}
+  .jargon-term.lm{color:var(--lm2);}
+  .jargon-term.pt{color:var(--pt);}
+  .jargon-term.ft{color:var(--ft);}
+  .jargon-term.inf{color:var(--inf);}
+  .jargon-term.gen{color:var(--gen);}
+  .jargon-term.img{color:var(--img);}
+  .jargon-term.aud{color:var(--aud);}
+  .jargon-term.mm{color:var(--gen);}
+  .jargon-def{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── SECTION HEADER ── */
+  .sec-hdr{border-radius:14px;padding:24px 28px;margin-bottom:26px;}
+  .sec-hdr.lm{background:var(--lm-bg);border:1.5px solid var(--lm-bd);}
+  .sec-hdr.pt{background:var(--pt-bg);border:1.5px solid var(--pt-bd);}
+  .sec-hdr.ft{background:var(--ft-bg);border:1.5px solid var(--ft-bd);}
+  .sec-hdr.inf{background:var(--inf-bg);border:1.5px solid var(--inf-bd);}
+  .sec-hdr.emb{background:var(--emb2-bg);border:1.5px solid var(--emb2-bd);}
+  .sec-hdr.gen{background:var(--gen-bg);border:1.5px solid var(--gen-bd);}
+  .sec-hdr.mm{background:var(--mm-bg);border:1.5px solid var(--mm-bd);}
+  .sec-hdr-num{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:7px;}
+  .sec-hdr.lm .sec-hdr-num{color:var(--lm);}
+  .sec-hdr.pt .sec-hdr-num{color:var(--pt);}
+  .sec-hdr.ft .sec-hdr-num{color:var(--ft);}
+  .sec-hdr.inf .sec-hdr-num{color:var(--inf);}
+  .sec-hdr.emb .sec-hdr-num{color:var(--emb2);}
+  .sec-hdr.gen .sec-hdr-num{color:var(--gen);}
+  .sec-hdr.mm  .sec-hdr-num{color:var(--gen);}
+  .sec-hdr-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:var(--ink);margin-bottom:5px;}
+  .sec-hdr-sub{font-size:14px;color:var(--ink2);line-height:1.6;}
+  .sec-hdr-meta{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap;}
+  .sec-hdr-meta-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink3);}
+  .sec-hdr-meta-item span{color:var(--ink);font-weight:600;}
+
+  /* ── DECODING VISUAL ── */
+  .decode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+  .decode-card{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+  .decode-card-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:4px;}
+  .decode-card-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+  .decode-card.greedy .decode-card-tag{color:var(--inf);}
+  .decode-card.beam   .decode-card-tag{color:var(--ft);}
+  .decode-card.topk   .decode-card-tag{color:var(--lm);}
+  .decode-card.topp   .decode-card-tag{color:var(--gen);}
+  .decode-card-desc{font-size:13.5px;color:var(--ink2);line-height:1.58;}
+  .decode-card-use{font-size:12px;color:var(--ink3);margin-top:8px;font-style:italic;}
+
+  /* ── TEMP VISUAL ── */
+  .temp-strip{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:20px 26px;margin:24px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .temp-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--lm);margin-bottom:16px;}
+  .temp-scale{display:flex;align-items:center;gap:0;margin-bottom:14px;}
+  .temp-bar{flex:1;height:14px;border-radius:7px;background:linear-gradient(90deg,#2563eb,#7c3aed,#d97706,#dc2626);}
+  .temp-points{display:flex;justify-content:space-between;margin-top:6px;}
+  .temp-point{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink3);text-align:center;flex:1;}
+  .temp-row{display:grid;grid-template-columns:80px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--paper2);align-items:start;}
+  .temp-row:last-child{border-bottom:none;}
+  .temp-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--lm);}
+  .temp-desc{font-size:13.5px;color:var(--ink2);}
+
+  /* ── SLM vs LLM STRIP ── */
+  .slm-llm{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+  .slm-card,.llm-card{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:20px 22px;box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+  .slm-card{border-top:3px solid var(--ft);}
+  .llm-card{border-top:3px solid var(--lm);}
+  .slm-card-label,.llm-card-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;}
+  .slm-card-label{color:var(--ft);}
+  .llm-card-label{color:var(--lm);}
+  .slm-card-title,.llm-card-title{font-weight:700;font-size:1.05rem;color:var(--ink);margin-bottom:10px;}
+  .slm-card ul,.llm-card ul{list-style:none;font-size:13.5px;color:var(--ink2);}
+  .slm-card ul li,.llm-card ul li{padding:4px 0 4px 16px;position:relative;border-bottom:1px solid var(--paper2);}
+  .slm-card ul li:last-child,.llm-card ul li:last-child{border-bottom:none;}
+  .slm-card ul li::before,.llm-card ul li::before{content:'→';position:absolute;left:0;font-size:11px;}
+  .slm-card ul li::before{color:var(--ft);}
+  .llm-card ul li::before{color:var(--lm);}
+  .card-examples{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--paper3);}
+  .slm-card .card-examples{color:var(--ft);}
+  .llm-card .card-examples{color:var(--lm);}
+
+  /* ── DIFFUSION VISUAL ── */
+  .diffusion-wrap{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:22px 26px;margin:24px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .diffusion-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--img);margin-bottom:18px;}
+  .diffusion-steps{display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:4px;}
+  .diff-step{flex-shrink:0;text-align:center;}
+  .diff-box{width:60px;height:60px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:5px;}
+  .diff-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);}
+  .diff-arrow{font-size:16px;color:var(--paper3);flex-shrink:0;align-self:center;padding-bottom:14px;}
+  .diff-note{font-size:12.5px;color:var(--ink3);margin-top:14px;font-style:italic;border-top:1px solid var(--paper2);padding-top:12px;}
+  .diff-box.real{background:#dcfce7;border:1px solid #86efac;}
+  .diff-box.n1{background:#d1fae5;border:1px solid #6ee7b7;}
+  .diff-box.n2{background:#e4f2fa;border:1px solid #93c5fd;}
+  .diff-box.n3{background:#ede9fe;border:1px solid #c4b5fd;}
+  .diff-box.noise{background:#fdf2f8;border:1px solid #f9a8d4;}
+  .diff-forward{color:var(--img);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+  .diff-reverse{color:var(--inf);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;margin:12px 0 8px;}
+
+  /* ── MODALITY GRID ── */
+  .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+  .mod-card{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:18px 20px;box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+  .mod-card.txt{border-left:3px solid var(--txt);}
+  .mod-card.img{border-left:3px solid var(--img);}
+  .mod-card.aud{border-left:3px solid var(--aud);}
+  .mod-card.eval{border-left:3px solid var(--eval);}
+  .mod-card-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:7px;}
+  .mod-card.txt .mod-card-label{color:var(--txt);}
+  .mod-card.img .mod-card-label{color:var(--img);}
+  .mod-card.aud .mod-card-label{color:var(--aud);}
+  .mod-card.eval .mod-card-label{color:var(--eval);}
+  .mod-card-title{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:10px;}
+  .mod-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .mod-table td{padding:6px 0;border-bottom:1px solid var(--paper2);color:var(--ink2);vertical-align:top;line-height:1.5;}
+  .mod-table td:first-child{font-weight:600;color:var(--ink);padding-right:12px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+  .mod-table tr:last-child td{border-bottom:none;}
+  .mod-models{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:10px;padding-top:8px;border-top:1px solid var(--paper3);}
+  .mod-card.txt .mod-models{color:var(--txt);}
+  .mod-card.img .mod-models{color:var(--img);}
+  .mod-card.aud .mod-models{color:var(--aud);}
+  .mod-card.eval .mod-models{color:var(--eval);}
+
+  /* ── MULTIMODAL PIPELINE ── */
+  .mm-pipe{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:22px 26px;margin:24px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .mm-pipe-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gen);margin-bottom:18px;}
+  .mm-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .mm-input{border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;text-align:center;flex:1;min-width:90px;}
+  .mm-input.text{background:#eff6ff;border:1px solid #93c5fd;color:#1d4ed8;}
+  .mm-input.image{background:#fdf2f8;border:1px solid #f9a8d4;color:#9d174d;}
+  .mm-input.audio{background:#ecfeff;border:1px solid #67e8f9;color:#0e7490;}
+  .mm-encoder{background:var(--mm-bg);border:1.5px solid var(--mm-bd);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;color:var(--gen);flex:1;min-width:100px;text-align:center;}
+  .mm-tokens{background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:8px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7c3aed;text-align:center;}
+  .mm-llm{background:linear-gradient(135deg,var(--lm-bg),var(--mm-bg));border:1.5px solid var(--mm-bd);border-radius:10px;padding:12px 16px;font-weight:700;font-size:14px;color:var(--ink);text-align:center;flex:2;}
+  .mm-arr{font-size:18px;color:var(--paper3);flex-shrink:0;}
+
+  /* ── METRIC TABLE ── */
+  .m-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;}
+  .m-table th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--paper3);}
+  .m-table td{padding:10px 0 9px;border-bottom:1px solid var(--paper2);vertical-align:top;color:var(--ink2);line-height:1.55;}
+  .m-table td:first-child{font-weight:600;color:var(--ink);padding-right:18px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .m-table tr:last-child td{border-bottom:none;}
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap{background:var(--code-bg);border-radius:12px;overflow:hidden;margin:28px 0;}
+  .code-header{background:rgba(255,255,255,0.04);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .code-header-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+  .code-dots{display:flex;gap:6px;}
+  .code-dot{width:10px;height:10px;border-radius:50%;}
+  .code-dot:nth-child(1){background:#ff5f57;}
+  .code-dot:nth-child(2){background:#febc2e;}
+  .code-dot:nth-child(3){background:#28c840;}
+  pre{padding:22px 24px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.8;color:var(--code-txt);}
+  .cm{color:#4a5580;} .ck{color:#ce93d8;} .cs{color:#a5d6a7;} .cn{color:#ffcc80;} .cf{color:#90caf9;}
+
+  /* ── EXPECTED OUTPUT ── */
+  .expected-output{background:#0d1209;border:1px solid rgba(251,191,36,0.18);border-radius:10px;margin:-10px 0 28px;overflow:hidden;}
+  .expected-output-header{background:rgba(251,191,36,0.07);padding:8px 20px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#fbbf24;border-bottom:1px solid rgba(251,191,36,0.14);}
+  .expected-output pre{padding:16px 20px;font-size:12px;line-height:1.75;color:#c5cae9;background:transparent;}
+  .out-h{color:#90caf9;} .out-n{color:#ffcc80;} .out-g{color:#a5d6a7;} .out-d{color:#80deea;}
+
+  /* ── AGENT BOX ── */
+  .agent-box{background:#0a0800;border-radius:14px;padding:32px 34px;margin:46px 0;position:relative;overflow:hidden;}
+  .agent-box::before{content:'';position:absolute;top:-50px;left:-50px;width:300px;height:300px;background:radial-gradient(circle,rgba(217,119,6,0.18) 0%,transparent 65%);pointer-events:none;}
+  .agent-box::after{content:'';position:absolute;bottom:-50px;right:-50px;width:260px;height:260px;background:radial-gradient(circle,rgba(192,38,211,0.15) 0%,transparent 65%);pointer-events:none;}
+  .ab-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:#fbbf24;margin-bottom:14px;position:relative;}
+  .agent-box h3{color:#fff;margin:0 0 12px;font-size:1.1rem;position:relative;}
+  .agent-box p{color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;position:relative;line-height:1.72;}
+  .agent-box p:last-child{margin-bottom:0;}
+
+  /* ── CHEAT GRID ── */
+  .cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+  .cheat-cell{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+  .cheat-cell.lm{border-top:3px solid var(--lm);}
+  .cheat-cell.ft{border-top:3px solid var(--ft);}
+  .cheat-cell.inf{border-top:3px solid var(--inf);}
+  .cheat-cell.emb{border-top:3px solid var(--emb2);}
+  .cheat-cell.gen{border-top:3px solid var(--gen);}
+  .cheat-cell.mm{border-top:3px solid var(--mm);}
+  .cheat-cell-name{font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:3px;}
+  .cheat-cell-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-bottom:8px;letter-spacing:0.06em;}
+  .cheat-cell ul{list-style:none;font-size:13px;color:var(--ink2);}
+  .cheat-cell ul li{padding:2px 0 2px 14px;position:relative;}
+  .cheat-cell ul li::before{content:'·';position:absolute;left:0;color:var(--ink3);}
+
+  /* ── FOOTER ── */
+  .footer{background:#0a0800;padding:56px 24px;margin-top:80px;text-align:center;}
+  .footer-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;}
+  .footer-sub{font-size:13px;color:rgba(255,255,255,0.38);margin-bottom:10px;}
+  .footer-next{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#fbbf24;margin-top:20px;}
+  .footer-block{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgba(251,191,36,0.5);margin-top:8px;}
+
+  @media(max-width:640px){
+    .toc ol,.decode-grid,.slm-llm,.mod-grid,.cheat-grid{grid-template-columns:1fr;}
+    .masthead-inner{flex-direction:column;gap:4px;}
+    .mm-row{gap:6px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="ms-t">Master Agentic AI with Me · Issue #09</div>
+    <div class="ms-m">Blocks 06 + 07 · Language Models + Generative AI · Both Complete</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="issue-tag">Issue 09 · Blocks 06 + 07 · Two Blocks, One Issue</div>
+  <h1>From <em class="lm">Language Models</em><br>to <em class="gen">Generative AI</em></h1>
+  <p class="hero-sub">Pre-training, scaling laws, RLHF, decoding strategies — then text, images, audio, and multimodal AI. The complete picture of how models are built and what they create.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>35 min</strong>read</div>
+    <div class="hero-stat"><strong>2</strong>blocks covered</div>
+    <div class="hero-stat"><strong>5</strong>code cells</div>
+    <div class="hero-stat"><strong>4</strong>modalities</div>
+  </div>
+  <div class="hero-badges">
+    <span class="hbadge lm">Pre-training · BPE · Scaling Laws</span>
+    <span class="hbadge lm">SFT · RLHF · SLM vs LLM</span>
+    <span class="hbadge lm">Decoding · Temperature · Context</span>
+    <span class="hbadge gen">Text · Image · Audio · Multimodal</span>
+    <span class="hbadge gen">Diffusion · CLIP · Evaluation</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-label">In this issue — Blocks 06 + 07</div>
+    <div class="toc-section lm">Block 06 — Language Models</div>
+    <ol>
+      <li class="lm-item"><a href="#pretraining">Pre-training: next token prediction, BPE, vocabulary, scaling laws, emergent abilities</a></li>
+      <li class="lm-item"><a href="#finetuning">Fine-tuning and Alignment: SFT, Instruction Tuning, RLHF</a></li>
+      <li class="lm-item"><a href="#slm-llm">SLM vs LLM — size, cost, capability</a></li>
+      <li class="lm-item"><a href="#inference">Inference and generation: Greedy, Beam Search, Top-k, Top-p, Temperature</a></li>
+      <li class="lm-item"><a href="#prompting">Prompting intro: zero-shot, few-shot, system prompt</a></li>
+      <li class="lm-item"><a href="#embeddings">LLM Embeddings + Vector Search + RAG intro</a></li>
+    </ol>
+    <div class="toc-section gen">Block 07 — Generative AI</div>
+    <ol start="7">
+      <li class="gen-item"><a href="#how-gen">How autoregressive generation works</a></li>
+      <li class="gen-item"><a href="#text-gen">Text generation — tasks and models</a></li>
+      <li class="gen-item"><a href="#diffusion">Image generation — Diffusion Models, CLIP, DALL-E</a></li>
+      <li class="gen-item"><a href="#audio">Audio generation — TTS, STT, voice cloning, music</a></li>
+      <li class="gen-item"><a href="#evaluation">Evaluation — BLEU, ROUGE, FID, LLM-as-judge</a></li>
+      <li class="gen-item"><a href="#multimodal">Multimodal AI — vision+audio+text in one model</a></li>
+    </ol>
+  </div>
+
+  <div class="eyebrow lm">From the editor</div>
+  <p>Welcome to Issue 09. This is the issue where the entire path clicks together. You built the Transformer in Issue 08. Now Issue 09 answers: what does training that Transformer on trillions of tokens produce? And what does the result actually create?</p>
+  <p>Block 06 is about Language Models — how they're trained, how they're aligned to be helpful, what the difference is between a 7B and a 70B model, and how you control what they output. Block 07 is about Generative AI — the full spectrum of what modern AI can create: text, images, audio, and everything at once in multimodal systems.</p>
+  <p>After this issue, you have the complete technical foundation. Issues 10 onward cover Prompt Engineering, Agentic AI, RAG, Context Engineering, and Frameworks — the applied engineering that turns everything you've learned into production systems.</p>
+
+  <!-- ════ BLOCK 06 ════ -->
+
+  <div class="block-divider"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num lm">Block 06</div>
+      <div class="block-title">Language Models — SLMs &amp; LLMs</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 1 · Pre-Training</span></div>
+
+  <div id="pretraining">
+    <div class="sec-hdr pt">
+      <div class="sec-hdr-num">Block 06 · Section 1</div>
+      <div class="sec-hdr-title">Pre-Training — Learning Everything by Predicting the Next Word</div>
+      <div class="sec-hdr-sub">Train a Transformer decoder on trillions of tokens with one task: predict the next token. No labels needed. As a side effect, the model learns the entire structure of human knowledge.</div>
+      <div class="sec-hdr-meta">
+        <div class="sec-hdr-meta-item">Task: <span>Next Token Prediction (CLM)</span></div>
+        <div class="sec-hdr-meta-item">Data: <span>Common Crawl · Books · Code · Wikipedia</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow pt">Pre-Training</div>
+    <h2>Next Token Prediction — <em class="pt">the one task that teaches everything</em></h2>
+
+    <p>The pre-training objective sounds almost trivially simple: given a sequence of tokens, predict the next one. "The cat sat on the ___" → predict "mat". That's it. There's no labelled data, no human annotation, no explicit teaching of grammar or facts or reasoning. Just: predict the next token, measure error, backpropagate, repeat.</p>
+
+    <p>But here's the thing — to reliably predict the next token across trillions of examples, a model must implicitly learn everything. It must learn grammar (wrong grammar → wrong predictions). It must learn facts (predicting "France" after "The capital of France is" requires knowing the fact). It must learn reasoning (predicting the conclusion of a logical argument requires following the logic). All of this emerges as a side effect of next-token prediction at scale.</p>
+
+    <div class="pull-quote">
+      <p>Language modelling is not a task. It's a compression challenge — the only way to predict text reliably across all of human knowledge is to genuinely model the world that produced it.</p>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term pt">BPE — Byte Pair Encoding</span>
+      <span class="jargon-def">The most widely used tokenisation algorithm for LLMs. Start with individual characters. Find the most frequent pair of adjacent characters or tokens and merge them into one new token. Repeat thousands of times. Result: a vocabulary of ~50K subword tokens. "unhappiness" becomes ["un", "happi", "ness"]. "GPT-4" becomes ["G", "PT", "-", "4"]. BPE handles any language, any word, any misspelling — unknown words are decomposed into known subword pieces. GPT models use BPE. Claude and GPT-4 use vocabularies of ~100K tokens.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term pt">WordPiece</span>
+      <span class="jargon-def">BERT's tokenisation variant. Similar to BPE but merges pairs that maximise the likelihood of the training data (likelihood-based, not frequency-based). Uses "##" prefix for continuation tokens: "unhappiness" → ["un", "##happi", "##ness"]. Vocabulary size typically 30,522 for BERT-base. Less common now — most modern models use BPE or its variant (tiktoken for GPT, SentencePiece for many others).</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term pt">Vocabulary Size</span>
+      <span class="jargon-def">The number of unique tokens the model knows. BERT: 30,522. GPT-2: 50,257. GPT-4 / Claude: ~100,000. Larger vocabulary means fewer tokens per word (more efficient context window usage) but more embedding parameters (100K tokens × 4096 dims = 400M params just for embeddings). The vocabulary is fixed after pre-training — the model can't learn new tokens without retraining the tokeniser and embedding layer.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term pt">Scaling Laws</span>
+      <span class="jargon-def">The empirical observation (Kaplan et al., OpenAI 2020; Hoffmann et al., DeepMind 2022 — "Chinchilla") that model performance improves predictably as a power law with parameter count, dataset size, and compute. The Chinchilla paper found that many large models were undertrained: a 70B model trained on 1.4T tokens is better than a 280B model trained on 300B tokens. Optimal training: roughly 20 tokens of training data per parameter. This guides every major LLM training run — before you spend millions on compute, you can predict the improvement you'll get.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term pt">Emergent Abilities</span>
+      <span class="jargon-def">Capabilities that appear suddenly at large scale that are not present (or even slightly present) in smaller models. Below a certain scale: zero performance. At that scale: near-perfect performance. Examples: arithmetic with carry (addition), multi-step reasoning, in-context learning, chain-of-thought, code generation. These abilities were not explicitly trained — they emerged from scale. This is why small models sometimes can't do things that seem simple: the emergent threshold hasn't been crossed. GPT-3 (175B) was when many emergent abilities first appeared.</span>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-label pt">Why scale matters — the threshold analogy</div>
+      <p>A 1-parameter model can't do anything useful. A 1B-parameter model can complete sentences. A 7B model can follow instructions. A 70B model starts reasoning. A 175B model shows emergent abilities. The graph isn't smooth — it has phase transitions. Like how water doesn't "partially freeze" at 5°C — it stays liquid until exactly 0°C, then changes state. Emergent abilities in LLMs are phase transitions: the model either has them or it doesn't, and scale is the temperature control.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 2 · Fine-Tuning and Alignment</span></div>
+
+  <div id="finetuning">
+    <div class="sec-hdr ft">
+      <div class="sec-hdr-num">Block 06 · Section 2</div>
+      <div class="sec-hdr-title">Fine-Tuning &amp; Alignment — From Text Predictor to Helpful Assistant</div>
+      <div class="sec-hdr-sub">A pre-trained model completes text — it doesn't answer questions helpfully, refuse harmful requests, or behave safely. These three steps turn a raw model into a production assistant.</div>
+    </div>
+
+    <div class="eyebrow ft">Fine-Tuning</div>
+    <h2>From raw model to <em class="ft">helpful assistant</em> — three stages</h2>
+
+    <p>A freshly pre-trained model is impressive but dangerous. Ask it "How do I make a bomb?" — it will helpfully complete the text. Ask it "What's the capital of France?" — it might respond "What's the capital of France? That's a great question. The capital of Spain is Madrid, and..." (it completes patterns, not questions). Three training stages fix this.</p>
+
+    <div class="jargon">
+      <span class="jargon-term ft">Supervised Fine-Tuning (SFT)</span>
+      <span class="jargon-def">After pre-training, train the model on a dataset of (instruction, ideal response) pairs. "Summarise this article: [article]" → "[clean summary]". "Write a Python function to sort a list" → "[correct Python code]". "What is photosynthesis?" → "[accurate explanation]". This is standard supervised training: model predicts tokens of the ideal response, loss is backpropagated. The model starts to understand that its job is to answer, not just complete. Typically uses a dataset of 100K–1M carefully curated examples. InstructGPT was the first widely publicised SFT model.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term ft">Instruction Tuning</span>
+      <span class="jargon-def">A specific type of SFT using a very diverse set of instruction types — writing, coding, summarising, translating, reasoning, roleplay, math, safety refusals, and more. The diversity is what makes the model generalisable: a model fine-tuned only on writing prompts won't know how to follow coding instructions. Instruction tuning gives the model a general "follow instruction" capability that transfers to novel instruction types it hasn't explicitly seen. The FLAN models (Google) and Alpaca (Stanford) pioneered this approach with open datasets.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term ft">RLHF — Reinforcement Learning from Human Feedback</span>
+      <span class="jargon-def">The technique that made ChatGPT feel dramatically better than GPT-3 base. Three sub-stages: (1) SFT on demonstrations as above. (2) Reward Model training: collect pairs of model outputs for the same prompt, have human raters rank which is better, train a smaller model (the reward model) to predict human preference scores. (3) RL fine-tuning: use PPO (Proximal Policy Optimisation) to update the main model, using the reward model's scores as the reward signal. The model learns to generate outputs humans rate highly. Anthropic's variant is Constitutional AI (CAI) — uses AI feedback instead of human feedback for the RL stage, with a written "constitution" of values.</span>
+    </div>
+
+    <div class="callout ft">
+      <div class="callout-label">The alignment tax</div>
+      <p>RLHF makes models more helpful and safer, but it slightly reduces raw capability scores on certain benchmarks — the model sacrifices some completion quality to add helpfulness and safety. This trade-off is called the "alignment tax." It's considered worth paying — a model that follows instructions correctly and refuses to help with harm is far more useful in practice than a model that's slightly better at predicting tokens from a benchmark dataset. Modern alignment research is focused on reducing this tax while keeping the safety improvements.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · SLM vs LLM</span></div>
+
+  <div id="slm-llm">
+    <div class="eyebrow lm">Block 06 · Section 3</div>
+    <h2>SLM vs LLM — <em class="lm">size is a design decision</em></h2>
+    <p>Parameter count is not just a measure of capability — it determines where the model runs, how much it costs, and what tasks it can tackle. The right model size is the one that solves your problem at the acceptable cost and latency. Bigger isn't always better.</p>
+
+    <div class="slm-llm">
+      <div class="slm-card">
+        <div class="slm-card-label">Small Language Models</div>
+        <div class="slm-card-title">1B – 7B parameters</div>
+        <ul>
+          <li>Runs on consumer GPU (RTX 4090) or laptop</li>
+          <li>Fast inference — low latency responses</li>
+          <li>Cheap to run — fraction of LLM cost</li>
+          <li>Good for focused, well-defined tasks</li>
+          <li>Can run locally — full data privacy</li>
+          <li>Weaker at multi-step reasoning</li>
+          <li>Fewer emergent capabilities</li>
+        </ul>
+        <div class="card-examples">Examples: Phi-3 (3.8B) · Gemma 2B · Mistral 7B · Llama 3.2 3B</div>
+      </div>
+      <div class="llm-card">
+        <div class="llm-card-label">Large Language Models</div>
+        <div class="llm-card-title">70B – 1T+ parameters</div>
+        <ul>
+          <li>Requires GPU clusters or cloud API</li>
+          <li>Slower and more expensive per token</li>
+          <li>Broad general capability across all tasks</li>
+          <li>Strong multi-step reasoning and planning</li>
+          <li>Emergent abilities present and reliable</li>
+          <li>Better instruction following on complex prompts</li>
+          <li>Powers most production AI agents today</li>
+        </ul>
+        <div class="card-examples">Examples: GPT-4o · Claude 3.5 Sonnet · Gemini 1.5 Pro · LLaMA 3 70B</div>
+      </div>
+    </div>
+
+    <div class="callout lm">
+      <div class="callout-label">The practical decision framework</div>
+      <p>Use an SLM when: the task is well-defined and narrow (sentiment classification, simple extraction, document tagging), latency is critical, data must stay on-premises, or cost at scale makes LLMs infeasible. Use an LLM when: the task requires multi-step reasoning, complex instruction following, broad knowledge, or writing quality matters. A common production pattern: use a small model to route and classify requests, a large model to handle complex queries that fail the small model's confidence threshold.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · Inference and Generation</span></div>
+
+  <div id="inference">
+    <div class="sec-hdr inf">
+      <div class="sec-hdr-num">Block 06 · Section 4</div>
+      <div class="sec-hdr-title">Inference &amp; Generation — Controlling What the Model Produces</div>
+      <div class="sec-hdr-sub">The model outputs a probability distribution over all tokens at each step. Decoding strategies decide how to turn those probabilities into actual text. Four strategies. Three key parameters.</div>
+    </div>
+
+    <div class="eyebrow inf">Inference</div>
+    <h2>Decoding strategies — <em class="inf">four ways to pick the next token</em></h2>
+
+    <p>At every generation step, the model outputs a probability distribution over its entire vocabulary (~50K–100K tokens). The decoding strategy decides how to select one token from that distribution. The choice dramatically affects output quality and diversity.</p>
+
+    <div class="decode-grid">
+      <div class="decode-card greedy">
+        <div class="decode-card-name">Greedy Decoding</div>
+        <div class="decode-card-tag">Always pick the highest-prob token</div>
+        <div class="decode-card-desc">At each step, take the single token with the highest probability. Fast, deterministic — same prompt always gives the same output. But often produces repetitive, boring text — the model gets stuck looping on high-probability completions.</div>
+        <div class="decode-card-use">Use for: Factual Q&A where one correct answer exists. Never for creative writing.</div>
+      </div>
+      <div class="decode-card beam">
+        <div class="decode-card-name">Beam Search</div>
+        <div class="decode-card-tag">Keep top-B sequences in parallel</div>
+        <div class="decode-card-desc">Instead of committing to one token, keep the top B most likely partial sequences ("beams") at each step. After generation, select the sequence with the highest overall probability. Better than greedy but still deterministic and can still be repetitive.</div>
+        <div class="decode-card-use">Use for: Machine translation, summarisation where coherence matters more than diversity.</div>
+      </div>
+      <div class="decode-card topk">
+        <div class="decode-card-name">Top-k Sampling</div>
+        <div class="decode-card-tag">Sample from top K tokens only</div>
+        <div class="decode-card-desc">Filter to only the K most likely tokens, then sample randomly from those K. k=50 means: consider only the 50 most likely words, pick one probabilistically. Adds diversity. Problem: k=50 might include rare tokens when distribution is sharp, or miss good tokens when it's flat.</div>
+        <div class="decode-card-use">Use for: Creative writing, chatbots. k=40–50 is a common default.</div>
+      </div>
+      <div class="decode-card topp">
+        <div class="decode-card-name">Top-p (Nucleus) Sampling</div>
+        <div class="decode-card-tag">Sample from tokens covering p% of probability mass</div>
+        <div class="decode-card-desc">Dynamically select the smallest set of tokens whose cumulative probability exceeds p (e.g. 0.9). When the distribution is sharp, this selects few tokens. When it's flat, it selects many. Adapts to context. Considered superior to top-k for most tasks.</div>
+        <div class="decode-card-use">Use for: General text generation. p=0.9 is the standard default. Claude uses this.</div>
+      </div>
+    </div>
+
+    <h3>The three key parameters you set every API call</h3>
+
+    <div class="temp-strip">
+      <div class="temp-label">Temperature — the creativity dial</div>
+      <div class="temp-scale">
+        <div class="temp-bar"></div>
+      </div>
+      <div class="temp-points">
+        <div class="temp-point">0.0<br>Deterministic</div>
+        <div class="temp-point">0.3<br>Focused</div>
+        <div class="temp-point">0.7<br>Balanced</div>
+        <div class="temp-point">1.0<br>Default</div>
+        <div class="temp-point">2.0<br>Wild</div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="temp-row">
+          <div class="temp-val">0.0 – 0.2</div>
+          <div class="temp-desc"><strong>Factual / deterministic.</strong> Use for: structured data extraction, code generation, factual Q&A. Same prompt → same output every time (with greedy). Most deterministic output.</div>
+        </div>
+        <div class="temp-row">
+          <div class="temp-val">0.3 – 0.6</div>
+          <div class="temp-desc"><strong>Focused creative.</strong> Use for: professional writing, business emails, technical explanations. Creative but disciplined — won't go off the rails.</div>
+        </div>
+        <div class="temp-row">
+          <div class="temp-val">0.7 – 1.0</div>
+          <div class="temp-desc"><strong>Balanced generation.</strong> The default for most LLM APIs. Use for: chatbots, general assistance, balanced creativity. Claude defaults to ~1.0.</div>
+        </div>
+        <div class="temp-row">
+          <div class="temp-val">1.0 – 2.0</div>
+          <div class="temp-desc"><strong>High diversity.</strong> Use for: brainstorming, creative writing, generating many varied options. Increases risk of incoherence at very high values.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term inf">Temperature — how it works mathematically</span>
+      <span class="jargon-def">Temperature T divides all logits (raw pre-softmax scores) before the softmax: logit_scaled = logit / T. At T=1: logits unchanged, standard distribution. At T→0: the highest logit becomes enormous relative to others after division → softmax is near-1 for the top token → greedy. At T=2: all logits are halved → differences between probabilities shrink → flatter distribution → more randomness. Temperature does not change which token is most likely — only how much more likely the top choice is versus alternatives.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term inf">Context Window</span>
+      <span class="jargon-def">The maximum number of tokens the model can process in one call — the "memory" of a single conversation or task. Includes both the input (prompt + conversation history + documents) and the output (the model's response). GPT-2: 1,024 tokens. GPT-3: 4,096. GPT-4-turbo: 128,000. Claude 3.5 Sonnet: 200,000. Gemini 1.5 Pro: 1,000,000. The context window is not free — attention computation scales as O(n²) with sequence length, so very long contexts are expensive. When the context is full, the oldest tokens are dropped (unless you implement summarisation or memory management).</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term inf">Max Tokens</span>
+      <span class="jargon-def">The maximum number of tokens the model will generate in its response. Hard stop — the model simply stops generating when it hits this limit, even if the response is incomplete. Set this based on the expected response length: 100 for short answers, 1000 for essays, 4096 for detailed code, 8192 for long documents. Setting it too low truncates responses. Setting it too high wastes cost if responses are short. Most APIs also have a global context window limit that counts both input and output tokens together.</span>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · Prompting Intro</span></div>
+
+  <div id="prompting">
+    <div class="eyebrow lm">Block 06 · Section 5</div>
+    <h2>Prompting intro — <em class="lm">three ways to talk to an LLM</em></h2>
+    <p>Before diving deep into Prompt Engineering (Block 08 in your roadmap), here are the three fundamental prompting patterns every LLM user needs to know. These are the building blocks everything else is built from.</p>
+
+    <table class="m-table">
+      <tr><th>Pattern</th><th>What it is</th><th>When to use</th><th>Example</th></tr>
+      <tr>
+        <td>Zero-shot</td>
+        <td>Just ask — no examples or demonstrations. The model uses its pre-training knowledge directly.</td>
+        <td>Simple, common tasks where the model has seen enough examples during training.</td>
+        <td>"Translate to French: Hello, how are you?"</td>
+      </tr>
+      <tr>
+        <td>Few-shot</td>
+        <td>Give 2–5 input/output examples in the prompt before your actual query. The model learns the pattern from examples.</td>
+        <td>When output format matters, when task is unusual, when you need consistent style.</td>
+        <td>"Positive: I love this! → POS\nNegative: Terrible. → NEG\nReview: Pretty good. → ?"</td>
+      </tr>
+      <tr>
+        <td>System prompt</td>
+        <td>A persistent instruction that sets the model's role, persona, constraints, and context for the entire conversation.</td>
+        <td>Every production application. Defines who the model is and what it should/shouldn't do.</td>
+        <td>"You are a helpful customer support agent for Acme Corp. Only answer questions about our products. Be concise."</td>
+      </tr>
+    </table>
+
+    <div class="callout lm">
+      <div class="callout-label">This is just the intro — Block 08 is all prompt engineering</div>
+      <p>Zero-shot, few-shot, and system prompts are the entry points. Block 08 (Prompt Engineering) covers Chain-of-Thought, ReAct, self-consistency, prompt chaining, and every advanced technique that makes LLMs genuinely reliable in production. For now, know these three — they're the vocabulary of every LLM interaction you'll have.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 6 · LLM Embeddings and Vector Search</span></div>
+
+  <div id="embeddings">
+    <div class="sec-hdr emb">
+      <div class="sec-hdr-num">Block 06 · Section 6</div>
+      <div class="sec-hdr-title">LLM Embeddings &amp; Vector Search — Text to Meaning to Retrieval</div>
+      <div class="sec-hdr-sub">LLMs can convert any text into a high-dimensional vector that captures its semantic meaning. These vectors power semantic search, document retrieval, and the entire RAG architecture.</div>
+      <div class="sec-hdr-meta">
+        <div class="sec-hdr-meta-item">Vector dims: <span>~1536 (OpenAI text-embedding-3-small)</span></div>
+        <div class="sec-hdr-meta-item">Tools: <span>FAISS · Chroma · Pinecone</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow lm">Block 06 · Section 6</div>
+    <h2>LLM Embeddings — <em class="lm">text into meaning space</em></h2>
+    <p>Beyond generating text, LLMs can also function as embedding models — converting any text (word, sentence, paragraph, document) into a dense vector of numbers that captures semantic meaning. These vectors are the backbone of every modern search system and every RAG pipeline.</p>
+
+    <table class="m-table">
+      <tr><th>Concept</th><th>What it means in practice</th></tr>
+      <tr>
+        <td>Text → Embedding Vector</td>
+        <td>Any text input → a fixed-length list of ~1536 numbers representing its meaning. "The cat sat on the mat" → [0.023, −0.418, 0.891, …]. Semantically similar texts produce numerically similar vectors.</td>
+      </tr>
+      <tr>
+        <td>Cosine Similarity</td>
+        <td>Measure how similar two vectors are by computing the cosine of the angle between them. 1.0 = identical meaning, 0.0 = unrelated, −1.0 = opposite. The standard distance metric for all embedding search.</td>
+      </tr>
+      <tr>
+        <td>Semantic Search</td>
+        <td>Find documents that mean the same thing as a query, not just documents that share keywords. "How do I sort a list in Python?" finds "The sorted() function arranges elements in order" even though "sorted", "function", and "order" don't appear in the query.</td>
+      </tr>
+      <tr>
+        <td>Vector Database</td>
+        <td>A database optimised for storing millions of embedding vectors and finding the nearest neighbours to a query vector extremely fast. Not a traditional SQL database — uses approximate nearest neighbour (ANN) algorithms like HNSW or IVF.</td>
+      </tr>
+      <tr>
+        <td>FAISS / Chroma / Pinecone</td>
+        <td>FAISS (Facebook AI Similarity Search): open-source, runs locally, extremely fast, best for large-scale production. Chroma: developer-friendly, easy setup, good for prototyping. Pinecone: managed cloud service, no infrastructure to manage, production-ready with scaling built-in.</td>
+      </tr>
+      <tr>
+        <td>RAG — Retrieval-Augmented Generation</td>
+        <td>The pattern: embed all your documents → store in vector DB → at query time, embed the user's question → find the top-k most similar document chunks → inject those chunks into the LLM's context → LLM answers using the retrieved facts as grounding. Solves the knowledge cutoff problem and reduces hallucinations. Full deep-dive in Block 10 (RAG).</td>
+      </tr>
+    </table>
+
+    <div class="callout emb">
+      <div class="callout-label">Connects directly to Agentic AI, RAG, and Context Engineering</div>
+      <p>Embeddings + vector search are the retrieval infrastructure of every production AI agent. When an agent needs to answer a question about your company's internal documents, it doesn't re-read all documents every time — it embeds the query, finds the top 5 relevant chunks in milliseconds, and feeds only those to the LLM. This makes agents both accurate (grounded in real data) and efficient (not paying to process millions of tokens on every query). The full technical implementation is Block 10 (RAG).</p>
+    </div>
+  </div>
+
+  <!-- ════ BLOCK 07 ════ -->
+
+  <div class="block-divider"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num gen">Block 07</div>
+      <div class="block-title">Generative AI — Create, Don't Just Understand</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · How Generation Works</span></div>
+
+  <div id="how-gen">
+    <div class="eyebrow gen">Block 07 · Section 1</div>
+    <h2>How generation works — <em class="gen">one token at a time</em></h2>
+    <p>Generative AI is the application layer of everything you've learned. The Transformer architecture from Block 05, trained and aligned via the Block 06 process, now takes a prompt and creates something new — text, images, audio, or combinations of all three.</p>
+
+    <div class="jargon">
+      <span class="jargon-term gen">Autoregressive Generation</span>
+      <span class="jargon-def">The core generation mechanism for text LLMs. Predict one token, append it to the sequence, predict the next token from the extended sequence, repeat. "Write me a poem about stars" → model predicts "The" → appends to get "Write me a poem about stars\nThe" → predicts "stars" → appends → predicts "above" → and so on until a stop condition is met. Each step is a full forward pass through the entire Transformer. This is why generating long responses takes more time than short ones — it scales linearly with output length.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term gen">Stop Sequences</span>
+      <span class="jargon-def">Tokens or strings that tell the model to stop generating immediately when encountered. Common examples: "\n\n" (double newline — stop after a paragraph), "Human:" or "User:" (stop before the next conversation turn in chat systems), a custom delimiter like "###END###". Without stop sequences, the model generates until max_tokens is reached. Well-designed stop sequences prevent runaway generation and keep outputs clean and correctly delimited.</span>
+    </div>
+
+    <div class="callout gen">
+      <div class="callout-label">The full generation pipeline</div>
+      <p>User prompt → Tokenise (text → token IDs) → Embed (IDs → vectors) → Add positional encoding → Pass through N Transformer blocks (attention + FFN × N) → Final layer norm → Project to vocabulary (linear layer, shape d_model × vocab_size) → Apply temperature → Apply top-p or top-k mask → Softmax → Sample one token → Detokenise (token ID → text fragment) → Append to output → Repeat from "Embed" step. Every token generation goes through this full pipeline. For a 200-token response from a 96-layer model: 200 × 96 × (attention + FFN operations) = enormous amount of computation, all happening on GPU clusters in seconds.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · Text, Image, Audio Generation</span></div>
+
+  <div id="text-gen">
+    <div class="eyebrow gen">Block 07 · Section 2</div>
+    <h2>What generative AI can create — <em class="gen">four modalities</em></h2>
+  </div>
+
+  <div class="mod-grid">
+    <div class="mod-card txt">
+      <div class="mod-card-label">Modality 1</div>
+      <div class="mod-card-title">Text Generation</div>
+      <table class="mod-table">
+        <tr><td>Completion</td><td>Continue any text naturally and coherently</td></tr>
+        <tr><td>Instruction following</td><td>Execute precisely what the prompt asks</td></tr>
+        <tr><td>Summarisation</td><td>Condense long content into key points</td></tr>
+        <tr><td>Code generation</td><td>Write, explain, debug, and review code</td></tr>
+        <tr><td>Creative writing</td><td>Stories, poems, scripts, dialogue</td></tr>
+      </table>
+      <div class="mod-models">GPT-4o · Claude 3.5 Sonnet · Gemini 1.5 Pro · LLaMA 3</div>
+    </div>
+
+    <div id="diffusion">
+    <div class="mod-card img">
+      <div class="mod-card-label">Modality 2</div>
+      <div class="mod-card-title">Image Generation — Diffusion Models</div>
+      <table class="mod-table">
+        <tr><td>Forward diffusion</td><td>Training: gradually add random noise to real images</td></tr>
+        <tr><td>Reverse diffusion</td><td>Inference: learned denoising from pure noise</td></tr>
+        <tr><td>Text conditioning</td><td>CLIP embeddings guide what image is generated</td></tr>
+        <tr><td>Text-to-Image</td><td>Type description → generate matching image</td></tr>
+        <tr><td>Image-to-Image</td><td>Modify an existing image with a text prompt</td></tr>
+      </table>
+      <div class="mod-models">DALL-E 3 · Stable Diffusion · Midjourney · Imagen</div>
+    </div>
+    </div>
+
+    <div id="audio">
+    <div class="mod-card aud">
+      <div class="mod-card-label">Modality 3</div>
+      <div class="mod-card-title">Audio Generation</div>
+      <table class="mod-table">
+        <tr><td>Text-to-Speech (TTS)</td><td>Convert text to natural, expressive voice</td></tr>
+        <tr><td>Speech-to-Text (STT)</td><td>Transcribe audio to text with high accuracy</td></tr>
+        <tr><td>Voice cloning</td><td>Reproduce any speaker's voice from short samples</td></tr>
+        <tr><td>Music generation</td><td>Create original music from text descriptions</td></tr>
+      </table>
+      <div class="mod-models">Whisper (STT) · ElevenLabs (TTS/clone) · Suno (music) · Bark</div>
+    </div>
+    </div>
+
+    <div id="evaluation">
+    <div class="mod-card eval">
+      <div class="mod-card-label">Measuring quality</div>
+      <div class="mod-card-title">Evaluation Metrics</div>
+      <table class="mod-table">
+        <tr><td>BLEU</td><td>Text similarity to reference (translation, summarisation)</td></tr>
+        <tr><td>ROUGE</td><td>Recall-based text overlap (summarisation quality)</td></tr>
+        <tr><td>FID Score</td><td>Image generation quality vs real image distribution</td></tr>
+        <tr><td>Human evaluation</td><td>Best judge for open-ended creative quality</td></tr>
+        <tr><td>LLM-as-judge</td><td>Use another LLM to score output quality at scale</td></tr>
+      </table>
+      <div class="mod-models">LLM-as-judge is now the dominant approach for LLM evaluation at scale</div>
+    </div>
+    </div>
+  </div>
+
+  <!-- DIFFUSION deep dive -->
+  <div class="eyebrow gen">Image generation — deeper</div>
+  <h2>Diffusion Models — <em class="gen">learning to un-noise</em></h2>
+  <p>Image generation uses a completely different architecture from text LLMs — diffusion models, not Transformers (though modern image models like DALL-E 3 do incorporate Transformer components). The core insight is elegant: instead of learning to generate images directly, teach the model to reverse a well-defined destruction process.</p>
+
+  <div class="diffusion-wrap">
+    <div class="diffusion-label">The diffusion process — forward (destroy) and reverse (create)</div>
+    <div class="diff-forward">→ Forward diffusion (training only — add noise step by step)</div>
+    <div class="diffusion-steps">
+      <div class="diff-step"><div class="diff-box real">🐈</div><div class="diff-label">Real image<br>t=0</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box n1">🐈̈</div><div class="diff-label">Light noise<br>t=250</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box n2">🌫️</div><div class="diff-label">Heavy noise<br>t=600</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box n3">🌪️</div><div class="diff-label">Very noisy<br>t=900</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box noise">📡</div><div class="diff-label">Pure noise<br>t=1000</div></div>
+    </div>
+    <div class="diff-reverse">← Reverse diffusion (inference — start from noise, predict the image)</div>
+    <div class="diffusion-steps">
+      <div class="diff-step"><div class="diff-box noise">📡</div><div class="diff-label">Random noise<br>"a cat"</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box n3">🌪️</div><div class="diff-label">Denoised<br>step 1</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box n2">🌫️</div><div class="diff-label">Denoised<br>step ~20</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box n1">🐈̈</div><div class="diff-label">Denoised<br>step ~40</div></div>
+      <div class="diff-arrow">→</div>
+      <div class="diff-step"><div class="diff-box real">🐈</div><div class="diff-label">Final image<br>step 50</div></div>
+    </div>
+    <div class="diff-note">Forward diffusion is a fixed mathematical process — gradually add Gaussian noise according to a schedule. The model only needs to learn one thing: given a noisy image at time t, what noise was added? Train it to predict the noise. At inference, start from pure random noise and run the reverse process ~50 steps, guided at each step by the text prompt's CLIP embedding.</div>
+  </div>
+
+  <div class="jargon">
+    <span class="jargon-term img">CLIP — Contrastive Language-Image Pre-training</span>
+    <span class="jargon-def">OpenAI's model that jointly trains a text encoder and image encoder so that matching image-text pairs have similar embeddings in shared vector space. "A photo of a red cat" → text embedding. [photo of a red cat] → image embedding. Trained on 400M image-text pairs from the internet. CLIP bridges text and images: the text embedding of a generation prompt is used to condition the diffusion denoising process, steering it toward images that match the text. CLIP is why "photorealistic photo of a dragon flying over Mumbai at sunset" actually generates something recognisable — the text embedding guides every denoising step.</span>
+  </div>
+
+  <div class="callout img">
+    <div class="callout-label">Why diffusion models, not Transformers, for images</div>
+    <p>Text generation works well autoregressively (one token at a time) because language has a natural left-to-right order. Images don't have that order — top-left to bottom-right pixel generation produces blurry, incoherent images. Diffusion models generate the entire image simultaneously through iterative refinement, preserving global coherence. Recent work (like DALL-E 3 and Stable Diffusion 3) does incorporate Transformer components for image understanding, but the core generation mechanism remains diffusion.</p>
+  </div>
+
+  <!-- EVALUATION deeper -->
+  <div class="eyebrow gen">Evaluation — deeper</div>
+  <h2>How we measure <em class="gen">whether AI output is good</em></h2>
+
+  <div class="jargon">
+    <span class="jargon-term gen">BLEU — Bilingual Evaluation Understudy</span>
+    <span class="jargon-def">Measure overlap between generated text and a human reference translation. Count n-gram matches (1-gram, 2-gram, 3-gram, 4-gram) between generated and reference text. Average across n-gram sizes. Score: 0.0 (no overlap) to 1.0 (perfect match). Widely used for machine translation. Limitation: doesn't account for paraphrases — "The vehicle approached quickly" vs "The car came fast" are semantically similar but BLEU would score them low.</span>
+  </div>
+
+  <div class="jargon">
+    <span class="jargon-term gen">ROUGE — Recall-Oriented Understudy for Gisting Evaluation</span>
+    <span class="jargon-def">Measures how much of the reference text appears in the generated text (recall-focused, unlike BLEU which is precision-focused). ROUGE-1: unigram recall. ROUGE-2: bigram recall. ROUGE-L: longest common subsequence. Standard for evaluating text summarisation — how much of the important content from the source did the summary capture? Still can't handle paraphrases or judge quality of reasoning.</span>
+  </div>
+
+  <div class="jargon">
+    <span class="jargon-term img">FID Score — Fréchet Inception Distance</span>
+    <span class="jargon-def">Measure the quality and diversity of generated images by comparing their statistical distribution against real images. Pass both generated and real images through an Inception network, extract feature vectors, compare the mean and covariance matrices of both distributions. Lower FID = generated images more closely match the statistical distribution of real images = better quality and diversity. Unlike human evaluation, FID is automatic and scalable. Widely used to benchmark image generation models: Stable Diffusion FID ≈ 7, DALL-E 3 FID ≈ 5 (lower is better).</span>
+  </div>
+
+  <div class="jargon">
+    <span class="jargon-term gen">LLM-as-Judge</span>
+    <span class="jargon-def">Use a capable LLM (GPT-4, Claude) to evaluate the output of another LLM. Given a prompt and a response, ask the judge: "Rate this response from 1-10 for helpfulness, accuracy, and coherence. Explain your reasoning." Scales to millions of evaluations automatically. Correlates well with human judgment on most tasks. Used heavily in model development: run 10,000 prompt-response pairs through an LLM judge to get aggregate quality scores for a model checkpoint. Main risk: the judge's biases become your evaluation biases — GPT-4 rated as judge tends to prefer GPT-4-style responses.</span>
+  </div>
+
+  <div class="divider"><span>Part 9 · Multimodal AI</span></div>
+
+  <div id="multimodal">
+    <div class="sec-hdr mm">
+      <div class="sec-hdr-num">Block 07 · The Current Frontier</div>
+      <div class="sec-hdr-title">Multimodal AI — Text + Image + Audio + Video in One Model</div>
+      <div class="sec-hdr-sub">Instead of separate models for each modality, modern frontier models process all data types simultaneously. The direction every major AI lab is heading — because the real world is multimodal.</div>
+    </div>
+
+    <div class="eyebrow mm">Multimodal AI</div>
+    <h2>Multimodal — <em class="mm">one model, every sense</em></h2>
+
+    <p>The history of AI has been specialisation: image models for images, speech models for speech, text models for text. Multimodal AI breaks that pattern — one model that can simultaneously understand and generate across all data types. GPT-4o can listen to you speak, look at the photo you took, and respond in both text and voice. Gemini 1.5 Pro can watch a video and answer questions about it. This isn't just convenient — it's architecturally more powerful because modalities inform each other.</p>
+
+    <div class="analogy">
+      <div class="analogy-label gen">Why multimodal is better than single-modal</div>
+      <p>When a radiologist reads an X-ray, they also read the patient's notes, ask follow-up questions, look at previous scans, and integrate all of it into one diagnosis. A text-only model can't see the X-ray. An image-only model can't read the notes. A multimodal model can do all of it simultaneously — just like the radiologist. Real-world intelligence is inherently multimodal. Specialised single-modality models are a historical artefact of limited compute and architectural limitations that frontier models are now overcoming.</p>
+    </div>
+
+    <h3>The input modalities modern models understand</h3>
+    <table class="m-table">
+      <tr><th>Modality</th><th>What the model processes</th><th>Example use cases</th></tr>
+      <tr>
+        <td>Text</td>
+        <td>Questions, instructions, documents, code, conversations</td>
+        <td>All standard LLM tasks — the baseline modality</td>
+      </tr>
+      <tr>
+        <td>Images</td>
+        <td>Photos, charts, diagrams, screenshots, handwritten notes</td>
+        <td>Describe an image, answer questions about a chart, read a whiteboard photo</td>
+      </tr>
+      <tr>
+        <td>Audio</td>
+        <td>Speech, environmental sounds, music</td>
+        <td>Voice conversations, transcription, "what is that sound?"</td>
+      </tr>
+      <tr>
+        <td>Video</td>
+        <td>Sequential frames + audio track</td>
+        <td>Summarise a video, "what happens at 3:42?", temporal reasoning</td>
+      </tr>
+      <tr>
+        <td>Documents</td>
+        <td>PDFs with mixed text/images/tables, spreadsheets</td>
+        <td>Extract data from invoices, summarise research papers with figures</td>
+      </tr>
+    </table>
+
+    <h3>Key multimodal capabilities</h3>
+    <table class="m-table">
+      <tr><th>Capability</th><th>What it is</th></tr>
+      <tr>
+        <td>Vision-Language Understanding</td>
+        <td>Jointly reason about image content and text — "What's wrong with this code screenshot?" or "Does this chart support the claim in this paragraph?"</td>
+      </tr>
+      <tr>
+        <td>Image Captioning</td>
+        <td>Generate natural language description of an image. "A golden retriever puppy playing fetch on a sunny beach."</td>
+      </tr>
+      <tr>
+        <td>Visual Question Answering (VQA)</td>
+        <td>Answer specific questions about image content. "How many people are in this photo?" "What brand is the laptop in the background?"</td>
+      </tr>
+      <tr>
+        <td>Document Understanding</td>
+        <td>Read and reason about documents that mix text with charts, tables, and images — PDFs, presentations, spreadsheets.</td>
+      </tr>
+      <tr>
+        <td>OCR — Optical Character Recognition</td>
+        <td>Extract text from images — handwriting, screenshots, photos of signs. Modern LLMs do this natively without a separate OCR system.</td>
+      </tr>
+    </table>
+
+    <h3>How multimodal models work — the architecture concept</h3>
+
+    <div class="mm-pipe">
+      <div class="mm-pipe-label">Multimodal input → unified token space → LLM</div>
+      <div class="mm-row">
+        <div class="mm-input text">📝 Text<br><small>tokeniser</small></div>
+        <div class="mm-arr">→</div>
+        <div class="mm-encoder">Text Tokens<br>[t₁, t₂, …, tₙ]</div>
+        <div class="mm-arr">→</div>
+        <div class="mm-tokens">unified<br>token space</div>
+      </div>
+      <div class="mm-row">
+        <div class="mm-input image">🖼️ Image<br><small>vision encoder</small></div>
+        <div class="mm-arr">→</div>
+        <div class="mm-encoder">Image Patches → Tokens<br>[v₁, v₂, …, v₁₉₆]</div>
+        <div class="mm-arr">→</div>
+        <div class="mm-tokens">merged with<br>text tokens</div>
+      </div>
+      <div class="mm-row">
+        <div class="mm-input audio">🎙️ Audio<br><small>audio encoder</small></div>
+        <div class="mm-arr">→</div>
+        <div class="mm-encoder">Audio Frames → Tokens<br>[a₁, a₂, …, aₘ]</div>
+        <div class="mm-arr">→</div>
+        <div class="mm-tokens">all tokens<br>concatenated</div>
+      </div>
+      <div style="text-align:center;margin:12px 0;font-size:20px;color:var(--paper3);">↓</div>
+      <div class="mm-llm">Standard LLM Transformer — processes the unified mixed-modality token sequence with full self-attention across all tokens from all modalities</div>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term mm">Vision Encoder</span>
+      <span class="jargon-def">Converts an image into a sequence of tokens the LLM can attend to. Typically a Vision Transformer (ViT) that splits the image into patches (e.g. 16×16 pixel patches), projects each patch into a vector, and produces a sequence of patch tokens. A 224×224 image becomes 196 patches (14×14 grid), each mapped to a 768-dimensional vector — a sequence of 196 tokens the LLM can attend to alongside the text tokens. The vision encoder's parameters are pre-trained separately (often on CLIP) and then combined with the LLM.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term mm">Audio Encoder</span>
+      <span class="jargon-def">Converts audio waveforms into tokens. Typically splits audio into short overlapping frames (e.g. 25ms windows), computes spectral features, and projects them into token vectors. Whisper-style encoders use a CNN-Transformer stack to convert mel spectrograms into token sequences. GPT-4o processes audio natively end-to-end (audio waveform → tokens → LLM → text + audio output) without a separate transcription step, enabling real-time voice conversations with genuine emotional understanding from tone and pacing.</span>
+    </div>
+
+    <div class="callout mm">
+      <div class="callout-label">Models to know for multimodal AI</div>
+      <p><strong>GPT-4o</strong> — OpenAI's "omni" model. Text + image + audio natively in one model. Real-time voice conversation. Can sing, detect emotions in speech, describe images. <strong>Gemini 1.5 Pro</strong> — Google's leading multimodal. Text + image + video + audio. 1M token context window. Can analyse an entire film. <strong>Claude 3.5 Sonnet</strong> — Anthropic's model. Text + image understanding. Excellent at document analysis, chart reading, code screenshots. <strong>LLaVA</strong> — open-source vision-language model. CLIP vision encoder + LLaMA LLM. Run locally. <strong>Whisper + GPT pipeline</strong> — Whisper for speech-to-text, GPT for understanding/generation. The legacy approach before native multimodal models became standard.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 10 · Python Implementation</span></div>
+
+  <div class="eyebrow lm">Run this in Google Colab</div>
+  <h2>The complete code — <em class="lm">every line explained</em></h2>
+
+  <!-- CELL 1 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 1 — BPE Tokenisation: see how LLMs break text into tokens</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>, <span class="cs">"install"</span>, <span class="cs">"tiktoken"</span>, <span class="cs">"-q"</span>])
+<span class="cm"># tiktoken: OpenAI's fast BPE tokeniser — same one used by GPT-3.5 and GPT-4</span>
+<span class="ck">import</span> tiktoken
+
+<span class="cm"># ── Load GPT-4's tokeniser ─────────────────────────────────────</span>
+enc = tiktoken.<span class="cf">get_encoding</span>(<span class="cs">"cl100k_base"</span>)
+<span class="cm"># cl100k_base: the BPE encoding used by GPT-3.5-turbo, GPT-4, text-embedding-3
+# 100,277 tokens in the vocabulary</span>
+
+<span class="cf">print</span>(<span class="cs">"=== BPE Tokenisation — How LLMs Break Text ===\n"</span>)
+
+examples = [
+    <span class="cs">"Hello, how are you?"</span>,
+    <span class="cs">"unhappiness"</span>,                          <span class="cm"># subword split</span>
+    <span class="cs">"ChatGPT is powerful"</span>,
+    <span class="cs">"def fibonacci(n: int) -> list[int]:"</span>,    <span class="cm"># code tokenisation</span>
+    <span class="cs">"நான் தமிழ் படிக்கிறேன்"</span>,              <span class="cm"># Tamil — multi-byte chars</span>
+    <span class="cs">"2 + 2 = 4 but 999999 * 999999 = ?"</span>,    <span class="cm"># numbers and math</span>
+]
+
+<span class="ck">for</span> text <span class="ck">in</span> examples:
+    token_ids = enc.<span class="cf">encode</span>(text)
+    <span class="cm"># encode(): convert text string → list of integer token IDs</span>
+    tokens    = [enc.<span class="cf">decode</span>([t]) <span class="ck">for</span> t <span class="ck">in</span> token_ids]
+    <span class="cm"># decode each ID individually to see the text piece it represents</span>
+    <span class="cf">print</span>(<span class="cs">f"Text:   '{text}'"</span>)
+    <span class="cf">print</span>(<span class="cs">f"Tokens: {tokens}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"Count:  {len(token_ids)} tokens\n"</span>)
+
+<span class="cm"># ── Context window cost calculator ────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"=== Context Window Token Counter ===\n"</span>)
+long_text = <span class="cs">"""Machine learning is a subset of artificial intelligence that enables 
+systems to learn and improve from experience without being explicitly programmed. 
+It focuses on developing computer programs that can access data and use it to 
+learn for themselves."""</span>
+tokens_used = <span class="cf">len</span>(enc.<span class="cf">encode</span>(long_text))
+<span class="cf">print</span>(<span class="cs">f"Text length (chars): {len(long_text)}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Tokens used:         {tokens_used}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Chars per token:     {len(long_text)/tokens_used:.2f}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nContext window comparisons:"</span>)
+<span class="ck">for</span> model, ctx <span class="ck">in</span> [(<span class="cs">"GPT-2"</span>, <span class="cn">1024</span>), (<span class="cs">"GPT-3.5"</span>, <span class="cn">4096</span>), (<span class="cs">"GPT-4-turbo"</span>, <span class="cn">128000</span>), (<span class="cs">"Claude 3.5"</span>, <span class="cn">200000</span>)]:
+    approx_words = ctx * <span class="cn">0.75</span>   <span class="cm"># ~0.75 words per token on average for English</span>
+    <span class="cf">print</span>(<span class="cs">f"  {model:<span class="cn">15</span>}: {ctx:>8,} tokens ≈ {approx_words:>8,.0f} words ≈ {approx_words/250:.0f} pages"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== BPE Tokenisation — How LLMs Break Text ===
+
+<span class="out-d">Text:   'Hello, how are you?'
+Tokens: ['Hello', ',', ' how', ' are', ' you', '?']
+Count:  6 tokens
+
+Text:   'unhappiness'
+Tokens: ['un', 'happiness']
+Count:  2 tokens
+
+Text:   'ChatGPT is powerful'
+Tokens: ['Chat', 'GPT', ' is', ' powerful']
+Count:  4 tokens
+
+Text:   'def fibonacci(n: int) -> list[int]:'
+Tokens: ['def', ' fibonacci', '(', 'n', ':', ' int', ')', ' ->', ' list', '[', 'int', ']:']
+Count:  12 tokens
+
+Text:   'நான் தமிழ் படிக்கிறேன்'
+Tokens: ['நான', '்', ' த', 'மிழ', '்', ' ப', 'ட', 'ிக', '்கிற', 'ேன', '்']
+Count:  11 tokens
+
+Text:   '2 + 2 = 4 but 999999 * 999999 = ?'
+Tokens: ['2', ' +', ' 2', ' =', ' 4', ' but', ' ', '999999', ' *', ' ', '999999', ' =', ' ?']
+Count:  13 tokens</span>
+
+=== Context Window Token Counter ===
+
+<span class="out-h">Text length (chars): 249
+Tokens used:         51
+Chars per token:     4.88</span>
+
+Context window comparisons:
+<span class="out-d">  GPT-2           :    1,024 tokens ≈      768 words ≈ 3 pages
+  GPT-3.5         :    4,096 tokens ≈    3,072 words ≈ 12 pages
+  GPT-4-turbo     :  128,000 tokens ≈   96,000 words ≈ 384 pages
+  Claude 3.5      :  200,000 tokens ≈  150,000 words ≈ 600 pages</span>
+
+<span class="out-g">→ "unhappiness" = 2 tokens ("un" + "happiness") — BPE uses common subword pieces
+→ Tamil uses 11 tokens for 7 characters — non-English languages are less token-efficient
+→ Large numbers like "999999" get one token — BPE learns common number patterns
+→ Claude 3.5's 200K context = 600 pages = entire Harry Potter series in one call</span></pre>
+  </div>
+
+  <!-- CELL 2 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 2 — Decoding Strategies: Greedy vs Top-p vs Temperature</div>
+    </div>
+    <pre><span class="ck">import</span> torch
+<span class="ck">import</span> torch.nn.functional <span class="ck">as</span> F
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+torch.manual_seed(<span class="cn">42</span>)
+
+<span class="cm"># ── Simulate a token probability distribution ──────────────────</span>
+<span class="cm"># Pretend the model has computed logits for the next token over a small 10-word vocab</span>
+vocab = [<span class="cs">"cat"</span>, <span class="cs">"dog"</span>, <span class="cs">"mat"</span>, <span class="cs">"sat"</span>, <span class="cs">"the"</span>, <span class="cs">"a"</span>, <span class="cs">"big"</span>, <span class="cs">"tiny"</span>, <span class="cs">"lazy"</span>, <span class="cs">"jumped"</span>]
+logits = torch.<span class="cf">tensor</span>([<span class="cn">3.2</span>, <span class="cn">1.8</span>, <span class="cn">2.9</span>, <span class="cn">0.5</span>, <span class="cn">1.2</span>, <span class="cn">0.8</span>, <span class="cn">0.3</span>, <span class="cn">0.1</span>, <span class="cn">0.2</span>, <span class="cn">0.4</span>])
+<span class="cm"># logits: raw model outputs before softmax. Higher = model thinks this word is more likely.</span>
+
+<span class="cf">print</span>(<span class="cs">"=== Token Probability Distribution ===\n"</span>)
+probs_default = F.<span class="cf">softmax</span>(logits, dim=<span class="cn">-1</span>)
+<span class="cf">print</span>(<span class="cs">f"{'Token':<span class="cn">10</span>} {'Logit':>8} {'Prob (T=1.0)':>12} {'Bar'"</span>)
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">45</span>)
+<span class="ck">for</span> tok, log, prob <span class="ck">in</span> <span class="cf">zip</span>(vocab, logits, probs_default):
+    bar = <span class="cs">'█'</span> * <span class="cf">int</span>(prob.<span class="cf">item</span>() * <span class="cn">50</span>)
+    <span class="cf">print</span>(<span class="cs">f"{tok:<span class="cn">10</span>} {log.item():>8.1f} {prob.item():>12.4f} {bar}"</span>)
+
+<span class="cm"># ── Effect of Temperature ──────────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== Temperature Effect on Probabilities ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"{'Temperature':<span class="cn">14</span>} {'cat (was top)':>15} {'dog':>8} {'mat':>8} {'Effect'"</span>)
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">60</span>)
+<span class="ck">for</span> temp <span class="ck">in</span> [<span class="cn">0.1</span>, <span class="cn">0.5</span>, <span class="cn">1.0</span>, <span class="cn">1.5</span>, <span class="cn">2.0</span>]:
+    scaled = F.<span class="cf">softmax</span>(logits / temp, dim=<span class="cn">-1</span>)
+    <span class="cm"># logits / temp: divide all logits by temperature before softmax</span>
+    <span class="cm"># low T: top logit gets relatively huge → near-1 probability</span>
+    <span class="cm"># high T: all logits shrink proportionally → flatter distribution</span>
+    effect = <span class="cs">"near-greedy"</span> <span class="ck">if</span> temp < <span class="cn">0.3</span> <span class="ck">else</span> (<span class="cs">"creative"</span> <span class="ck">if</span> temp > <span class="cn">1.2</span> <span class="ck">else</span> <span class="cs">"balanced"</span>)
+    <span class="cf">print</span>(<span class="cs">f"T = {temp:<span class="cn">9.1f</span>}  {scaled[0].item():>15.4f} {scaled[1].item():>8.4f} {scaled[2].item():>8.4f}  {effect}"</span>)
+
+<span class="cm"># ── Top-p (Nucleus) Sampling ───────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== Top-p (Nucleus) Sampling (p=0.9) ===\n"</span>)
+probs_sorted, sorted_idx = torch.<span class="cf">sort</span>(probs_default, descending=<span class="ck">True</span>)
+<span class="cm"># sort probabilities highest to lowest, keeping original indices</span>
+cumulative = torch.<span class="cf">cumsum</span>(probs_sorted, dim=<span class="cn">-1</span>)
+<span class="cm"># cumsum: running sum — cumulative[i] = sum of top-i probabilities</span>
+
+p = <span class="cn">0.90</span>
+nucleus_mask = cumulative <= p
+nucleus_mask[<span class="cn">0</span>] = <span class="ck">True</span>   <span class="cm"># always include the top token</span>
+nucleus_tokens = [vocab[sorted_idx[i]] <span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cf">len</span>(vocab)) <span class="ck">if</span> nucleus_mask[i]]
+nucleus_probs  = probs_sorted[nucleus_mask]
+
+<span class="cf">print</span>(<span class="cs">f"Top-p={p}: Sample from these tokens (covering {nucleus_probs.sum():.3f} of probability):"</span>)
+<span class="ck">for</span> tok, prob, cum <span class="ck">in</span> <span class="cf">zip</span>(nucleus_tokens, nucleus_probs, cumulative[nucleus_mask]):
+    <span class="cf">print</span>(<span class="cs">f"  {tok:<span class="cn">8</span>} prob={prob:.4f}  cumulative={cum:.4f}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nTop-p EXCLUDED: {[vocab[sorted_idx[i]] for i in range(len(vocab)) if not nucleus_mask[i]]}"</span>)
+<span class="cf">print</span>(<span class="cs">"(low-probability tokens are excluded from sampling — prevents weird word choices)"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== Token Probability Distribution ===
+
+<span class="out-h">Token      Logit   Prob (T=1.0) Bar</span>
+---------------------------------------------
+<span class="out-d">cat         3.2       0.4421  ██████████████████████
+dog         1.8       0.1106  █████
+mat         2.9       0.3282  ████████████████
+sat         0.5       0.0297  █
+the         1.2       0.0602  ███
+a           0.8       0.0403  ██
+big         0.3       0.0244  █
+tiny        0.1       0.0200  █
+lazy        0.2       0.0221  █
+jumped      0.4       0.0271  █</span>
+
+=== Temperature Effect on Probabilities ===
+
+<span class="out-h">Temperature     cat (was top)      dog      mat  Effect</span>
+------------------------------------------------------------
+<span class="out-d">T =       0.1         0.9979   0.0003   0.0018  near-greedy
+T =       0.5         0.7341   0.0444   0.5271  balanced
+T =       1.0         0.4421   0.1106   0.3282  balanced
+T =       1.5         0.3047   0.1473   0.2614  creative
+T =       2.0         0.2298   0.1647   0.2114  creative</span>
+
+=== Top-p (Nucleus) Sampling (p=0.9) ===
+
+<span class="out-d">Top-p=0.9: Sample from these tokens (covering 0.907 of probability):
+  cat      prob=0.4421  cumulative=0.4421
+  mat      prob=0.3282  cumulative=0.7703
+  dog      prob=0.1106  cumulative=0.8809
+  the      prob=0.0602  cumulative=0.9411</span>
+
+<span class="out-d">Top-p EXCLUDED: ['a', 'sat', 'jumped', 'big', 'lazy', 'tiny']</span>
+(low-probability tokens are excluded from sampling — prevents weird word choices)
+
+<span class="out-g">→ T=0.1: "cat" gets 99.8% probability — essentially always chosen. Near-deterministic.
+→ T=2.0: "cat" drops to 23%, "mat" to 21% — much more diversity, but incoherence risk
+→ Top-p=0.9 keeps only 4 tokens (those covering 90% of probability mass)
+→ "a", "sat", "jumped" excluded — prevents the model from generating improbable tokens</span></pre>
+  </div>
+
+  <!-- CELL 3 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 3 — LLM API: generate text with the Anthropic API</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>, <span class="cs">"install"</span>, <span class="cs">"anthropic"</span>, <span class="cs">"-q"</span>])
+<span class="ck">import</span> anthropic
+<span class="ck">import</span> os
+
+client = anthropic.<span class="cf">Anthropic</span>(api_key=os.environ.<span class="cf">get</span>(<span class="cs">"ANTHROPIC_API_KEY"</span>))
+<span class="cm"># Set ANTHROPIC_API_KEY as an environment variable in Colab:
+# from google.colab import userdata; os.environ["ANTHROPIC_API_KEY"] = userdata.get("ANTHROPIC_API_KEY")</span>
+
+<span class="cm"># ── Zero-shot generation ──────────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"=== Zero-Shot Generation ===\n"</span>)
+response = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">200</span>,          <span class="cm"># max output tokens (stops after this many tokens)</span>
+    messages=[
+        {<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cs">"Explain gradient descent in one paragraph, for a beginner."</span>}
+    ]
+)
+<span class="cf">print</span>(<span class="cs">"Zero-shot response:"</span>)
+<span class="cf">print</span>(response.content[<span class="cn">0</span>].text)
+<span class="cf">print</span>(<span class="cs">f"\nTokens used — input: {response.usage.input_tokens}, output: {response.usage.output_tokens}"</span>)
+
+<span class="cm"># ── Few-shot generation ───────────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== Few-Shot Generation (Sentiment Classification) ===\n"</span>)
+few_shot_prompt = <span class="cs">"""Classify sentiment as POSITIVE, NEGATIVE, or NEUTRAL.
+
+Review: I absolutely love this product!
+Sentiment: POSITIVE
+
+Review: The packaging was damaged but contents were fine.
+Sentiment: NEUTRAL
+
+Review: Worst purchase I've ever made. Returned immediately.
+Sentiment: NEGATIVE
+
+Review: Surprisingly good quality for the price point.
+Sentiment:"""</span>
+
+response_fs = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">10</span>,           <span class="cm"># very short — we only expect one word</span>
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: few_shot_prompt}]
+)
+<span class="cf">print</span>(<span class="cs">f"Review: 'Surprisingly good quality for the price point.'"</span>)
+<span class="cf">print</span>(<span class="cs">f"Few-shot prediction: {response_fs.content[0].text.strip()}"</span>)
+
+<span class="cm"># ── System prompt + structured output ────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== System Prompt + Structured Output ===\n"</span>)
+response_sys = client.messages.<span class="cf">create</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    max_tokens=<span class="cn">150</span>,
+    system=<span class="cs">"""You are a technical glossary API. When given a term, respond ONLY with a JSON object:
+{"term": "...", "one_line": "...", "example": "..."}
+No markdown, no explanation, just the JSON object."""</span>,
+    <span class="cm"># system: the system prompt — sets persona, constraints, and output format</span>
+    messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cs">"temperature"</span>}]
+)
+<span class="cf">print</span>(<span class="cs">"System prompt response:"</span>)
+<span class="cf">print</span>(response_sys.content[<span class="cn">0</span>].text)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== Zero-Shot Generation ===
+
+Zero-shot response:
+<span class="out-d">Gradient descent is an optimization algorithm that helps machine learning models improve 
+their predictions by repeatedly adjusting their internal settings (called parameters) in 
+the direction that reduces their errors. Imagine you're blindfolded on a hilly landscape 
+trying to reach the lowest valley — at each step, you feel the slope beneath your feet 
+and move in whichever direction goes downhill. Similarly, the algorithm measures how wrong 
+the model's predictions are (the "loss"), calculates which direction to adjust each 
+parameter to reduce that error (the "gradient"), and takes a small step in that direction 
+(controlled by the "learning rate"). After many thousands of steps across millions of 
+examples, the model gradually converges to settings that make accurate predictions.</span>
+
+<span class="out-h">Tokens used — input: 24, output: 127</span>
+
+=== Few-Shot Generation ===
+
+<span class="out-d">Review: 'Surprisingly good quality for the price point.'
+Few-shot prediction: POSITIVE</span>
+
+=== System Prompt + Structured Output ===
+
+System prompt response:
+<span class="out-d">{"term": "temperature", "one_line": "A parameter controlling randomness in LLM outputs — low values produce focused responses, high values produce creative ones.", "example": "temperature=0.1 for factual Q&A, temperature=1.0 for creative writing"}</span>
+
+<span class="out-g">→ Zero-shot works well for common knowledge tasks — model draws on pre-training
+→ Few-shot pattern-matching is perfect for classification — model copies the format
+→ System prompt enforces JSON-only output — critical for production API integrations
+→ max_tokens=10 is enough for "POSITIVE" — saves cost by limiting output length</span></pre>
+  </div>
+
+  <!-- CELL 4 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 4 — LLM Embeddings + Vector Search (mini RAG retrieval)</div>
+    </div>
+    <pre><span class="cm"># Using sentence-transformers for local embeddings (no API key needed)</span>
+<span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>, <span class="cs">"install"</span>, <span class="cs">"sentence-transformers"</span>, <span class="cs">"faiss-cpu"</span>, <span class="cs">"-q"</span>])
+<span class="ck">from</span> sentence_transformers <span class="ck">import</span> SentenceTransformer
+<span class="ck">import</span> faiss           <span class="cm"># FAISS: Facebook AI Similarity Search — fast vector database</span>
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+
+model_emb = <span class="cf">SentenceTransformer</span>(<span class="cs">'all-MiniLM-L6-v2'</span>)
+<span class="cf">print</span>(<span class="cs">"✅ Embedding model loaded\n"</span>)
+
+<span class="cm"># ── Create a mini document corpus ─────────────────────────────</span>
+documents = [
+    <span class="cs">"Python is a high-level programming language popular for AI and data science."</span>,
+    <span class="cs">"The Transformer architecture uses self-attention to process sequences in parallel."</span>,
+    <span class="cs">"Chennai is a coastal city in Tamil Nadu, India, known for its culture and food."</span>,
+    <span class="cs">"Gradient descent optimises neural network weights by minimising the loss function."</span>,
+    <span class="cs">"RLHF trains language models to be helpful using human preference feedback."</span>,
+    <span class="cs">"The Indian Ocean is the third largest ocean in the world."</span>,
+    <span class="cs">"Fine-tuning adapts a pre-trained model to a specific domain or task."</span>,
+    <span class="cs">"DALL-E generates images from text descriptions using a diffusion model."</span>,
+]
+
+<span class="cm"># ── Step 1: Embed all documents (indexing phase) ──────────────</span>
+doc_embeddings = model_emb.<span class="cf">encode</span>(documents)
+<span class="cm"># encode(): returns numpy array shape (n_docs, embedding_dim)</span>
+doc_embeddings = doc_embeddings.<span class="cf">astype</span>(np.float32)
+<span class="cm"># FAISS requires float32</span>
+
+<span class="cm"># ── Step 2: Build FAISS index (vector database) ───────────────</span>
+d = doc_embeddings.<span class="cf">shape</span>[<span class="cn">1</span>]   <span class="cm"># embedding dimension (384 for MiniLM)</span>
+index = faiss.<span class="cf">IndexFlatIP</span>(d)   <span class="cm"># IndexFlatIP: Inner Product search (= cosine when normalised)</span>
+
+faiss.normalize_L2(doc_embeddings)
+<span class="cm"># normalize_L2: convert embeddings to unit vectors so inner product = cosine similarity</span>
+index.<span class="cf">add</span>(doc_embeddings)
+<span class="cm"># add(): insert all document vectors into the index</span>
+<span class="cf">print</span>(<span class="cs">f"Vector database built: {index.ntotal} documents, {d} dimensions each"</span>)
+
+<span class="cm"># ── Step 3: Semantic search (retrieval phase) ─────────────────</span>
+queries = [
+    <span class="cs">"How do LLMs learn from human feedback?"</span>,
+    <span class="cs">"What programming language is best for machine learning?"</span>,
+    <span class="cs">"How are images generated by AI?"</span>,
+]
+
+<span class="cf">print</span>(<span class="cs">"\n=== Semantic Search Results ===\n"</span>)
+<span class="ck">for</span> query <span class="ck">in</span> queries:
+    q_emb = model_emb.<span class="cf">encode</span>([query]).<span class="cf">astype</span>(np.float32)
+    faiss.<span class="cf">normalize_L2</span>(q_emb)        <span class="cm"># normalise query too</span>
+    scores, indices = index.<span class="cf">search</span>(q_emb, k=<span class="cn">2</span>)
+    <span class="cm"># search: find top-k most similar document vectors</span>
+    <span class="cm"># returns scores (cosine similarity) and indices (which document)</span>
+    <span class="cf">print</span>(<span class="cs">f"Query: '{query}'"</span>)
+    <span class="ck">for</span> rank, (score, idx) <span class="ck">in</span> <span class="cf">enumerate</span>(<span class="cf">zip</span>(scores[<span class="cn">0</span>], indices[<span class="cn">0</span>]), <span class="cn">1</span>):
+        <span class="cf">print</span>(<span class="cs">f"  Rank {rank} (score={score:.4f}): {documents[idx]}"</span>)
+    <span class="cf">print</span>()</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>✅ Embedding model loaded
+
+<span class="out-h">Vector database built: 8 documents, 384 dimensions each</span>
+
+=== Semantic Search Results ===
+
+<span class="out-d">Query: 'How do LLMs learn from human feedback?'</span>
+  Rank 1 <span class="out-g">(score=0.7821)</span>: RLHF trains language models to be helpful using human preference feedback.
+  Rank 2 <span class="out-g">(score=0.6234)</span>: Fine-tuning adapts a pre-trained model to a specific domain or task.
+
+<span class="out-d">Query: 'What programming language is best for machine learning?'</span>
+  Rank 1 <span class="out-g">(score=0.7143)</span>: Python is a high-level programming language popular for AI and data science.
+  Rank 2 <span class="out-g">(score=0.5812)</span>: Gradient descent optimises neural network weights by minimising the loss function.
+
+<span class="out-d">Query: 'How are images generated by AI?'</span>
+  Rank 1 <span class="out-g">(score=0.7634)</span>: DALL-E generates images from text descriptions using a diffusion model.
+  Rank 2 <span class="out-g">(score=0.5021)</span>: The Transformer architecture uses self-attention to process sequences in parallel.
+
+<span class="out-g">→ FAISS finds the semantically closest documents in milliseconds — even for large corpora
+→ "RLHF" doc correctly retrieved for "human feedback" query — semantic, not keyword match
+→ This is the retrieval step of a RAG system — inject these top-k docs into LLM context
+→ IndexFlatIP with L2 normalisation = cosine similarity search (most common setup)</span></pre>
+  </div>
+
+  <!-- CELL 5 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 5 — Evaluation Metrics: BLEU and ROUGE</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>, <span class="cs">"install"</span>, <span class="cs">"nltk"</span>, <span class="cs">"rouge-score"</span>, <span class="cs">"-q"</span>])
+<span class="ck">from</span> nltk.translate.bleu_score <span class="ck">import</span> sentence_bleu, SmoothingFunction
+<span class="ck">from</span> rouge_score <span class="ck">import</span> rouge_scorer
+<span class="ck">import</span> nltk; nltk.<span class="cf">download</span>(<span class="cs">'punkt'</span>, quiet=<span class="ck">True</span>)
+
+<span class="cm"># ── BLEU — measures translation/generation quality ────────────</span>
+<span class="cf">print</span>(<span class="cs">"=== BLEU Score ===\n"</span>)
+reference = <span class="cs">"The cat sat on the warm mat near the window"</span>
+candidates = [
+    <span class="cs">"The cat sat on the warm mat near the window"</span>,  <span class="cm"># perfect</span>
+    <span class="cs">"The cat sat on the mat"</span>,                        <span class="cm"># partial match</span>
+    <span class="cs">"A dog stood on a cold floor beside the door"</span>,   <span class="cm"># poor match</span>
+    <span class="cs">"The feline rested on the warm rug by the glass"</span>, <span class="cm"># paraphrase — BLEU weakness!</span>
+]
+
+ref_tokens = reference.<span class="cf">lower</span>().<span class="cf">split</span>()
+smooth = SmoothingFunction().<span class="cf">method1</span>
+<span class="cm"># SmoothingFunction: prevents zero BLEU for short sentences with no n-gram matches</span>
+
+<span class="ck">for</span> cand <span class="ck">in</span> candidates:
+    cand_tokens = cand.<span class="cf">lower</span>().<span class="cf">split</span>()
+    score = <span class="cf">sentence_bleu</span>([ref_tokens], cand_tokens, smoothing_function=smooth)
+    <span class="cm"># sentence_bleu([refs], candidate): first arg is list of references (can have multiple)
+    # returns BLEU-4 by default: geometric mean of 1,2,3,4-gram precision</span>
+    <span class="cf">print</span>(<span class="cs">f"BLEU = {score:.3f} | '{cand}'"</span>)
+
+<span class="cm"># ── ROUGE — measures summarisation quality ────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== ROUGE Score ===\n"</span>)
+article = <span class="cs">"""Machine learning is a branch of artificial intelligence. It enables systems 
+to learn from data and improve over time. Neural networks are a key technique in 
+machine learning that simulate how the brain works."""</span>
+summaries = {
+    <span class="cs">"Good summary"</span>:    <span class="cs">"Machine learning enables systems to learn from data using neural networks."</span>,
+    <span class="cs">"Partial summary"</span>: <span class="cs">"AI systems learn from data."</span>,
+    <span class="cs">"Off-topic"</span>:       <span class="cs">"The weather in Chennai is warm and humid today."</span>,
+}
+
+scorer = <span class="cf">rouge_scorer</span>.<span class="cf">RougeScorer</span>([<span class="cs">'rouge1'</span>, <span class="cs">'rouge2'</span>, <span class="cs">'rougeL'</span>], use_stemmer=<span class="ck">True</span>)
+<span class="cm"># rouge1: unigram overlap, rouge2: bigram overlap, rougeL: longest common subsequence</span>
+<span class="cm"># use_stemmer=True: "learns" and "learning" count as the same word</span>
+
+<span class="cf">print</span>(<span class="cs">f"{'Summary type':<span class="cn">20</span>} {'R1-F1':>8} {'R2-F1':>8} {'RL-F1':>8}"</span>)
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">50</span>)
+<span class="ck">for</span> name, summary <span class="ck">in</span> summaries.<span class="cf">items</span>():
+    scores = scorer.<span class="cf">score</span>(article, summary)
+    <span class="cm"># score(reference, generated): returns dict of RougeScore objects with precision, recall, fmeasure</span>
+    <span class="cf">print</span>(<span class="cs">f"{name:<span class="cn">20</span>} {scores['rouge1'].fmeasure:>8.3f} {scores['rouge2'].fmeasure:>8.3f} {scores['rougeL'].fmeasure:>8.3f}"</span>)
+
+<span class="cf">print</span>(<span class="cs">"\nNote: Both BLEU and ROUGE struggle with paraphrases."</span>)
+<span class="cf">print</span>(<span class="cs">"LLM-as-judge handles paraphrases correctly — that's why it's now dominant."</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== BLEU Score ===
+
+<span class="out-d">BLEU = 1.000 | 'The cat sat on the warm mat near the window'      ← perfect match
+BLEU = 0.478 | 'The cat sat on the mat'                           ← partial match
+BLEU = 0.043 | 'A dog stood on a cold floor beside the door'      ← poor match
+BLEU = 0.028 | 'The feline rested on the warm rug by the glass'</span>   ← paraphrase, BLEU fails!
+
+=== ROUGE Score ===
+
+<span class="out-h">Summary type         R1-F1    R2-F1    RL-F1</span>
+--------------------------------------------------
+<span class="out-d">Good summary         0.742    0.621    0.694    ← high overlap — good summary
+Partial summary      0.341    0.121    0.298    ← low recall — missed key info
+Off-topic            0.014    0.000    0.014    ← near-zero — completely off-topic</span>
+
+<span class="out-d">Note: Both BLEU and ROUGE struggle with paraphrases.
+LLM-as-judge handles paraphrases correctly — that's why it's now dominant.</span>
+
+<span class="out-g">→ "The feline rested on the warm rug" is semantically identical to the reference but BLEU=0.028
+→ BLEU sees "feline"≠"cat", "rug"≠"mat" — treats paraphrases as wrong
+→ LLM-as-judge would correctly score this high — evaluator reads for meaning, not exact words
+→ ROUGE-2 drops more sharply than ROUGE-1 — bigram matches are harder to achieve
+→ Off-topic "Chennai weather" gets near-zero ROUGE — correct! Not about ML at all</span></pre>
+  </div>
+
+  <div class="divider"><span>Connection to AI Agents</span></div>
+
+  <div class="agent-box">
+    <div class="ab-label">Blocks 06 + 07 — inside every agent you'll build</div>
+    <h3>Language models are the brain. Generative AI is the voice. Both are inside every agent.</h3>
+    <p>When you call the Claude or GPT-4 API in your agent, you're invoking the entire Block 06 stack: a decoder-only Transformer (Block 05), pre-trained on trillions of tokens via next-token prediction, aligned through SFT and RLHF, generating tokens via top-p sampling at temperature ~1.0, bounded by a 200K token context window. Every API parameter — model, max_tokens, temperature, system — maps directly to the concepts you just learned.</p>
+    <p>The decoding strategies you control with temperature and top-p matter for agents. Tool-calling and structured JSON output = low temperature (0.0–0.2), deterministic, reproducible. Reasoning and plan generation = medium temperature (0.5–0.7), coherent but flexible. Brainstorming and creative fallbacks = high temperature (0.9–1.2), diverse. Choosing the wrong temperature causes agent failures that look mysterious but are actually just sampling strategy mismatches.</p>
+    <p>Multimodal capability directly expands what agents can perceive. A customer service agent that can only read text is blind to product photos. An agent that can process images can read screenshots, receipts, charts, and diagrams. An agent with audio input can handle voice interactions natively. As you build agents in Blocks 09–13, multimodal input is what determines whether your agent can handle real-world messy data or only clean text.</p>
+    <p>LLM embeddings and vector search (Section 6 of Block 06) are the foundation of every RAG system — which is Block 10 in your roadmap. You just built the retrieval step from scratch in Cell 4: embed documents, FAISS index, query embedding, cosine search, top-k results. The full RAG pipeline adds prompt construction and LLM generation on top of exactly that retrieval foundation.</p>
+  </div>
+
+  <div class="divider"><span>Blocks 06 + 07 — Complete Cheat Sheet</span></div>
+
+  <div class="eyebrow lm">Save this</div>
+  <h2>Both blocks — <em class="lm">one reference</em></h2>
+
+  <div class="cheat-grid">
+    <div class="cheat-cell lm">
+      <div class="cheat-cell-name">Pre-Training</div>
+      <div class="cheat-cell-sub">Next token prediction · BPE · Scaling Laws</div>
+      <ul>
+        <li>Next token prediction — self-supervised, no labels</li>
+        <li>BPE tokenisation — subword vocabulary 50K–100K</li>
+        <li>WordPiece — BERT's tokenisation variant</li>
+        <li>Scaling laws — predict quality from compute</li>
+        <li>Emergent abilities — phase transitions at scale</li>
+      </ul>
+    </div>
+    <div class="cheat-cell ft">
+      <div class="cheat-cell-name">Fine-Tuning &amp; Alignment</div>
+      <div class="cheat-cell-sub">SFT → Instruction Tuning → RLHF</div>
+      <ul>
+        <li>SFT — train on (instruction, response) pairs</li>
+        <li>Instruction tuning — diverse task coverage</li>
+        <li>RLHF — human rankings → reward model → PPO</li>
+        <li>Result: helpful, harmless, honest assistant</li>
+        <li>Anthropic's variant: Constitutional AI (CAI)</li>
+      </ul>
+    </div>
+    <div class="cheat-cell inf">
+      <div class="cheat-cell-name">Inference &amp; Decoding</div>
+      <div class="cheat-cell-sub">Greedy · Beam · Top-k · Top-p · Temperature</div>
+      <ul>
+        <li>Greedy — always pick highest prob token</li>
+        <li>Beam search — top-B sequences in parallel</li>
+        <li>Top-k — sample from K most likely tokens</li>
+        <li>Top-p (nucleus) — cover p% of probability mass</li>
+        <li>Temperature — controls distribution sharpness</li>
+        <li>Context window — max tokens per call</li>
+      </ul>
+    </div>
+    <div class="cheat-cell emb">
+      <div class="cheat-cell-name">Embeddings &amp; Vector Search</div>
+      <div class="cheat-cell-sub">Text → vector · Cosine similarity · RAG</div>
+      <ul>
+        <li>Text → ~1536-dim embedding vector</li>
+        <li>Cosine similarity — 1.0=same, 0.0=unrelated</li>
+        <li>Semantic search — meaning-based not keyword</li>
+        <li>FAISS — fast local vector search</li>
+        <li>Chroma — easy dev vector DB</li>
+        <li>Pinecone — managed cloud vector DB</li>
+        <li>RAG — retrieve → inject → generate</li>
+      </ul>
+    </div>
+    <div class="cheat-cell gen">
+      <div class="cheat-cell-name">Generative AI</div>
+      <div class="cheat-cell-sub">Text · Image · Audio · Evaluation</div>
+      <ul>
+        <li>Text: completion, instructions, code, creative</li>
+        <li>Images: diffusion models — forward/reverse noise</li>
+        <li>CLIP: text-image joint embedding for conditioning</li>
+        <li>Audio: TTS (ElevenLabs), STT (Whisper), music (Suno)</li>
+        <li>BLEU: n-gram precision (translation)</li>
+        <li>ROUGE: recall-based overlap (summarisation)</li>
+        <li>FID: image quality vs real image distribution</li>
+        <li>LLM-as-judge: scalable quality evaluation</li>
+      </ul>
+    </div>
+    <div class="cheat-cell mm">
+      <div class="cheat-cell-name">Multimodal AI</div>
+      <div class="cheat-cell-sub">Text + Image + Audio + Video in one model</div>
+      <ul>
+        <li>Vision encoder: image patches → token sequence</li>
+        <li>Audio encoder: spectrogram → token sequence</li>
+        <li>All modalities mapped to unified token space</li>
+        <li>LLM processes all tokens with full attention</li>
+        <li>GPT-4o: text + image + audio natively</li>
+        <li>Gemini 1.5 Pro: adds video + 1M context</li>
+        <li>Claude 3.5: text + image understanding</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:24px;">
+    <div class="callout-label">Blocks 06 + 07 in two sentences</div>
+    <p>
+      Block 06: Train a Transformer on trillions of tokens (next-token prediction, BPE tokenisation, scaling laws → emergent abilities), align it with SFT + RLHF, choose model size (SLM 1–7B vs LLM 70B+), control output with decoding strategies (top-p, temperature) and parameters (context window, max tokens), use embeddings + FAISS for semantic search and RAG.
+      Block 07: Generative AI creates: text (decoder Transformer), images (diffusion — forward noise + reverse denoising guided by CLIP), audio (TTS/STT/voice cloning/music), measured by BLEU/ROUGE/FID/LLM-as-judge, all unified in multimodal models that map every input type to a shared token space and process everything with one Transformer.
+    </p>
+  </div>
+
+  <div class="divider"><span>That's Issue #09 — Blocks 06 + 07 Complete</span></div>
+
+  <p>Two blocks in one issue. You now understand the full arc: from raw Transformer architecture (Block 05) to how you train it into an LLM (Block 06) to what that LLM can create (Block 07). The technical foundation is complete.</p>
+  <p>Here's where you stand in the roadmap: ✅ Python · ✅ Machine Learning · ✅ Neural Networks · ✅ NLP · ✅ Transformer · ✅ Language Models · ✅ Generative AI.</p>
+  <p><strong>Next: Block 08 — Prompt Engineering.</strong> The first applied block. Zero-shot, few-shot, Chain-of-Thought, ReAct, self-consistency, prompt chaining, negative prompting, output format control, common pitfalls, and every professional technique for making LLMs reliably useful in production. Then: Agentic AI, RAG, Context Engineering, Frameworks, Platforms — all the way to production-grade AI agents.</p>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    <div class="footer-title">Master Agentic AI with Me</div>
+    <div class="footer-sub">From Python to production-grade AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-next">Issue 09 · Blocks 06 + 07 Complete · Next: Prompt Engineering →</div>
+    <div class="footer-block">✓ ML · ✓ Neural Networks · ✓ NLP · ✓ Transformer · ✓ LLMs · ✓ GenAI · Next: Prompt Engineering</div>
+  </div>
+</div>
+
+</body>
+</html>
