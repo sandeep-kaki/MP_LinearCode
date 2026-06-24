@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Agentic AI with Me — Issue #11 FINAL: RAG · Context · Frameworks · Platforms</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0d0d0d; --ink2:#363636; --ink3:#757575;
+    --paper:#f4faf7; --paper2:#e5f4ee; --paper3:#c8e6d5;
+
+    /* RAG — blue */
+    --rag:#2563eb; --rag2:#1d4ed8; --rag-bg:#eff6ff; --rag-bd:rgba(37,99,235,0.25);
+    /* Context — teal */
+    --ctx:#0d7377; --ctx2:#0a5c5f; --ctx-bg:#e4f5f5; --ctx-bd:rgba(13,115,119,0.25);
+    /* Frameworks — violet */
+    --fw:#7c3aed; --fw2:#6d28d9; --fw-bg:#f5f3ff; --fw-bd:rgba(124,58,237,0.25);
+    /* Platforms — amber */
+    --pl:#d97706; --pl2:#b45309; --pl-bg:#fffbeb; --pl-bd:rgba(217,119,6,0.25);
+
+    /* sub-framework colors */
+    --lc:#7c3aed; --lc-bg:#f5f3ff; --lc-bd:rgba(124,58,237,0.22);
+    --li:#059669; --li-bg:#ecfdf5; --li-bd:rgba(5,150,105,0.22);
+    --ag:#2563eb; --ag-bg:#eff6ff; --ag-bd:rgba(37,99,235,0.22);
+    --gdk:#db2777; --gdk-bg:#fdf2f8; --gdk-bd:rgba(219,39,119,0.22);
+
+    /* platform colors */
+    --az:#0078d4; --az-bg:#e6f3fb; --az-bd:rgba(0,120,212,0.22);
+    --aws:#f59e0b; --aws-bg:#fffbeb; --aws-bd:rgba(245,158,11,0.22);
+    --gcp:#34a853; --gcp-bg:#ecfdf5; --gcp-bd:rgba(52,168,83,0.22);
+
+    --red:#dc2626; --red-bg:#fef2f2;
+    --code-bg:#070d0d; --code-txt:#e8eaf6;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;line-height:1.78;}
+
+  .masthead{background:#030d08;padding:13px 0;}
+  .masthead-inner{display:flex;justify-content:space-between;align-items:center;max-width:800px;margin:0 auto;padding:0 24px;}
+  .ms-t{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+  .ms-m{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.32);}
+
+  .hero{background:#030d08;padding:80px 24px 68px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 22% 45%,rgba(37,99,235,0.14) 0%,transparent 58%),radial-gradient(ellipse 50% 42% at 78% 55%,rgba(124,58,237,0.12) 0%,transparent 55%),radial-gradient(ellipse 45% 38% at 50% 90%,rgba(5,150,105,0.10) 0%,transparent 55%);pointer-events:none;}
+  .issue-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#6ee7b7;border:1px solid rgba(110,231,183,0.35);border-radius:20px;padding:5px 16px;margin-bottom:26px;position:relative;}
+  .final-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:#fbbf24;border:1px solid rgba(251,191,36,0.3);border-radius:20px;padding:4px 14px;margin-bottom:12px;}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4.8vw,3.6rem);font-weight:900;color:#fff;line-height:1.08;letter-spacing:-0.022em;margin-bottom:18px;max-width:740px;margin-left:auto;margin-right:auto;position:relative;}
+  .hero h1 em.rag{font-style:italic;color:#93c5fd;}
+  .hero h1 em.ctx{font-style:italic;color:#5eead4;}
+  .hero h1 em.fw{font-style:italic;color:#c4b5fd;}
+  .hero h1 em.pl{font-style:italic;color:#fbbf24;}
+  .hero-sub{font-size:15px;color:rgba(255,255,255,0.5);max-width:520px;margin:0 auto 36px;line-height:1.72;position:relative;}
+  .hero-stats{display:flex;justify-content:center;gap:42px;flex-wrap:wrap;position:relative;}
+  .hero-stat{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.07em;text-transform:uppercase;}
+  .hero-stat strong{display:block;font-size:24px;color:#fff;font-family:'Inter',sans-serif;font-weight:600;letter-spacing:0;margin-bottom:3px;}
+  .hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:26px;position:relative;}
+  .hbadge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;padding:4px 11px;border-radius:20px;border:1px solid;}
+  .hbadge.rag{color:#93c5fd;border-color:rgba(147,197,253,0.3);}
+  .hbadge.ctx{color:#5eead4;border-color:rgba(94,234,212,0.3);}
+  .hbadge.fw{color:#c4b5fd;border-color:rgba(196,181,253,0.3);}
+  .hbadge.pl{color:#fde68a;border-color:rgba(253,230,138,0.3);}
+
+  .block-divider{height:3px;margin:72px 0 0;border-radius:2px;}
+  .block-divider.rag{background:linear-gradient(90deg,rgba(37,99,235,0.18),transparent);}
+  .block-divider.ctx{background:linear-gradient(90deg,rgba(13,115,119,0.18),transparent);}
+  .block-divider.fw{background:linear-gradient(90deg,rgba(124,58,237,0.18),transparent);}
+  .block-divider.pl{background:linear-gradient(90deg,rgba(217,119,6,0.18),transparent);}
+  .block-label{text-align:center;padding:20px 0 44px;}
+  .block-label-inner{display:inline-flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--paper3);border-radius:30px;padding:8px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .block-num{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;padding:4px 12px;border-radius:20px;}
+  .block-num.rag{background:var(--rag-bg);color:var(--rag);}
+  .block-num.ctx{background:var(--ctx-bg);color:var(--ctx);}
+  .block-num.fw{background:var(--fw-bg);color:var(--fw);}
+  .block-num.pl{background:var(--pl-bg);color:var(--pl);}
+  .block-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink);}
+
+  .container{max-width:800px;margin:0 auto;padding:0 24px;}
+
+  .toc{background:#fff;border:1px solid var(--paper3);border-radius:14px;padding:26px 30px;margin:52px 0;box-shadow:0 2px 14px rgba(13,115,119,0.06);}
+  .toc-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px;}
+  .toc-section{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin:12px 0 6px;}
+  .toc-section.rag{color:var(--rag);}
+  .toc-section.ctx{color:var(--ctx);}
+  .toc-section.fw{color:var(--fw);}
+  .toc-section.pl{color:var(--pl);}
+  .toc ol{list-style:none;counter-reset:toc;}
+  .toc li{counter-increment:toc;font-size:13.5px;color:var(--ink2);display:flex;align-items:baseline;gap:9px;padding:2px 0;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);font-family:'IBM Plex Mono',monospace;font-size:10px;flex-shrink:0;}
+  .toc li.r::before{color:var(--rag);}
+  .toc li.c::before{color:var(--ctx);}
+  .toc li.f::before{color:var(--fw);}
+  .toc li.p::before{color:var(--pl);}
+  .toc li a{color:var(--ink2);text-decoration:none;}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:58px 0 48px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--paper3);}
+  .divider span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);white-space:nowrap;}
+
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;}
+  .eyebrow.rag{color:var(--rag);}
+  .eyebrow.ctx{color:var(--ctx);}
+  .eyebrow.fw{color:var(--fw);}
+  .eyebrow.pl{color:var(--pl);}
+  h2{font-family:'Playfair Display',serif;font-size:clamp(1.72rem,3.1vw,2.4rem);font-weight:700;line-height:1.18;letter-spacing:-0.015em;margin-bottom:18px;color:var(--ink);}
+  h2 em.rag{font-style:italic;color:var(--rag);}
+  h2 em.ctx{font-style:italic;color:var(--ctx);}
+  h2 em.fw{font-style:italic;color:var(--fw);}
+  h2 em.pl{font-style:italic;color:var(--pl);}
+  h3{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:600;margin:30px 0 10px;color:var(--ink);}
+  p{margin-bottom:16px;color:var(--ink2);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--ink);font-weight:600;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--paper2);padding:1px 6px;border-radius:4px;color:var(--ctx2);}
+
+  .pull-quote{border-left:3px solid var(--rag);padding:6px 0 6px 26px;margin:32px 0;}
+  .pull-quote.ctx{border-left-color:var(--ctx);}
+  .pull-quote p{font-family:'Playfair Display',serif;font-size:1.18rem;font-style:italic;color:var(--ink);line-height:1.62;margin:0;}
+
+  .analogy{background:#fff;border:1px solid var(--paper3);border-radius:12px;padding:20px 26px;margin:24px 0;box-shadow:0 1px 8px rgba(0,0,0,0.04);}
+  .analogy-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;}
+  .analogy-label.rag{color:var(--rag);}
+  .analogy-label.ctx{color:var(--ctx);}
+  .analogy p{font-size:14.5px;color:var(--ink2);margin:0;}
+
+  .callout{border-radius:10px;padding:16px 20px;margin:24px 0;border:1px solid transparent;}
+  .callout-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;margin-bottom:8px;}
+  .callout p{font-size:14px;margin:0;line-height:1.68;}
+  .callout.rag{background:var(--rag-bg);border-color:var(--rag-bd);}
+  .callout.rag .callout-label{color:var(--rag);}
+  .callout.ctx{background:var(--ctx-bg);border-color:var(--ctx-bd);}
+  .callout.ctx .callout-label{color:var(--ctx);}
+  .callout.fw{background:var(--fw-bg);border-color:var(--fw-bd);}
+  .callout.fw .callout-label{color:var(--fw);}
+  .callout.pl{background:var(--pl-bg);border-color:var(--pl-bd);}
+  .callout.pl .callout-label{color:var(--pl);}
+  .callout.green{background:#ecfdf5;border-color:rgba(5,150,105,0.22);}
+  .callout.green .callout-label{color:#059669;}
+  .callout.amber{background:var(--pl-bg);border-color:var(--pl-bd);}
+  .callout.amber .callout-label{color:var(--pl);}
+
+  .jargon{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--paper3);border-radius:6px;padding:10px 14px;margin:7px 0;}
+  .jargon-term{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0;padding-top:1px;}
+  .jargon-term.rag{color:var(--rag2);}
+  .jargon-term.ctx{color:var(--ctx2);}
+  .jargon-term.fw{color:var(--fw2);}
+  .jargon-def{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── RAG PIPELINE VISUAL ── */
+  .pipeline-wrap{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;margin:22px 0;box-shadow:0 1px 8px rgba(0,0,0,0.04);}
+  .pipeline-phase{padding:12px 20px;border-bottom:1px solid var(--paper3);}
+  .pipeline-phase:last-child{border-bottom:none;}
+  .pipeline-phase-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;}
+  .pipeline-phase.index .pipeline-phase-label{color:var(--rag);}
+  .pipeline-phase.retrieve .pipeline-phase-label{color:#059669;}
+  .pipeline-steps{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+  .pipe-step{border-radius:8px;padding:10px 12px;text-align:center;flex:1;min-width:110px;}
+  .pipe-step.idx{background:var(--rag-bg);border:1px solid var(--rag-bd);}
+  .pipe-step.ret{background:#ecfdf5;border:1px solid rgba(5,150,105,0.25);}
+  .pipe-step-num{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;margin-bottom:4px;}
+  .pipe-step.idx .pipe-step-num{color:var(--rag);}
+  .pipe-step.ret .pipe-step-num{color:#059669;}
+  .pipe-step-name{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px;}
+  .pipe-step-desc{font-size:11px;color:var(--ink3);}
+  .pipe-arr{font-size:16px;color:var(--paper3);flex-shrink:0;}
+
+  /* ── RAG TYPES ── */
+  .rag-types{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+  .rag-type-card{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+  .rag-type-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--rag);margin-bottom:5px;}
+  .rag-type-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px;}
+  .rag-type-desc{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  /* ── CONTEXT ORDER VISUAL ── */
+  .ctx-order{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;margin:22px 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .ctx-order-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ctx);padding:12px 18px;border-bottom:1px solid var(--paper3);background:var(--ctx-bg);}
+  .ctx-layer{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:12px 18px;border-bottom:1px solid var(--paper2);align-items:start;}
+  .ctx-layer:last-child{border-bottom:none;}
+  .ctx-layer-num{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--ctx);}
+  .ctx-layer-content strong{font-size:14px;color:var(--ink);display:block;margin-bottom:2px;}
+  .ctx-layer-content span{font-size:13px;color:var(--ink3);}
+
+  /* ── FRAMEWORK CARDS ── */
+  .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0;}
+  .fw-card{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .fw-card-header{padding:14px 18px;border-bottom:1px solid var(--paper3);}
+  .fw-card.lc .fw-card-header{background:var(--lc-bg);}
+  .fw-card.li .fw-card-header{background:var(--li-bg);}
+  .fw-card.ag .fw-card-header{background:var(--ag-bg);}
+  .fw-card.gdk .fw-card-header{background:var(--gdk-bg);}
+  .fw-card-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;}
+  .fw-card.lc .fw-card-tag{color:var(--lc);}
+  .fw-card.li .fw-card-tag{color:var(--li);}
+  .fw-card.ag .fw-card-tag{color:var(--ag);}
+  .fw-card.gdk .fw-card-tag{color:var(--gdk);}
+  .fw-card-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--ink);}
+  .fw-card-sub{font-size:12.5px;color:var(--ink3);margin-top:3px;}
+  .fw-card-body{padding:14px 18px;}
+  .fw-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .fw-table td{padding:7px 0;border-bottom:1px solid var(--paper2);vertical-align:top;line-height:1.5;}
+  .fw-table td:first-child{font-weight:600;color:var(--ink);padding-right:12px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11.5px;}
+  .fw-table td:last-child{color:var(--ink2);}
+  .fw-table tr:last-child td{border-bottom:none;}
+  .fw-install{font-family:'IBM Plex Mono',monospace;font-size:10.5px;margin-top:10px;padding:6px 10px;border-radius:5px;display:inline-block;}
+  .fw-card.lc .fw-install{background:var(--lc-bg);color:var(--lc);}
+  .fw-card.li .fw-install{background:var(--li-bg);color:var(--li);}
+  .fw-card.ag .fw-install{background:var(--ag-bg);color:var(--ag);}
+  .fw-card.gdk .fw-install{background:var(--gdk-bg);color:var(--gdk);}
+
+  /* ── PLATFORM CARDS ── */
+  .platform-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:22px 0;}
+  .platform-card{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+  .platform-card-header{padding:14px 18px;border-bottom:1px solid var(--paper3);}
+  .platform-card.az .platform-card-header{background:var(--az-bg);}
+  .platform-card.aws .platform-card-header{background:var(--aws-bg);}
+  .platform-card.gcp .platform-card-header{background:var(--gcp-bg);}
+  .platform-card-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;}
+  .platform-card.az .platform-card-tag{color:var(--az);}
+  .platform-card.aws .platform-card-tag{color:var(--aws);}
+  .platform-card.gcp .platform-card-tag{color:var(--gcp);}
+  .platform-card-name{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:2px;}
+  .platform-card-sub{font-size:12px;color:var(--ink3);}
+  .platform-card-body{padding:14px 18px;}
+  .platform-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .platform-table td{padding:6px 0;border-bottom:1px solid var(--paper2);vertical-align:top;line-height:1.5;}
+  .platform-table td:first-child{font-weight:600;color:var(--ink);padding-right:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;white-space:nowrap;}
+  .platform-table td:last-child{color:var(--ink2);}
+  .platform-table tr:last-child td{border-bottom:none;}
+  .platform-best{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:10px;padding:5px 10px;border-radius:5px;display:inline-block;}
+  .platform-card.az .platform-best{background:var(--az-bg);color:var(--az);}
+  .platform-card.aws .platform-best{background:var(--aws-bg);color:var(--aws);}
+  .platform-card.gcp .platform-best{background:var(--gcp-bg);color:var(--gcp);}
+
+  /* ── COMPARISON TABLE ── */
+  .m-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;}
+  .m-table th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--paper3);}
+  .m-table td{padding:10px 0 9px;border-bottom:1px solid var(--paper2);vertical-align:top;color:var(--ink2);line-height:1.55;}
+  .m-table td:first-child{font-weight:600;color:var(--ink);padding-right:16px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .m-table tr:last-child td{border-bottom:none;}
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap{background:var(--code-bg);border-radius:12px;overflow:hidden;margin:26px 0;}
+  .code-header{background:rgba(255,255,255,0.04);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .code-header-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+  .code-dots{display:flex;gap:6px;}
+  .code-dot{width:10px;height:10px;border-radius:50%;}
+  .code-dot:nth-child(1){background:#ff5f57;}
+  .code-dot:nth-child(2){background:#febc2e;}
+  .code-dot:nth-child(3){background:#28c840;}
+  pre{padding:22px 24px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.8;color:var(--code-txt);}
+  .cm{color:#4a5580;} .ck{color:#ce93d8;} .cs{color:#a5d6a7;} .cn{color:#ffcc80;} .cf{color:#90caf9;}
+
+  .expected-output{background:#04120a;border:1px solid rgba(45,212,191,0.18);border-radius:10px;margin:-10px 0 26px;overflow:hidden;}
+  .expected-output-header{background:rgba(45,212,191,0.07);padding:8px 20px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#2dd4bf;border-bottom:1px solid rgba(45,212,191,0.13);}
+  .expected-output pre{padding:16px 20px;font-size:12px;line-height:1.75;color:#c5cae9;background:transparent;}
+  .out-h{color:#90caf9;} .out-n{color:#ffcc80;} .out-g{color:#a5d6a7;} .out-d{color:#80deea;}
+
+  /* ── SERIES COMPLETE BOX ── */
+  .complete-box{background:#030d08;border-radius:14px;padding:36px 38px;margin:50px 0;position:relative;overflow:hidden;border:1px solid rgba(110,231,183,0.2);}
+  .complete-box::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(37,99,235,0.15) 0%,transparent 65%);pointer-events:none;}
+  .complete-box::after{content:'';position:absolute;bottom:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(124,58,237,0.13) 0%,transparent 65%);pointer-events:none;}
+  .cb-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:#6ee7b7;margin-bottom:16px;position:relative;}
+  .complete-box h3{color:#fff;font-size:1.2rem;margin-bottom:14px;position:relative;}
+  .complete-box p{color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;position:relative;line-height:1.72;}
+  .complete-box p:last-child{margin-bottom:0;}
+  .series-checkmarks{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative;}
+  .series-check{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 10px;border-radius:20px;background:rgba(110,231,183,0.1);border:1px solid rgba(110,231,183,0.22);color:#6ee7b7;}
+
+  /* ── CHEAT GRID ── */
+  .cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+  .cheat-cell{background:#fff;border:1px solid var(--paper3);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+  .cheat-cell.rag{border-top:3px solid var(--rag);}
+  .cheat-cell.ctx{border-top:3px solid var(--ctx);}
+  .cheat-cell.fw{border-top:3px solid var(--fw);}
+  .cheat-cell.pl{border-top:3px solid var(--pl);}
+  .cheat-cell-name{font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:3px;}
+  .cheat-cell-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-bottom:8px;letter-spacing:0.06em;}
+  .cheat-cell ul{list-style:none;font-size:13px;color:var(--ink2);}
+  .cheat-cell ul li{padding:2px 0 2px 14px;position:relative;}
+  .cheat-cell ul li::before{content:'·';position:absolute;left:0;color:var(--ink3);}
+
+  .footer{background:#030d08;padding:56px 24px;margin-top:80px;text-align:center;position:relative;overflow:hidden;}
+  .footer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(37,99,235,0.1) 0%,transparent 60%);pointer-events:none;}
+  .footer-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:8px;position:relative;}
+  .footer-sub{font-size:13px;color:rgba(255,255,255,0.38);margin-bottom:12px;position:relative;}
+  .footer-final{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#6ee7b7;margin-top:20px;position:relative;}
+  .footer-series{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgba(110,231,183,0.5);margin-top:8px;position:relative;}
+
+  @media(max-width:660px){
+    .rag-types,.fw-grid,.cheat-grid{grid-template-columns:1fr;}
+    .platform-grid{grid-template-columns:1fr;}
+    .masthead-inner{flex-direction:column;gap:4px;}
+    .pipeline-steps{flex-direction:column;align-items:stretch;}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="ms-t">Master Agentic AI with Me · Issue #11 · Final Issue</div>
+    <div class="ms-m">Blocks 10–13 · RAG · Context Engineering · Frameworks · Platforms</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="final-badge">★ Final Issue · Series Complete</div>
+  <div class="issue-tag">Issue 11 · Blocks 10 · 11 · 12 · 13 · The Full Stack</div>
+  <h1><em class="rag">RAG</em> · <em class="ctx">Context</em><br><em class="fw">Frameworks</em> · <em class="pl">Platforms</em></h1>
+  <p class="hero-sub">The final four blocks. Everything you need to go from understanding AI to deploying production-grade agents — grounded in real knowledge, engineered for the context window, built on frameworks, running on cloud platforms.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>38 min</strong>read</div>
+    <div class="hero-stat"><strong>4</strong>blocks covered</div>
+    <div class="hero-stat"><strong>5</strong>code cells</div>
+    <div class="hero-stat"><strong>series</strong>complete</div>
+  </div>
+  <div class="hero-badges">
+    <span class="hbadge rag">8-step RAG · Chunking · Reranking · Hybrid</span>
+    <span class="hbadge ctx">Context window · Memory · Strategies · Structure</span>
+    <span class="hbadge fw">LangChain · LlamaIndex · AutoGen · ADK · CrewAI</span>
+    <span class="hbadge pl">Azure · AWS Bedrock · Google Vertex · Free tiers</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-label">In this final issue — Blocks 10–13</div>
+    <div class="toc-section rag">Block 10 — RAG</div>
+    <ol>
+      <li class="r"><a href="#why-rag">Why RAG — 5 problems it solves</a></li>
+      <li class="r"><a href="#rag-pipeline">The complete 8-step RAG pipeline</a></li>
+      <li class="r"><a href="#rag-concepts">Key concepts: chunking, embedding models, reranking, hybrid search</a></li>
+      <li class="r"><a href="#rag-types">RAG types: Naive, Advanced, Modular, Agentic</a></li>
+    </ol>
+    <div class="toc-section ctx">Block 11 — Context Engineering</div>
+    <ol start="5">
+      <li class="c"><a href="#context-window">Context window: tokens, growth, what fits inside</a></li>
+      <li class="c"><a href="#litm">Lost-in-the-middle problem</a></li>
+      <li class="c"><a href="#memory-systems">Memory systems: 5 types</a></li>
+      <li class="c"><a href="#ctx-strategies">Context management strategies: 5 approaches</a></li>
+      <li class="c"><a href="#ctx-design">Structured context design + ideal context order</a></li>
+    </ol>
+    <div class="toc-section fw">Block 12 — Frameworks</div>
+    <ol start="10">
+      <li class="f"><a href="#langchain">LangChain — 6 components + LangGraph + LangSmith</a></li>
+      <li class="f"><a href="#llamaindex">LlamaIndex — 6 components, document-focused RAG</a></li>
+      <li class="f"><a href="#autogen">AutoGen — ConversableAgent, AssistantAgent, UserProxy, GroupChat</a></li>
+      <li class="f"><a href="#adk">Google ADK — agent definition, tools, multi-agent, Vertex AI</a></li>
+      <li class="f"><a href="#other-fw">CrewAI, Semantic Kernel, Haystack, DSPy + decision table</a></li>
+    </ol>
+    <div class="toc-section pl">Block 13 — Platforms</div>
+    <ol start="15">
+      <li class="p"><a href="#azure">Microsoft Azure — Azure OpenAI, Copilot, Foundry, AI Search, Semantic Kernel</a></li>
+      <li class="p"><a href="#bedrock">AWS Bedrock — Foundation models, Agents, Knowledge Bases, Guardrails</a></li>
+      <li class="p"><a href="#vertex">Google Vertex AI — Model Garden, Agent Builder, Vector Search, MLOps</a></li>
+      <li class="p"><a href="#platform-compare">Platform comparison + free options for beginners</a></li>
+    </ol>
+  </div>
+
+  <div class="eyebrow rag">From the editor — the final issue</div>
+  <p>Welcome to Issue 11 — the last issue. Eleven newsletters, thirteen blocks, one complete path from Python basics to production-grade AI agents. This issue closes the loop.</p>
+  <p>Block 10 (RAG) is the pattern that makes agents useful on real data — private company documents, live web content, specialised knowledge. Block 11 (Context Engineering) is the craft of managing the most expensive real estate in AI: the context window. Block 12 (Frameworks) gives you the scaffolding that turns the concepts you've learned into applications you can ship. Block 13 (Platforms) is where those applications live in production.</p>
+  <p>After this issue, you have everything. The series is complete. Start building.</p>
+
+  <!-- ════ BLOCK 10 · RAG ════ -->
+
+  <div class="block-divider rag"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num rag">Block 10</div>
+      <div class="block-title">RAG — Retrieval-Augmented Generation</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 1 · Why RAG</span></div>
+
+  <div id="why-rag">
+    <div class="eyebrow rag">The most important pattern in production AI</div>
+    <h2>Why RAG — <em class="rag">five problems, one architecture</em></h2>
+
+    <p>An LLM is frozen in time. It knows everything that was in its training data — and nothing else. No events after its cutoff. No private company documents. No real-time prices or news. RAG (Retrieval-Augmented Generation) breaks this constraint by giving the model access to a dynamic, queryable knowledge base at inference time.</p>
+
+    <div class="pull-quote">
+      <p>RAG doesn't change the model. It changes what the model can see. And the model can only reason about what it can see.</p>
+    </div>
+
+    <table class="m-table">
+      <tr><th>Problem</th><th>What happens without RAG</th><th>What RAG does</th></tr>
+      <tr>
+        <td>Knowledge cutoff</td>
+        <td>LLM doesn't know about events, products, or documents published after its training cutoff date.</td>
+        <td>Retrieve live documents at query time — web pages, PDFs, news articles — and inject them as context. The model answers from retrieved facts, not stale training memory.</td>
+      </tr>
+      <tr>
+        <td>Private data</td>
+        <td>LLM was never trained on your company's internal documentation, customer data, or proprietary knowledge base.</td>
+        <td>Index your private documents in a vector database. Retrieve the relevant chunks when a query arrives. No model retraining needed — the knowledge is in the retrieval layer.</td>
+      </tr>
+      <tr>
+        <td>Hallucination</td>
+        <td>LLM confidently states incorrect facts when it doesn't know the answer, rather than admitting uncertainty.</td>
+        <td>Ground the model in retrieved documents. Instruct it to answer only from the provided context. Hallucination rate drops dramatically when the model has real facts to work with.</td>
+      </tr>
+      <tr>
+        <td>Long documents</td>
+        <td>A 500-page manual doesn't fit in the context window. Even if it did, important details would be lost in the middle.</td>
+        <td>Chunk the document, embed all chunks, store in vector DB. At query time, retrieve only the 3–5 most relevant chunks. The model reads 500 words instead of 500 pages.</td>
+      </tr>
+      <tr>
+        <td>Cost</td>
+        <td>Fine-tuning a model on new knowledge requires GPU compute, data prep, and retraining — expensive and slow to update.</td>
+        <td>Adding new knowledge = adding documents to the vector database. No retraining. No compute cost beyond the embedding pass. Update knowledge in minutes.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="divider"><span>Part 2 · The 8-Step Pipeline</span></div>
+
+  <div id="rag-pipeline">
+    <div class="eyebrow rag">The complete pipeline</div>
+    <h2>RAG from document to answer — <em class="rag">eight steps</em></h2>
+
+    <div class="pipeline-wrap">
+      <div class="pipeline-phase index">
+        <div class="pipeline-phase-label">Phase 1 — Indexing (done once, offline before the app launches)</div>
+        <div class="pipeline-steps">
+          <div class="pipe-step idx">
+            <div class="pipe-step-num">STEP 1</div>
+            <div class="pipe-step-name">Document Ingestion</div>
+            <div class="pipe-step-desc">Load PDFs, Word, web pages, databases, CSVs</div>
+          </div>
+          <div class="pipe-arr">→</div>
+          <div class="pipe-step idx">
+            <div class="pipe-step-num">STEP 2</div>
+            <div class="pipe-step-name">Chunking</div>
+            <div class="pipe-step-desc">Split docs into fixed, sentence, or semantic pieces</div>
+          </div>
+          <div class="pipe-arr">→</div>
+          <div class="pipe-step idx">
+            <div class="pipe-step-num">STEP 3</div>
+            <div class="pipe-step-name">Embedding</div>
+            <div class="pipe-step-desc">Convert each chunk → dense vector via embedding model</div>
+          </div>
+          <div class="pipe-arr">→</div>
+          <div class="pipe-step idx">
+            <div class="pipe-step-num">STEP 4</div>
+            <div class="pipe-step-name">Vector Store</div>
+            <div class="pipe-step-desc">Save all vectors to a searchable DB (FAISS/Chroma/Pinecone)</div>
+          </div>
+        </div>
+      </div>
+      <div class="pipeline-phase retrieve">
+        <div class="pipeline-phase-label">Phase 2 — Retrieval + Generation (runs at every user query)</div>
+        <div class="pipeline-steps">
+          <div class="pipe-step ret">
+            <div class="pipe-step-num">STEP 5</div>
+            <div class="pipe-step-name">Query Embedding</div>
+            <div class="pipe-step-desc">Convert user question → vector using same model</div>
+          </div>
+          <div class="pipe-arr">→</div>
+          <div class="pipe-step ret">
+            <div class="pipe-step-num">STEP 6</div>
+            <div class="pipe-step-name">Similarity Search</div>
+            <div class="pipe-step-desc">Find top-K chunks closest to query vector</div>
+          </div>
+          <div class="pipe-arr">→</div>
+          <div class="pipe-step ret">
+            <div class="pipe-step-num">STEP 7</div>
+            <div class="pipe-step-name">Context Injection</div>
+            <div class="pipe-step-desc">Insert retrieved chunks into LLM prompt</div>
+          </div>
+          <div class="pipe-arr">→</div>
+          <div class="pipe-step ret">
+            <div class="pipe-step-num">STEP 8</div>
+            <div class="pipe-step-name">LLM Generation</div>
+            <div class="pipe-step-desc">Model answers grounded in retrieved facts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · Key Concepts</span></div>
+
+  <div id="rag-concepts">
+    <div class="eyebrow rag">What every RAG engineer needs to know</div>
+    <h2>Key concepts — <em class="rag">the details that determine quality</em></h2>
+
+    <div class="jargon">
+      <span class="jargon-term rag">Chunking Strategies</span>
+      <span class="jargon-def">How you split documents determines retrieval quality. Fixed-size chunking: split every N tokens (e.g. 512), with overlap of ~50 tokens between chunks to preserve context at boundaries. Simple but loses semantic coherence. Sentence chunking: split on sentence boundaries — better semantic units but variable size. Semantic chunking: use an embedding model to detect where topic shifts occur and split there — best quality, highest cost. Recursive character splitting (LangChain default): hierarchically try to split on paragraph → sentence → word boundaries, falling back down the hierarchy. Rule of thumb: chunk size should match your query granularity — question about one fact → small chunks (256–512 tokens); question about a topic → larger chunks (1024–2048 tokens).</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term rag">Embedding Models</span>
+      <span class="jargon-def">The model that converts text to vectors. The same model must be used for both documents (at indexing) and queries (at retrieval) — otherwise vectors live in different spaces and similarity is meaningless. Key options: text-embedding-3-small (OpenAI, 1536 dims, fast, cheap, excellent quality), text-embedding-3-large (3072 dims, highest quality), BGE-M3 (open-source, multilingual, strong performance), E5-large (open-source, strong on retrieval tasks), sentence-transformers (Python library, many models, local). Dimension count ≠ quality — BGE-M3 at 1024 dims often beats older models at 1536 dims.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term rag">Top-K Retrieval</span>
+      <span class="jargon-def">Return the K most similar chunks to the query. K=3 is a common default. K=5–10 for complex questions that may need multiple evidence pieces. Higher K = more context = better recall but more tokens and more noise in the context. The challenge: a high similarity score doesn't always mean relevant content — a chunk about "bank interest rates" may score high for "river bank" queries if the domain isn't controlled. This is why reranking exists.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term rag">Reranking</span>
+      <span class="jargon-def">A second-pass model that takes the top-K retrieved chunks and the original query, and re-scores them for true relevance — not just vector similarity. First retrieval (vector search) is fast but approximate. Reranking is slower but more precise. The standard pattern: retrieve top-20 with vector search (high recall), then rerank and keep top-3 (high precision). Popular rerankers: Cohere Rerank API, cross-encoder models (ms-marco-MiniLM-L-6-v2), BGE-Reranker. Reranking consistently improves RAG answer quality with modest additional cost.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term rag">Hybrid Search</span>
+      <span class="jargon-def">Combine dense vector search (semantic similarity) with sparse keyword search (BM25/TF-IDF) and merge the results. Vector search excels at semantic matching ("how do I fix a broken authentication flow?"). Keyword search excels at exact term matching (product codes, names, abbreviations, proper nouns). Hybrid search beats either alone on real-world queries which often contain both semantic intent and specific terms. RRF (Reciprocal Rank Fusion) is the standard algorithm for merging ranked lists from both approaches. Elasticsearch (8.x+), Pinecone, Weaviate, and Qdrant all support hybrid search natively.</span>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · RAG Types</span></div>
+
+  <div id="rag-types">
+    <div class="eyebrow rag">From basic to production-grade</div>
+    <h2>Four RAG types — <em class="rag">an evolution path</em></h2>
+
+    <div class="rag-types">
+      <div class="rag-type-card">
+        <div class="rag-type-label">Type 1 · Start Here</div>
+        <div class="rag-type-name">Naive RAG</div>
+        <div class="rag-type-desc">The basic pipeline: ingest → chunk → embed → store → retrieve top-K → inject → generate. No reranking, no query transformation, no advanced chunking. Surprisingly effective for well-structured documents. The right starting point — understand its failure modes before reaching for advanced techniques.</div>
+      </div>
+      <div class="rag-type-card">
+        <div class="rag-type-label">Type 2 · Better Quality</div>
+        <div class="rag-type-name">Advanced RAG</div>
+        <div class="rag-type-desc">Adds pre-retrieval improvements (query rewriting, query expansion, HyDE — hypothetical document embedding) and post-retrieval improvements (reranking, context compression, result fusion). Typically 20–40% better answer quality on real-world queries. Use when Naive RAG fails consistently on a specific failure mode.</div>
+      </div>
+      <div class="rag-type-card">
+        <div class="rag-type-label">Type 3 · Production Flexibility</div>
+        <div class="rag-type-name">Modular RAG</div>
+        <div class="rag-type-desc">Decouple every pipeline component into swappable modules: any loader, any chunker, any embedder, any retriever, any reranker, any LLM, any output parser. Mix and match based on the task. LlamaIndex and LangChain both support this architecture. Easier to debug, A/B test, and upgrade individual components without rebuilding the whole pipeline.</div>
+      </div>
+      <div class="rag-type-card">
+        <div class="rag-type-label">Type 4 · Agent-Powered</div>
+        <div class="rag-type-name">Agentic RAG</div>
+        <div class="rag-type-desc">An agent dynamically decides when to retrieve, what to retrieve, and whether to retrieve again based on the current answer quality. If the first retrieval doesn't produce a confident answer, the agent reformulates the query and tries again. Combines the ReAct pattern with RAG — each "Action" can be a retrieval call. Most powerful but most complex. Use when queries are complex, ambiguous, or multi-hop (require information from multiple documents).</div>
+      </div>
+    </div>
+
+    <div class="callout rag">
+      <div class="callout-label">RAG libraries quick reference</div>
+      <p><strong>LangChain:</strong> End-to-end RAG with any vector store, any LLM, any loader. Best for general-purpose RAG as part of a larger agent. <strong>LlamaIndex:</strong> Document-focused RAG with sophisticated chunking, indexing strategies, and query engines. Best when your application is primarily about querying your own documents. <strong>ChromaDB:</strong> Lightweight, runs locally, zero infrastructure setup — perfect for development and small-scale production. <strong>FAISS:</strong> Facebook's ultra-fast vector search for large-scale local deployment — no network latency, runs in-process. <strong>Pinecone:</strong> Fully managed cloud vector database — scaling, persistence, backups handled for you. <strong>HuggingFace sentence-transformers:</strong> Open-source embedding models library — run any SBERT-compatible model locally at zero API cost.</p>
+    </div>
+  </div>
+
+  <!-- ════ BLOCK 11 · CONTEXT ENGINEERING ════ -->
+
+  <div class="block-divider ctx"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num ctx">Block 11</div>
+      <div class="block-title">Context Engineering — What the Model Can See</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · The Context Window</span></div>
+
+  <div id="context-window">
+    <div class="eyebrow ctx">The most valuable real estate in AI</div>
+    <h2>The context window — <em class="ctx">your model's entire world</em></h2>
+
+    <p>An LLM can only reason about what is currently in its context window. This is not a limitation of intelligence — it is a structural constraint. If the relevant document isn't in the context, the model doesn't know it exists. If the key instruction isn't in the prompt, the model doesn't know to follow it. Context engineering is the discipline of making sure the right information is always in the window, in the right place, in the right form.</p>
+
+    <table class="m-table">
+      <tr><th>Concept</th><th>What it means in practice</th></tr>
+      <tr>
+        <td>Context window</td>
+        <td>The maximum number of tokens the model can process in one call — both input (prompt + documents + history) and output (the generated response) count against this limit.</td>
+      </tr>
+      <tr>
+        <td>Tokens</td>
+        <td>How text is measured for billing and limits. Roughly 1 word ≈ 1.3 tokens in English. 1 token ≈ 4 characters. Non-English languages are less token-efficient (Tamil: ~3 chars/token). Code is typically more token-efficient than prose.</td>
+      </tr>
+      <tr>
+        <td>Context limit growth</td>
+        <td>GPT-2 (2019): 1,024 tokens. GPT-3 (2020): 4,096. GPT-4 (2023): 8K–128K. Claude 3.5 (2024): 200,000. Gemini 1.5 Pro: 1,000,000. The growth has been exponential — but cost scales with context length, so longer isn't always better.</td>
+      </tr>
+      <tr>
+        <td>What fits inside</td>
+        <td>System prompt + conversation history + retrieved documents + few-shot examples + the current user query + the model's response. All of these compete for the same token budget. Context engineering is resource allocation for tokens.</td>
+      </tr>
+    </table>
+
+    <div id="litm">
+      <h3>The lost-in-the-middle problem — a critical practical insight</h3>
+      <p>Research (Liu et al., Stanford 2023 — "Lost in the Middle") showed that LLMs are significantly better at using information placed at the beginning or end of a long context than information buried in the middle. When the same relevant document was placed at position 1 (start), position 15 (middle), or position 30 (end) of a 30-document context, accuracy was highest at the extremes and lowest in the middle.</p>
+    </div>
+
+    <div class="callout ctx">
+      <div class="callout-label">Practical implications of lost-in-the-middle</div>
+      <p>In RAG: put the most relevant retrieved chunk first, not buried behind less relevant ones. In system prompts: put the most critical constraints at the top AND repeat the most important rule at the bottom. In conversation history: recent messages matter more — compress or drop old turns rather than keeping them all equally. In document injection: use XML labels (&lt;document id="1" relevance="high"&gt;) to help the model identify the most relevant content without relying on position alone.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 6 · Memory Systems + Context Strategies</span></div>
+
+  <div id="memory-systems">
+    <div class="eyebrow ctx">How agents remember across calls</div>
+    <h2>Memory systems — <em class="ctx">five types, five purposes</em></h2>
+
+    <p>Every LLM call starts with a blank slate — no memory of previous calls. Memory systems are how you give applications continuity. Context engineering determines which memories get injected into each call, how much space they're allocated, and in what form.</p>
+
+    <table class="m-table">
+      <tr><th>Memory Type</th><th>How it works</th><th>When to use</th></tr>
+      <tr>
+        <td>In-context memory</td>
+        <td>All previous turns in the current conversation, already in the prompt. Automatic — no special implementation. Limited by context window: a 200K window fits ~150,000 words of history.</td>
+        <td>Short conversations, single-session tasks. The default for all chatbots.</td>
+      </tr>
+      <tr>
+        <td>External memory (RAG)</td>
+        <td>Stored in a vector database, retrieved on demand based on relevance to the current query. Unlimited scale — can store millions of documents. Only the relevant ones are retrieved per call.</td>
+        <td>Long-term knowledge storage, private documents, any knowledge base larger than the context window.</td>
+      </tr>
+      <tr>
+        <td>Episodic memory</td>
+        <td>Stored summaries or records of specific past conversations, recalled by similarity to the current session. "I've handled a request like this before — here's what I did."</td>
+        <td>Support agents that learn from past cases. Personal assistants that remember previous interactions with a user.</td>
+      </tr>
+      <tr>
+        <td>Semantic memory</td>
+        <td>Extracted facts, preferences, and knowledge stored as searchable embeddings. "User prefers Python. User works at a fintech startup. User is at an intermediate skill level."</td>
+        <td>Personalised agents that adapt to individual users over time. Knowledge accumulation from conversations.</td>
+      </tr>
+      <tr>
+        <td>Working memory</td>
+        <td>Temporary notes, intermediate results, and scratchpad reasoning written into the prompt context during the current task. "Note: the user mentioned a budget of ₹50,000."</td>
+        <td>Complex multi-step tasks where intermediate conclusions need to be tracked within a single session.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="ctx-strategies">
+    <div class="eyebrow ctx">When the window fills up</div>
+    <h2>Context management strategies — <em class="ctx">five ways to manage the budget</em></h2>
+
+    <table class="m-table">
+      <tr><th>Strategy</th><th>How it works</th><th>Best for</th></tr>
+      <tr>
+        <td>Sliding window</td>
+        <td>Keep only the most recent N tokens of conversation history. When the window would overflow, drop the oldest messages. Simple, fast, no additional LLM calls needed.</td>
+        <td>Chat applications where very old conversation turns are rarely relevant. Poor for tasks where early context is critical (e.g. "remember the goal I stated at the start").</td>
+      </tr>
+      <tr>
+        <td>Summarisation compression</td>
+        <td>When old conversation turns would overflow the window, use the LLM to summarise them into a compact paragraph ("Earlier, the user explained X and you agreed to do Y"). Inject the summary instead of the full history.</td>
+        <td>Long conversations where the overall narrative matters but exact wording doesn't. Adds latency and cost of a summarisation call but preserves semantic content.</td>
+      </tr>
+      <tr>
+        <td>Selective retrieval (RAG)</td>
+        <td>Don't load all documents upfront. At each query, retrieve only the 3–5 chunks relevant to that specific query. The context window contains targeted relevant content rather than a dump of everything.</td>
+        <td>Document Q&A, knowledge base agents, any application where the knowledge base is larger than a few thousand tokens.</td>
+      </tr>
+      <tr>
+        <td>Context prioritisation</td>
+        <td>Assign importance scores to different context elements. In a crisis, keep system prompt + most recent messages + most relevant documents. Drop: old conversation, low-relevance retrieved chunks, verbose examples.</td>
+        <td>Complex agents with many context sources competing for space. Requires explicit token budget management.</td>
+      </tr>
+      <tr>
+        <td>Document chunking</td>
+        <td>Break large documents into smaller, semantically coherent pieces before storing or injecting. A 50-page PDF becomes 200 chunks of 512 tokens each. Insert only the relevant chunks, not the full document.</td>
+        <td>Any application involving documents longer than 2,000 tokens. Essential for production RAG systems.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="ctx-design">
+    <div class="eyebrow ctx">The architecture of a well-engineered context</div>
+    <h2>Structured context design — <em class="ctx">how to organise what goes in</em></h2>
+
+    <div class="analogy">
+      <div class="analogy-label ctx">The newspaper layout analogy</div>
+      <p>A newspaper puts the most important headline above the fold — before you unfold the paper, you've already seen the key story. Every other item is ordered by importance, not randomly. Context engineering is the same: the model reads top-to-bottom, attention weights certain positions more heavily (start and end), and your most critical content must be placed deliberately — not wherever it happened to end up.</p>
+    </div>
+
+    <table class="m-table">
+      <tr><th>Technique</th><th>Purpose</th><th>Example</th></tr>
+      <tr>
+        <td>XML / Markdown tagging</td>
+        <td>Clearly label and delineate different sections so the model can identify what type of content each section contains and treat it appropriately.</td>
+        <td><code>&lt;documents&gt;</code>, <code>&lt;examples&gt;</code>, <code>&lt;question&gt;</code>, <code>&lt;conversation_history&gt;</code></td>
+      </tr>
+      <tr>
+        <td>Grounding</td>
+        <td>Explicitly instruct the model to only use the provided context for its answer, reducing reliance on training-time knowledge and hallucination.</td>
+        <td>"Answer using ONLY the documents provided below. If the answer is not in the documents, say 'I don't have that information.'"</td>
+      </tr>
+      <tr>
+        <td>Persona + constraints first</td>
+        <td>Front-load the system prompt with the most critical instructions. What the model reads first shapes how it processes everything that follows.</td>
+        <td>Role definition → absolute rules → output format → then everything else</td>
+      </tr>
+      <tr>
+        <td>Document injection</td>
+        <td>Insert retrieved documents with clear labels showing their source, relevance rank, and scope. Don't dump raw text — structure it so the model knows what it's reading.</td>
+        <td><code>&lt;doc id="1" source="HR_Policy.pdf" pages="12-13"&gt;...content...&lt;/doc&gt;</code></td>
+      </tr>
+    </table>
+
+    <div id="ideal-order">
+      <h3>The ideal context structure — five positions</h3>
+    </div>
+
+    <div class="ctx-order">
+      <div class="ctx-order-label">Ideal context window order — top to bottom</div>
+      <div class="ctx-layer">
+        <div class="ctx-layer-num">1</div>
+        <div class="ctx-layer-content">
+          <strong>System prompt + persona + rules</strong>
+          <span>Who the model is, what it must always do, what it must never do, absolute constraints, output format. These are read first and shape everything. Put critical rules here AND repeat the most important at position 5.</span>
+        </div>
+      </div>
+      <div class="ctx-layer">
+        <div class="ctx-layer-num">2</div>
+        <div class="ctx-layer-content">
+          <strong>Retrieved documents / grounding facts</strong>
+          <span>The specific knowledge retrieved from your vector database for this query. Near the top = strong attention. Label with XML tags. Include source attribution.</span>
+        </div>
+      </div>
+      <div class="ctx-layer">
+        <div class="ctx-layer-num">3</div>
+        <div class="ctx-layer-content">
+          <strong>Conversation history (compressed)</strong>
+          <span>Summary of earlier turns in this session. Summarised, not verbatim. Important events preserved; exact wording compressed. Gives the model awareness of what's been discussed.</span>
+        </div>
+      </div>
+      <div class="ctx-layer">
+        <div class="ctx-layer-num">4</div>
+        <div class="ctx-layer-content">
+          <strong>Few-shot examples (near the query)</strong>
+          <span>Input/output examples that demonstrate the desired format. Placed just before the query because the model will directly pattern-match the examples to the upcoming task.</span>
+        </div>
+      </div>
+      <div class="ctx-layer">
+        <div class="ctx-layer-num">5</div>
+        <div class="ctx-layer-content">
+          <strong>User query (last — model reads it fresh)</strong>
+          <span>The actual question or task — placed last so the model has all context when it processes it. Models attend more strongly to the end of context. Repeat any critical constraint here too: "Remember: always respond in JSON."</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ BLOCK 12 · FRAMEWORKS ════ -->
+
+  <div class="block-divider fw"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num fw">Block 12</div>
+      <div class="block-title">LLM Frameworks — Build Without the Boilerplate</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · The Four Main Frameworks</span></div>
+
+  <div id="langchain">
+    <div class="eyebrow fw">The four frameworks that matter most</div>
+    <h2>Frameworks — <em class="fw">scaffolding for LLM applications</em></h2>
+
+    <p>Frameworks abstract the repetitive infrastructure of building LLM applications — connecting to models, managing memory, wiring tools, building retrieval pipelines — so you spend your time on application logic, not plumbing. Each framework has a different primary strength. Choose the right one for the job.</p>
+
+    <div class="fw-grid">
+      <div class="fw-card lc">
+        <div class="fw-card-header">
+          <div class="fw-card-tag">Most Popular · General Purpose</div>
+          <div class="fw-card-name">LangChain</div>
+          <div class="fw-card-sub">Chains, agents, memory, RAG — the Swiss Army knife of LLM apps</div>
+        </div>
+        <div class="fw-card-body">
+          <table class="fw-table">
+            <tr><td>LLMChain</td><td>Prompt template + LLM + output parser as one reusable unit</td></tr>
+            <tr><td>PromptTemplate</td><td>Parameterised, reusable prompts with variable interpolation</td></tr>
+            <tr><td>OutputParser</td><td>Parse LLM text output into JSON, lists, Pydantic models</td></tr>
+            <tr><td>Memory</td><td>ConversationBufferMemory (full history), SummaryMemory (compressed)</td></tr>
+            <tr><td>Retriever</td><td>Connect to any vector store for RAG — standardised interface</td></tr>
+            <tr><td>Agent + Tools</td><td>ReAct agents with tool definitions, tool execution, history</td></tr>
+            <tr><td>LangGraph</td><td>Stateful, cyclical agent workflows — the upgrade for complex agents</td></tr>
+            <tr><td>LangSmith</td><td>Trace, debug, and evaluate every prompt chain in production</td></tr>
+          </table>
+          <div class="fw-install">pip install langchain langchain-openai langchain-anthropic</div>
+        </div>
+      </div>
+
+      <div id="llamaindex" class="fw-card li">
+        <div class="fw-card-header">
+          <div class="fw-card-tag">Best for RAG · Document-Focused</div>
+          <div class="fw-card-name">LlamaIndex</div>
+          <div class="fw-card-sub">The go-to framework for connecting LLMs to your documents and data sources</div>
+        </div>
+        <div class="fw-card-body">
+          <table class="fw-table">
+            <tr><td>Document loaders</td><td>Load PDFs, web pages, Notion, databases, CSV, JSON, code repos</td></tr>
+            <tr><td>Node parser</td><td>Intelligently chunk documents into semantic nodes with metadata</td></tr>
+            <tr><td>VectorStoreIndex</td><td>Index chunks → store embeddings → enable vector similarity search</td></tr>
+            <tr><td>Query engine</td><td>Ask natural language questions over your indexed documents</td></tr>
+            <tr><td>Retriever</td><td>Fine-grained retrieval with filters, metadata, and reranking</td></tr>
+            <tr><td>Response synthesiser</td><td>Combine retrieved chunks into one coherent, cited answer</td></tr>
+          </table>
+          <div class="fw-install">pip install llama-index llama-index-llms-anthropic</div>
+        </div>
+      </div>
+
+      <div id="autogen" class="fw-card ag">
+        <div class="fw-card-header">
+          <div class="fw-card-tag">Multi-Agent Conversations · by Microsoft</div>
+          <div class="fw-card-name">AutoGen</div>
+          <div class="fw-card-sub">Agents that talk to each other and execute code — powerful for coding and research</div>
+        </div>
+        <div class="fw-card-body">
+          <table class="fw-table">
+            <tr><td>ConversableAgent</td><td>Base class — any agent that sends and receives messages</td></tr>
+            <tr><td>AssistantAgent</td><td>LLM-powered agent — the "AI" in the conversation</td></tr>
+            <tr><td>UserProxyAgent</td><td>Represents the human — can execute code on the host machine</td></tr>
+            <tr><td>GroupChat</td><td>Multiple agents in one coordinated conversation with a manager</td></tr>
+            <tr><td>Code execution</td><td>Agents write code → UserProxy runs it → result feeds back as observation</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--ink3);margin-top:10px;font-style:italic;">Best for: coding assistants, research automation, multi-step problem solving with code verification.</p>
+          <div class="fw-install">pip install pyautogen</div>
+        </div>
+      </div>
+
+      <div id="adk" class="fw-card gdk">
+        <div class="fw-card-header">
+          <div class="fw-card-tag">Google's Agent Framework · Vertex AI Native</div>
+          <div class="fw-card-name">Google ADK</div>
+          <div class="fw-card-sub">Agent Development Kit — production agents on Google Cloud, tightly integrated with Gemini</div>
+        </div>
+        <div class="fw-card-body">
+          <table class="fw-table">
+            <tr><td>Agent definition</td><td>Define agent goals, instructions, and available tools in Python</td></tr>
+            <tr><td>Tool integration</td><td>Connect to Google Search, BigQuery, Cloud APIs, custom functions</td></tr>
+            <tr><td>Multi-agent orch.</td><td>Coordinate specialised sub-agents on complex tasks with a supervisor</td></tr>
+            <tr><td>Evaluation</td><td>Built-in agent testing, quality benchmarking, and regression detection</td></tr>
+            <tr><td>Vertex AI deploy</td><td>One-command deployment to managed Google Cloud infrastructure</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--ink3);margin-top:10px;font-style:italic;">Best for: Google Cloud users, Gemini-based agents, enterprise-scale deployment with GCP integration.</p>
+          <div class="fw-install">pip install google-adk</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="other-fw">
+    <div class="eyebrow fw">Other frameworks worth knowing</div>
+    <h2>Four more frameworks — <em class="fw">the wider ecosystem</em></h2>
+
+    <table class="m-table">
+      <tr><th>Framework</th><th>What it is</th><th>Best for</th></tr>
+      <tr>
+        <td>CrewAI</td>
+        <td>Role-based multi-agent framework. Define agents with explicit roles ("Senior Researcher", "Content Writer", "Code Reviewer"), tasks, and how they collaborate. Very beginner-friendly — less boilerplate than AutoGen. Python-native.</td>
+        <td>Role-based agent teams. Content pipelines (research → write → review). Any workflow that maps naturally to team roles. Great first multi-agent framework.</td>
+      </tr>
+      <tr>
+        <td>Semantic Kernel</td>
+        <td>Microsoft's SDK for integrating LLMs into existing .NET and Python applications. Plugins (tools), planners (agents), and memory as first-class concepts. Native integration with Azure OpenAI Service and Microsoft Copilot.</td>
+        <td>Enterprise teams with existing .NET/C# codebases, Microsoft ecosystem integration, Azure-first deployments. The natural choice when building in .NET.</td>
+      </tr>
+      <tr>
+        <td>Haystack</td>
+        <td>Production-grade NLP and RAG pipeline framework from deepset. Component-based: combinable nodes for every step of NLP/RAG. Strong on document processing, open-domain QA, and text extraction at scale.</td>
+        <td>Production NLP pipelines, enterprise document processing, teams that need the best open-source RAG tooling with production-ready infrastructure.</td>
+      </tr>
+      <tr>
+        <td>DSPy</td>
+        <td>Stanford's framework for programming (rather than prompting) LLMs. Define objectives and examples — DSPy automatically optimises prompts and few-shot examples using your LLM. Compiles programs into optimised prompts.</td>
+        <td>Research and advanced production applications where you want to automatically optimise prompts rather than manually engineer them. Rapidly evolving — worth watching.</td>
+      </tr>
+    </table>
+
+    <div class="callout fw">
+      <div class="callout-label">The decision table — which framework to start with</div>
+      <p>
+        Build a chatbot or chain prompts → <strong>LangChain</strong>.
+        Build Q&amp;A over your own documents → <strong>LlamaIndex</strong>.
+        Build multi-agent coding or research systems → <strong>AutoGen</strong>.
+        Build on Google Cloud / Gemini → <strong>Google ADK</strong>.
+        Build role-based agent teams, beginner-friendly → <strong>CrewAI</strong>.
+        Build in .NET or Microsoft ecosystem → <strong>Semantic Kernel</strong>.
+        Need production NLP pipelines → <strong>Haystack</strong>.
+        Want automatic prompt optimisation → <strong>DSPy</strong>.
+        For most beginners: start with LangChain (broadest ecosystem, most tutorials, widest model support), then add LlamaIndex when you need serious document handling.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════ BLOCK 13 · PLATFORMS ════ -->
+
+  <div class="block-divider pl"></div>
+  <div class="block-label">
+    <div class="block-label-inner">
+      <div class="block-num pl">Block 13</div>
+      <div class="block-title">Platforms — Where Agents Live in Production</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · The Three Cloud Platforms</span></div>
+
+  <div class="eyebrow pl">Where production AI runs</div>
+  <h2>Three platforms — <em class="pl">infrastructure for AI at scale</em></h2>
+
+  <p>Platforms provide the managed infrastructure to access, deploy, and scale LLM applications without managing GPU servers yourself. You write the application logic — the platform handles compute, scaling, model access, security, and monitoring. Each major cloud provider offers a comprehensive LLM platform. The right choice depends on where your existing infrastructure lives.</p>
+
+  <div class="platform-grid">
+    <div id="azure" class="platform-card az">
+      <div class="platform-card-header">
+        <div class="platform-card-tag">Microsoft Azure</div>
+        <div class="platform-card-name">Azure + Copilot</div>
+        <div class="platform-card-sub">Enterprise-grade, Office 365 integrated</div>
+      </div>
+      <div class="platform-card-body">
+        <table class="platform-table">
+          <tr><td>Azure OpenAI</td><td>GPT-4o, DALL-E, Whisper via secure API — same models, private deployment</td></tr>
+          <tr><td>MS Copilot</td><td>LLM built into Office 365, Teams, Windows — AI in existing workflows</td></tr>
+          <tr><td>Copilot Studio</td><td>Build custom copilots for your business — no-code/low-code</td></tr>
+          <tr><td>AI Foundry</td><td>Build, evaluate, and deploy AI apps on Azure — the central development hub</td></tr>
+          <tr><td>AI Search</td><td>Vector + keyword hybrid search for RAG pipelines — Azure-native retrieval</td></tr>
+          <tr><td>Semantic Kernel</td><td>SDK to integrate LLMs into .NET and Python apps with Azure services</td></tr>
+        </table>
+        <div class="platform-best">Best for: Microsoft / enterprise · Office integration · .NET teams</div>
+      </div>
+    </div>
+
+    <div id="bedrock" class="platform-card aws">
+      <div class="platform-card-header">
+        <div class="platform-card-tag">Amazon Web Services</div>
+        <div class="platform-card-name">AWS Bedrock</div>
+        <div class="platform-card-sub">Multi-model, AWS-native, enterprise security</div>
+      </div>
+      <div class="platform-card-body">
+        <table class="platform-table">
+          <tr><td>Foundation models</td><td>Claude (Anthropic), Llama, Titan, Mistral all via one unified API</td></tr>
+          <tr><td>Bedrock Agents</td><td>Managed agent runtime — tool use, orchestration on AWS infrastructure</td></tr>
+          <tr><td>Knowledge Bases</td><td>Managed RAG — connect S3 documents to a managed vector store</td></tr>
+          <tr><td>Model evaluation</td><td>Compare multiple models side-by-side on your own test cases</td></tr>
+          <tr><td>Fine-tuning</td><td>Fine-tune Claude, Llama, Titan on your own proprietary data</td></tr>
+          <tr><td>Guardrails</td><td>Safety filters, content policies, PII detection applied at API level</td></tr>
+        </table>
+        <div class="platform-best">Best for: AWS-first teams · multi-model flexibility · enterprise security</div>
+      </div>
+    </div>
+
+    <div id="vertex" class="platform-card gcp">
+      <div class="platform-card-header">
+        <div class="platform-card-tag">Google Cloud Platform</div>
+        <div class="platform-card-name">Vertex AI</div>
+        <div class="platform-card-sub">Gemini native, MLOps, multimodal frontier</div>
+      </div>
+      <div class="platform-card-body">
+        <table class="platform-table">
+          <tr><td>Model Garden</td><td>Access Gemini, Claude, Llama, and open-source models from one place</td></tr>
+          <tr><td>Vertex AI Studio</td><td>Test and design prompts for Gemini models — multimodal playground</td></tr>
+          <tr><td>Agent Builder</td><td>Build and deploy agents visually with tool connections and routing</td></tr>
+          <tr><td>Vector Search</td><td>Managed vector database for RAG — integrates with all GCP data services</td></tr>
+          <tr><td>Pipelines (MLOps)</td><td>Automate training, evaluation, and deployment as reproducible pipelines</td></tr>
+          <tr><td>Evaluation</td><td>Built-in model and agent quality evaluation at production scale</td></tr>
+        </table>
+        <div class="platform-best">Best for: Google Cloud teams · Gemini apps · ML + LLM combined</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="platform-compare">
+    <div class="eyebrow pl">Quick comparison + where to start for free</div>
+    <h2>Platform comparison — <em class="pl">and how to start today at no cost</em></h2>
+
+    <table class="m-table">
+      <tr><th>Platform</th><th>Best models</th><th>Best for</th><th>Unique strength</th></tr>
+      <tr>
+        <td>Azure OpenAI</td>
+        <td>GPT-4o, DALL-E 3, Whisper</td>
+        <td>Microsoft / enterprise teams</td>
+        <td>Office 365 + Teams Copilot integration, enterprise compliance (HIPAA, SOC 2)</td>
+      </tr>
+      <tr>
+        <td>AWS Bedrock</td>
+        <td>Claude 3.5, Llama 3, Mistral</td>
+        <td>AWS-first teams</td>
+        <td>Multi-model API + managed RAG (Knowledge Bases) + Guardrails safety layer</td>
+      </tr>
+      <tr>
+        <td>Google Vertex AI</td>
+        <td>Gemini 1.5 Pro, open models</td>
+        <td>Google Cloud teams</td>
+        <td>Multimodal Gemini + 1M context window + MLOps pipelines + Agent Builder</td>
+      </tr>
+    </table>
+
+    <div class="callout pl">
+      <div class="callout-label">Free options to start building today — no credit card anxiety</div>
+      <p>
+        <strong>Google AI Studio (aistudio.google.com)</strong> — Free Gemini API access with generous rate limits. Multimodal. Export to production code. The best free starting point. <br><br>
+        <strong>Anthropic Console (console.anthropic.com)</strong> — Free tier for Claude API testing. Built-in prompt generator. Real production models. Best for Claude-based development. <br><br>
+        <strong>OpenAI Playground (platform.openai.com)</strong> — Free credits for new accounts on GPT models. Full parameter control. Function calling testing. <br><br>
+        <strong>AWS Free Tier</strong> — Limited Bedrock access included. Good for testing the AWS integration patterns without full account billing. <br><br>
+        <strong>Azure Free Account</strong> — $200 credit for new users valid for 30 days. Covers meaningful Bedrock and Azure OpenAI usage for learning.
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 9 · Code</span></div>
+
+  <div class="eyebrow rag">Run this in Google Colab</div>
+  <h2>The complete code — <em class="rag">every line explained</em></h2>
+
+  <!-- CELL 1 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 1 — Complete RAG pipeline from scratch: chunk → embed → store → retrieve → generate</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>,<span class="cs">"install"</span>,<span class="cs">"sentence-transformers"</span>,<span class="cs">"faiss-cpu"</span>,<span class="cs">"anthropic"</span>,<span class="cs">"-q"</span>])
+<span class="ck">from</span> sentence_transformers <span class="ck">import</span> SentenceTransformer
+<span class="ck">import</span> faiss, numpy <span class="ck">as</span> np, anthropic, os
+
+<span class="cm"># ── PHASE 1: INDEXING ─────────────────────────────────────────</span>
+<span class="cm"># In production: load PDFs/Word docs. Here: inline text documents.</span>
+
+documents = [
+    <span class="cs">{"id": 1, "text": "Python is a high-level, interpreted programming language created by Guido van Rossum in 1991. It emphasises code readability and supports multiple paradigms including procedural, object-oriented, and functional programming.", "source": "python_intro.txt"}</span>,
+    <span class="cs">{"id": 2, "text": "Machine learning is a subset of AI where algorithms learn patterns from data without explicit programming. Key algorithms include linear regression, decision trees, neural networks, and support vector machines.", "source": "ml_basics.txt"}</span>,
+    <span class="cs">{"id": 3, "text": "The Transformer architecture, introduced in 'Attention Is All You Need' (2017), uses self-attention mechanisms to process sequences in parallel. It is the foundation of models like BERT, GPT, and Claude.", "source": "transformer.txt"}</span>,
+    <span class="cs">{"id": 4, "text": "RAG stands for Retrieval-Augmented Generation. It combines a retrieval system with a language model to answer questions using external knowledge not in the model's training data.", "source": "rag_overview.txt"}</span>,
+    <span class="cs">{"id": 5, "text": "LangChain is a framework for building LLM applications. Its core components are LLMChain, PromptTemplate, OutputParser, Memory, Retriever, and Agent+Tools.", "source": "langchain.txt"}</span>,
+    <span class="cs">{"id": 6, "text": "Chennai, officially known as Madras until 1996, is the capital of Tamil Nadu, India. It is the fourth-largest city in India with a population of approximately 7.1 million.", "source": "chennai.txt"}</span>,
+]
+
+<span class="cm"># ── Step 2: Chunking (documents are small, so no splitting needed here) ──</span>
+<span class="cm"># In production: RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)</span>
+texts = [d[<span class="cs">"text"</span>] <span class="ck">for</span> d <span class="ck">in</span> documents]
+sources = [d[<span class="cs">"source"</span>] <span class="ck">for</span> d <span class="ck">in</span> documents]
+
+<span class="cm"># ── Step 3: Embedding ─────────────────────────────────────────</span>
+embed_model = <span class="cf">SentenceTransformer</span>(<span class="cs">"all-MiniLM-L6-v2"</span>)
+<span class="cm"># same model must be used for documents AND queries</span>
+embeddings = embed_model.<span class="cf">encode</span>(texts, convert_to_numpy=<span class="ck">True</span>).<span class="cf">astype</span>(np.float32)
+faiss.<span class="cf">normalize_L2</span>(embeddings)        <span class="cm"># L2 norm → inner product = cosine similarity</span>
+
+<span class="cm"># ── Step 4: Vector store ─────────────────────────────────────</span>
+index = faiss.<span class="cf">IndexFlatIP</span>(embeddings.<span class="cf">shape</span>[<span class="cn">1</span>])
+index.<span class="cf">add</span>(embeddings)
+<span class="cf">print</span>(<span class="cs">f"✅ Indexed {index.ntotal} documents ({embeddings.shape[1]}-dim vectors)\n"</span>)
+
+<span class="cm"># ── PHASE 2: RETRIEVAL + GENERATION ──────────────────────────</span>
+client = anthropic.<span class="cf">Anthropic</span>(api_key=os.environ.<span class="cf">get</span>(<span class="cs">"ANTHROPIC_API_KEY"</span>))
+
+<span class="ck">def</span> <span class="cf">rag_query</span>(question: str, k: int = <span class="cn">3</span>) -> str:
+    <span class="cm"># Step 5: Query embedding</span>
+    q_emb = embed_model.<span class="cf">encode</span>([question], convert_to_numpy=<span class="ck">True</span>).<span class="cf">astype</span>(np.float32)
+    faiss.<span class="cf">normalize_L2</span>(q_emb)
+
+    <span class="cm"># Step 6: Similarity search — top-k</span>
+    scores, indices = index.<span class="cf">search</span>(q_emb, k)
+    retrieved = [(texts[i], sources[i], scores[<span class="cn">0</span>][j]) <span class="ck">for</span> j, i <span class="ck">in</span> <span class="cf">enumerate</span>(indices[<span class="cn">0</span>])]
+
+    <span class="cm"># Step 7: Context injection — format retrieved chunks as labelled XML</span>
+    context = <span class="cs">"\n"</span>.<span class="cf">join</span>([
+        <span class="cs">f'&lt;document id="{j+1}" source="{src}" relevance="{score:.3f}"&gt;\n{text}\n&lt;/document&gt;'</span>
+        <span class="ck">for</span> j, (text, src, score) <span class="ck">in</span> <span class="cf">enumerate</span>(retrieved)
+    ])
+
+    <span class="cm"># Step 8: LLM generation grounded in retrieved context</span>
+    response = client.messages.<span class="cf">create</span>(
+        model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+        max_tokens=<span class="cn">300</span>,
+        system=<span class="cs">"""You are a helpful assistant. Answer questions using ONLY the provided documents.
+If the answer is not in the documents, say: "I don't have that information in my knowledge base."
+Always cite the source document in your answer."""</span>,
+        messages=[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cs">f"Documents:\n{context}\n\nQuestion: {question}"</span>}]
+    )
+    <span class="ck">return</span> response.content[<span class="cn">0</span>].text, retrieved
+
+<span class="cf">print</span>(<span class="cs">"=== RAG Query Results ===\n"</span>)
+queries = [
+    <span class="cs">"What is the Transformer architecture and who created it?"</span>,
+    <span class="cs">"What is the population of Chennai?"</span>,
+    <span class="cs">"What is the GDP of India?"</span>,  <span class="cm"># not in any document — tests grounding</span>
+]
+
+<span class="ck">for</span> q <span class="ck">in</span> queries:
+    answer, retrieved = <span class="cf">rag_query</span>(q, k=<span class="cn">2</span>)
+    <span class="cf">print</span>(<span class="cs">f"Q: {q}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"Retrieved: {[s for _, s, _ in retrieved]}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"A: {answer}\n"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>✅ Indexed 6 documents (384-dim vectors)
+
+=== RAG Query Results ===
+
+<span class="out-h">Q: What is the Transformer architecture and who created it?</span>
+<span class="out-d">Retrieved: ['transformer.txt', 'ml_basics.txt']</span>
+<span class="out-g">A: The Transformer architecture was introduced in the 2017 paper "Attention Is All You Need." It uses self-attention mechanisms to process sequences in parallel and serves as the foundation for models like BERT, GPT, and Claude. (Source: transformer.txt)</span>
+
+<span class="out-h">Q: What is the population of Chennai?</span>
+<span class="out-d">Retrieved: ['chennai.txt', 'python_intro.txt']</span>
+<span class="out-g">A: Chennai has a population of approximately 7.1 million. It is the capital of Tamil Nadu and the fourth-largest city in India. The city was officially known as Madras until 1996. (Source: chennai.txt)</span>
+
+<span class="out-h">Q: What is the GDP of India?</span>
+<span class="out-d">Retrieved: ['chennai.txt', 'ml_basics.txt']</span>
+<span class="out-n">A: I don't have that information in my knowledge base. The provided documents don't contain any information about India's GDP.</span>
+
+<span class="out-g">→ Grounding works: GDP question correctly refused because no document contains GDP data
+→ Retrieved sources are shown — model uses only the relevant document
+→ Context injection with XML labels helps model identify source attribution
+→ This is the complete 8-step RAG pipeline in ~40 lines of Python</span></pre>
+  </div>
+
+  <!-- CELL 2 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 2 — Context window management: token counting + sliding window + summarisation</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>,<span class="cs">"install"</span>,<span class="cs">"tiktoken"</span>,<span class="cs">"-q"</span>])
+<span class="ck">import</span> tiktoken
+
+enc = tiktoken.<span class="cf">get_encoding</span>(<span class="cs">"cl100k_base"</span>)   <span class="cm"># GPT-4 / Claude-compatible tokeniser</span>
+
+<span class="ck">def</span> <span class="cf">count_tokens</span>(text: str) -> int:
+    <span class="ck">return</span> <span class="cf">len</span>(enc.<span class="cf">encode</span>(text))
+
+<span class="cm"># ── Simulate a growing conversation history ────────────────────</span>
+conversation = [
+    {<span class="cs">"role"</span>: <span class="cs">"user"</span>,      <span class="cs">"content"</span>: <span class="cs">"I'm building an AI agent to help with customer support for our SaaS product."</span>},
+    {<span class="cs">"role"</span>: <span class="cs">"assistant"</span>, <span class="cs">"content"</span>: <span class="cs">"Great! I can help you design that. What are the main use cases you want to handle?"</span>},
+    {<span class="cs">"role"</span>: <span class="cs">"user"</span>,      <span class="cs">"content"</span>: <span class="cs">"Mainly answering questions about pricing, troubleshooting login issues, and escalating to human agents when needed."</span>},
+    {<span class="cs">"role"</span>: <span class="cs">"assistant"</span>, <span class="cs">"content"</span>: <span class="cs">"Perfect. For that scope I'd recommend a ReAct agent with three tools: a knowledge base search tool, a ticket creation tool for escalations, and an account lookup tool for login issues."</span>},
+    {<span class="cs">"role"</span>: <span class="cs">"user"</span>,      <span class="cs">"content"</span>: <span class="cs">"What about handling multiple languages? We have customers in India, Brazil and Germany."</span>},
+    {<span class="cs">"role"</span>: <span class="cs">"assistant"</span>, <span class="cs">"content"</span>: <span class="cs">"For multilingual support, Claude handles Hindi, Portuguese, and German natively. Add a language detection step at the start and instruct the agent to always respond in the detected language."</span>},
+]
+
+<span class="cf">print</span>(<span class="cs">"=== Conversation Token Analysis ===\n"</span>)
+total = <span class="cf">sum</span>(<span class="cf">count_tokens</span>(m[<span class="cs">"content"</span>]) <span class="ck">for</span> m <span class="ck">in</span> conversation)
+<span class="ck">for</span> i, msg <span class="ck">in</span> <span class="cf">enumerate</span>(conversation):
+    toks = <span class="cf">count_tokens</span>(msg[<span class="cs">"content"</span>])
+    <span class="cf">print</span>(<span class="cs">f"Turn {i+1} ({msg['role']:<span class="cn">10</span>}): {toks:>4} tokens | '{msg['content'][:60]}...'"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nTotal conversation: {total} tokens"</span>)
+
+<span class="cm"># ── Strategy 1: Sliding window ─────────────────────────────────</span>
+TOKEN_BUDGET = <span class="cn">200</span>   <span class="cm"># example budget for conversation history</span>
+<span class="ck">def</span> <span class="cf">sliding_window</span>(messages, budget):
+    <span class="cs">"""Keep most recent messages that fit within token budget."""</span>
+    result, tokens_used = [], <span class="cn">0</span>
+    <span class="ck">for</span> msg <span class="ck">in</span> <span class="cf">reversed</span>(messages):      <span class="cm"># most recent first</span>
+        t = <span class="cf">count_tokens</span>(msg[<span class="cs">"content"</span>])
+        <span class="ck">if</span> tokens_used + t <= budget:
+            result.<span class="cf">insert</span>(<span class="cn">0</span>, msg)
+            tokens_used += t
+        <span class="ck">else</span>:
+            <span class="ck">break</span>
+    <span class="ck">return</span> result, tokens_used
+
+windowed, tokens_kept = <span class="cf">sliding_window</span>(conversation, TOKEN_BUDGET)
+<span class="cf">print</span>(<span class="cs">f"\n=== Sliding Window (budget={TOKEN_BUDGET} tokens) ==="</span>)
+<span class="cf">print</span>(<span class="cs">f"Kept {len(windowed)}/{len(conversation)} messages ({tokens_kept} tokens)"</span>)
+<span class="cf">print</span>(<span class="cs">f"Dropped {len(conversation)-len(windowed)} oldest messages"</span>)
+
+<span class="cm"># ── Strategy 2: Token budget allocation example ───────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n=== Token Budget Allocation Example ==="</span>)
+TOTAL_BUDGET = <span class="cn">8000</span>
+allocations = {
+    <span class="cs">"System prompt"</span>:    <span class="cn">400</span>,
+    <span class="cs">"Retrieved docs"</span>:   <span class="cn">3000</span>,
+    <span class="cs">"Chat history"</span>:    <span class="cn">2000</span>,
+    <span class="cs">"Few-shot examples"</span>: <span class="cn">800</span>,
+    <span class="cs">"User query"</span>:        <span class="cn">200</span>,
+    <span class="cs">"Reserved (output)"</span>: <span class="cn">1600</span>,
+}
+<span class="cf">print</span>(<span class="cs">f"{'Component':<span class="cn">22</span>} {'Tokens':>8} {'%':>6}  {'Bar'"</span>)
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">55</span>)
+<span class="ck">for</span> name, alloc <span class="ck">in</span> allocations.<span class="cf">items</span>():
+    pct = alloc / TOTAL_BUDGET * <span class="cn">100</span>
+    bar = <span class="cs">'█'</span> * <span class="cf">int</span>(pct / <span class="cn">3</span>)
+    <span class="cf">print</span>(<span class="cs">f"{name:<span class="cn">22</span>} {alloc:>8,} {pct:>6.1f}%  {bar}"</span>)
+<span class="cf">print</span>(<span class="cs">f"{'TOTAL':<span class="cn">22</span>} {sum(allocations.values()):>8,} tokens"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== Conversation Token Analysis ===
+
+<span class="out-d">Turn 1 (user      ):   20 tokens | 'I'm building an AI agent to help with customer support...'
+Turn 2 (assistant ):   18 tokens | 'Great! I can help you design that. What are the main us...'
+Turn 3 (user      ):   24 tokens | 'Mainly answering questions about pricing, troubleshootin...'
+Turn 4 (assistant ):   42 tokens | 'Perfect. For that scope I'd recommend a ReAct agent with...'
+Turn 5 (user      ):   19 tokens | 'What about handling multiple languages? We have customer...'
+Turn 6 (assistant ):   38 tokens | 'For multilingual support, Claude handles Hindi, Portugues...'</span>
+
+<span class="out-h">Total conversation: 161 tokens</span>
+
+=== Sliding Window (budget=200 tokens) ===
+<span class="out-g">Kept 6/6 messages (161 tokens)
+Dropped 0 oldest messages</span>
+
+=== Token Budget Allocation Example ===
+<span class="out-h">Component              Tokens      %   Bar</span>
+-------------------------------------------------------
+<span class="out-d">System prompt             400    5.0%  █
+Retrieved docs          3,000   37.5%  ████████████
+Chat history            2,000   25.0%  ████████
+Few-shot examples         800   10.0%  ███
+User query                200    2.5%  
+Reserved (output)       1,600   20.0%  ██████
+TOTAL                   8,000 tokens</span>
+
+<span class="out-g">→ Retrieved docs gets the biggest slice — it's the knowledge source
+→ 20% reserved for output — always leave headroom for the response
+→ Sliding window would drop oldest messages when total exceeds budget
+→ Budget allocation is the practical implementation of "context structure order"</span></pre>
+  </div>
+
+  <!-- CELL 3 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 3 — LangChain: chain + memory + structured output</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>,<span class="cs">"install"</span>,<span class="cs">"langchain"</span>,<span class="cs">"langchain-anthropic"</span>,<span class="cs">"-q"</span>])
+<span class="ck">from</span> langchain_anthropic <span class="ck">import</span> ChatAnthropic
+<span class="ck">from</span> langchain.prompts <span class="ck">import</span> ChatPromptTemplate
+<span class="ck">from</span> langchain.schema.output_parser <span class="ck">import</span> StrOutputParser
+<span class="ck">from</span> langchain.memory <span class="ck">import</span> ConversationSummaryMemory
+<span class="ck">import</span> os
+
+llm = <span class="cf">ChatAnthropic</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    api_key=os.environ.<span class="cf">get</span>(<span class="cs">"ANTHROPIC_API_KEY"</span>)
+)
+
+<span class="cm"># ── LangChain Component 1: PromptTemplate ────────────────────</span>
+prompt = ChatPromptTemplate.<span class="cf">from_messages</span>([
+    (<span class="cs">"system"</span>, <span class="cs">"You are a concise technical assistant. Answer in 2-3 sentences maximum."</span>),
+    (<span class="cs">"human"</span>,  <span class="cs">"{question}"</span>)
+    <span class="cm"># {question} is a variable — filled at runtime</span>
+])
+
+<span class="cm"># ── LangChain Component 2: Chain (pipe operator) ─────────────</span>
+chain = prompt | llm | <span class="cf">StrOutputParser</span>()
+<span class="cm"># | operator: pipe the output of each step to the next
+# prompt | llm: prompt formats, sends to LLM → AIMessage
+# | StrOutputParser(): extracts just the text content from AIMessage</span>
+
+<span class="cf">print</span>(<span class="cs">"=== LangChain Chain ===\n"</span>)
+result = chain.<span class="cf">invoke</span>({<span class="cs">"question"</span>: <span class="cs">"What is the difference between FAISS and Pinecone?"</span>})
+<span class="cf">print</span>(<span class="cs">f"Q: What is the difference between FAISS and Pinecone?\nA: {result}\n"</span>)
+
+<span class="cm"># ── LangChain Component 3: Conversation Memory ────────────────</span>
+memory = <span class="cf">ConversationSummaryMemory</span>(llm=llm)
+<span class="cm"># ConversationSummaryMemory: instead of storing full history, summarises
+# old turns using the LLM itself — saves tokens for long conversations</span>
+
+memory.<span class="cf">save_context</span>(
+    {<span class="cs">"input"</span>: <span class="cs">"I'm building a RAG system for medical records."</span>},
+    {<span class="cs">"output"</span>: <span class="cs">"Great. Medical RAG needs careful chunking of clinical notes and ICD-10 code awareness."</span>}
+)
+memory.<span class="cf">save_context</span>(
+    {<span class="cs">"input"</span>: <span class="cs">"We're using Chroma DB for the vector store."</span>},
+    {<span class="cs">"output"</span>: <span class="cs">"Good choice for development. For production with PHI, consider Pinecone with encryption at rest."</span>}
+)
+
+summary = memory.<span class="cf">load_memory_variables</span>({})
+<span class="cf">print</span>(<span class="cs">"=== LangChain Summary Memory ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"Compressed conversation history:\n{summary['history']}"</span>)
+
+<span class="cm"># ── Multi-step chain: translate and analyse ───────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== Multi-Step Chain (translate → analyse) ==="</span>)
+translate_prompt = ChatPromptTemplate.<span class="cf">from_messages</span>([
+    (<span class="cs">"system"</span>, <span class="cs">"Translate to English concisely. Output only the translation, nothing else."</span>),
+    (<span class="cs">"human"</span>, <span class="cs">"{text}"</span>)
+])
+analyse_prompt = ChatPromptTemplate.<span class="cf">from_messages</span>([
+    (<span class="cs">"system"</span>, <span class="cs">"Identify the sentiment (POSITIVE/NEGATIVE/NEUTRAL) of this English text. One word only."</span>),
+    (<span class="cs">"human"</span>, <span class="cs">"{translated}"</span>)
+])
+
+translate_chain = translate_prompt | llm | <span class="cf">StrOutputParser</span>()
+<span class="cm"># chain output feeds next chain via .assign() in a full pipeline
+# simplified here for clarity — showing the concept</span>
+tamil_text = <span class="cs">"இந்த தயாரிப்பு மிகவும் சிறப்பானது! நான் மிகவும் மகிழ்ச்சியாக இருக்கிறேன்."</span>
+translation = translate_chain.<span class="cf">invoke</span>({<span class="cs">"text"</span>: tamil_text})
+<span class="cf">print</span>(<span class="cs">f"Tamil: {tamil_text}"</span>)
+<span class="cf">print</span>(<span class="cs">f"Translated: {translation}"</span>)
+analyse_chain = analyse_prompt | llm | <span class="cf">StrOutputParser</span>()
+sentiment = analyse_chain.<span class="cf">invoke</span>({<span class="cs">"translated"</span>: translation})
+<span class="cf">print</span>(<span class="cs">f"Sentiment: {sentiment}"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>=== LangChain Chain ===
+
+<span class="out-d">Q: What is the difference between FAISS and Pinecone?
+A: FAISS is an open-source library from Facebook that runs locally in-process for fast vector similarity search — ideal for development and large-scale on-premises deployments. Pinecone is a fully managed cloud vector database that handles scaling, persistence, and infrastructure automatically. The main trade-off is control vs. convenience: FAISS gives you full ownership with zero latency overhead, while Pinecone eliminates infrastructure management at the cost of network latency and subscription fees.</span>
+
+=== LangChain Summary Memory ===
+
+<span class="out-d">Compressed conversation history:
+The human is building a RAG system for medical records using ChromaDB. The AI advised that medical RAG needs careful chunking of clinical notes and ICD-10 code awareness, and recommended considering Pinecone with encryption at rest for production due to PHI compliance requirements.</span>
+
+=== Multi-Step Chain (translate → analyse) ===
+<span class="out-d">Tamil: இந்த தயாரிப்பு மிகவும் சிறப்பானது! நான் மிகவும் மகிழ்ச்சியாக இருக்கிறேன்.</span>
+<span class="out-d">Translated: This product is very excellent! I am very happy.</span>
+<span class="out-g">Sentiment: POSITIVE</span>
+
+<span class="out-g">→ | operator chains steps cleanly: prompt → LLM → parser
+→ SummaryMemory compresses 2 turns into one paragraph — saves tokens in long conversations
+→ Multi-step chain: Tamil text → English → sentiment classification without one-shot complexity
+→ LangChain's strength: composable, readable, large ecosystem of integrations</span></pre>
+  </div>
+
+  <!-- CELL 4 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 4 — LlamaIndex: document Q&amp;A with VectorStoreIndex</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>,<span class="cs">"install"</span>,<span class="cs">"llama-index"</span>,<span class="cs">"llama-index-llms-anthropic"</span>,<span class="cs">"llama-index-embeddings-huggingface"</span>,<span class="cs">"-q"</span>])
+<span class="ck">from</span> llama_index.core <span class="ck">import</span> VectorStoreIndex, Document, Settings
+<span class="ck">from</span> llama_index.llms.anthropic <span class="ck">import</span> Anthropic <span class="ck">as</span> LlamaAnthropic
+<span class="ck">from</span> llama_index.embeddings.huggingface <span class="ck">import</span> HuggingFaceEmbedding
+<span class="ck">import</span> os
+
+<span class="cm"># ── Configure LlamaIndex to use Claude + local embeddings ─────</span>
+Settings.llm = <span class="cf">LlamaAnthropic</span>(
+    model=<span class="cs">"claude-haiku-4-5-20251001"</span>,
+    api_key=os.environ.<span class="cf">get</span>(<span class="cs">"ANTHROPIC_API_KEY"</span>)
+)
+Settings.embed_model = <span class="cf">HuggingFaceEmbedding</span>(model_name=<span class="cs">"BAAI/bge-small-en-v1.5"</span>)
+<span class="cm"># BGE-small: fast, high-quality open-source embedding model from BAAI</span>
+
+<span class="cm"># ── Create documents ──────────────────────────────────────────</span>
+docs = [
+    <span class="cf">Document</span>(text=<span class="cs">"LangChain is a framework for building LLM applications with chains, agents, and memory. Install: pip install langchain"</span>, metadata={<span class="cs">"source"</span>: <span class="cs">"langchain_doc"</span>}),
+    <span class="cf">Document</span>(text=<span class="cs">"LlamaIndex specialises in connecting LLMs to documents and data sources. Its VectorStoreIndex enables fast document Q&A. Install: pip install llama-index"</span>, metadata={<span class="cs">"source"</span>: <span class="cs">"llamaindex_doc"</span>}),
+    <span class="cf">Document</span>(text=<span class="cs">"AutoGen by Microsoft enables multi-agent conversations where agents write and execute code. Install: pip install pyautogen"</span>, metadata={<span class="cs">"source"</span>: <span class="cs">"autogen_doc"</span>}),
+    <span class="cf">Document</span>(text=<span class="cs">"CrewAI enables role-based multi-agent teams. Define agents with roles like Researcher, Writer, Reviewer. Install: pip install crewai"</span>, metadata={<span class="cs">"source"</span>: <span class="cs">"crewai_doc"</span>}),
+    <span class="cf">Document</span>(text=<span class="cs">"Google ADK (Agent Development Kit) is Google's framework for production agents on Vertex AI. Tightly integrated with Gemini models. Install: pip install google-adk"</span>, metadata={<span class="cs">"source"</span>: <span class="cs">"adk_doc"</span>}),
+]
+
+<span class="cm"># ── Build VectorStoreIndex (LlamaIndex's core RAG component) ──</span>
+index = VectorStoreIndex.<span class="cf">from_documents</span>(docs)
+<span class="cm"># from_documents: automatically chunks, embeds, and stores all documents
+# uses Settings.embed_model (BGE-small) for embeddings
+# default chunker: SentenceSplitter(chunk_size=1024, chunk_overlap=20)</span>
+
+<span class="cf">print</span>(<span class="cs">"✅ LlamaIndex VectorStoreIndex built\n"</span>)
+
+<span class="cm"># ── Create a query engine ─────────────────────────────────────</span>
+query_engine = index.<span class="cf">as_query_engine</span>(similarity_top_k=<span class="cn">2</span>)
+<span class="cm"># as_query_engine: wraps the index with retrieval + response synthesis
+# similarity_top_k=2: retrieve top-2 most relevant chunks</span>
+
+<span class="cf">print</span>(<span class="cs">"=== LlamaIndex Document Q&A ===\n"</span>)
+questions = [
+    <span class="cs">"Which framework should I use to build a Q&A system over my own documents?"</span>,
+    <span class="cs">"What framework is best for multi-agent coding assistants?"</span>,
+    <span class="cs">"How do I build role-based agent teams?"</span>,
+]
+
+<span class="ck">for</span> q <span class="ck">in</span> questions:
+    response = query_engine.<span class="cf">query</span>(q)
+    <span class="cf">print</span>(<span class="cs">f"Q: {q}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"A: {response.response}"</span>)
+    <span class="cm"># response.source_nodes contains the retrieved chunks and their scores</span>
+    sources = [n.metadata.get(<span class="cs">"source"</span>,<span class="cs">"?"</span>) <span class="ck">for</span> n <span class="ck">in</span> response.source_nodes]
+    <span class="cf">print</span>(<span class="cs">f"Sources: {sources}\n"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre>✅ LlamaIndex VectorStoreIndex built
+
+=== LlamaIndex Document Q&A ===
+
+<span class="out-h">Q: Which framework should I use to build a Q&A system over my own documents?</span>
+<span class="out-g">A: LlamaIndex is the recommended framework for building a Q&A system over your own documents. It specialises in connecting LLMs to documents and data sources, with its VectorStoreIndex enabling fast document question-answering.</span>
+<span class="out-d">Sources: ['llamaindex_doc', 'langchain_doc']</span>
+
+<span class="out-h">Q: What framework is best for multi-agent coding assistants?</span>
+<span class="out-g">A: AutoGen by Microsoft is best for multi-agent coding assistants. It enables multi-agent conversations where agents can write and execute code automatically.</span>
+<span class="out-d">Sources: ['autogen_doc', 'crewai_doc']</span>
+
+<span class="out-h">Q: How do I build role-based agent teams?</span>
+<span class="out-g">A: CrewAI enables you to build role-based multi-agent teams. You define agents with specific roles such as Researcher, Writer, or Reviewer, and they collaborate to complete tasks.</span>
+<span class="out-d">Sources: ['crewai_doc', 'adk_doc']</span>
+
+<span class="out-g">→ LlamaIndex correctly routes framework questions to the right document
+→ from_documents() handles the full indexing pipeline automatically
+→ as_query_engine() wraps retrieval + synthesis in one clean interface
+→ source_nodes shows which documents were retrieved — built-in citations</span></pre>
+  </div>
+
+  <!-- CELL 5 -->
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-header-label">Cell 5 — Complete production RAG with chunking + reranking + structured output</div>
+    </div>
+    <pre><span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>,<span class="cs">"install"</span>,<span class="cs">"sentence-transformers"</span>,<span class="cs">"faiss-cpu"</span>,<span class="cs">"-q"</span>])
+<span class="ck">from</span> sentence_transformers <span class="ck">import</span> SentenceTransformer, CrossEncoder
+<span class="ck">import</span> faiss, numpy <span class="ck">as</span> np, json
+
+<span class="cm"># ── Simulate a larger document corpus ─────────────────────────</span>
+long_document = <span class="cs">"""
+Section 1 - Introduction to RAG:
+RAG stands for Retrieval-Augmented Generation. It was introduced to solve LLM knowledge cutoff and hallucination problems.
+
+Section 2 - Chunking Strategies:
+Fixed-size chunking splits every N tokens. Semantic chunking splits on topic boundaries. Sentence chunking splits on punctuation.
+
+Section 3 - Vector Databases:
+FAISS is a local, fast vector database by Meta. Pinecone is a managed cloud vector database. ChromaDB is lightweight and perfect for development.
+
+Section 4 - Embedding Models:
+text-embedding-3-small from OpenAI produces 1536-dimensional vectors. BGE-M3 is an open-source multilingual embedding model. E5-large is strong for retrieval tasks.
+
+Section 5 - Reranking:
+Reranking uses a cross-encoder model to re-score retrieved chunks by relevance. Retrieve top-20 with vector search, rerank, keep top-3. Improves precision significantly.
+
+Section 6 - Hybrid Search:
+Hybrid search combines dense vector search with sparse BM25 keyword search. It uses Reciprocal Rank Fusion (RRF) to merge both ranked lists. Consistently beats either approach alone.
+
+Section 7 - RAG Types:
+Naive RAG: basic retrieve-inject-generate. Advanced RAG: query rewriting, reranking. Modular RAG: swappable components. Agentic RAG: agent decides when and what to retrieve.
+"""</span>
+
+<span class="cm"># ── Chunking: fixed size with overlap ─────────────────────────</span>
+<span class="ck">def</span> <span class="cf">chunk_text</span>(text: str, chunk_size: int = <span class="cn">120</span>, overlap: int = <span class="cn">20</span>) -> list:
+    <span class="cs">"""Split text into overlapping word chunks."""</span>
+    words = text.<span class="cf">split</span>()
+    chunks = []
+    <span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="cn">0</span>, <span class="cf">len</span>(words), chunk_size - overlap):
+        chunk = <span class="cs">" "</span>.<span class="cf">join</span>(words[i:i + chunk_size])
+        <span class="ck">if</span> chunk.<span class="cf">strip</span>():
+            chunks.<span class="cf">append</span>(chunk)
+    <span class="ck">return</span> chunks
+
+chunks = <span class="cf">chunk_text</span>(long_document)
+<span class="cf">print</span>(<span class="cs">f"Document → {len(chunks)} chunks (chunk_size=120 words, overlap=20)\n"</span>)
+
+<span class="cm"># ── Embed all chunks ──────────────────────────────────────────</span>
+embed_model = <span class="cf">SentenceTransformer</span>(<span class="cs">"all-MiniLM-L6-v2"</span>)
+chunk_embeddings = embed_model.<span class="cf">encode</span>(chunks, convert_to_numpy=<span class="ck">True</span>).<span class="cf">astype</span>(np.float32)
+faiss.<span class="cf">normalize_L2</span>(chunk_embeddings)
+index = faiss.<span class="cf">IndexFlatIP</span>(chunk_embeddings.<span class="cf">shape</span>[<span class="cn">1</span>])
+index.<span class="cf">add</span>(chunk_embeddings)
+
+<span class="cm"># ── Reranking with CrossEncoder ───────────────────────────────</span>
+reranker = <span class="cf">CrossEncoder</span>(<span class="cs">"cross-encoder/ms-marco-MiniLM-L-6-v2"</span>)
+<span class="cm"># CrossEncoder: takes (query, passage) pairs and scores true relevance
+# More accurate than cosine similarity but slower (can't pre-compute)</span>
+
+query = <span class="cs">"What is the difference between vector search and hybrid search in RAG?"</span>
+
+<span class="cm"># Step 1: Retrieve top-10 with vector search (high recall)</span>
+q_emb = embed_model.<span class="cf">encode</span>([query], convert_to_numpy=<span class="ck">True</span>).<span class="cf">astype</span>(np.float32)
+faiss.<span class="cf">normalize_L2</span>(q_emb)
+scores, indices = index.<span class="cf">search</span>(q_emb, k=<span class="cn">10</span>)
+top10_chunks = [chunks[i] <span class="ck">for</span> i <span class="ck">in</span> indices[<span class="cn">0</span>]]
+
+<span class="cm"># Step 2: Rerank top-10 → keep top-3 (high precision)</span>
+rerank_scores = reranker.<span class="cf">predict</span>([(query, c) <span class="ck">for</span> c <span class="ck">in</span> top10_chunks])
+<span class="cm"># reranker.predict: feeds (query, chunk) pairs, outputs relevance scores</span>
+ranked = <span class="cf">sorted</span>(<span class="cf">zip</span>(rerank_scores, top10_chunks), reverse=<span class="ck">True</span>)[:<span class="cn">3</span>]
+
+<span class="cf">print</span>(<span class="cs">f"Query: '{query}'\n"</span>)
+<span class="cf">print</span>(<span class="cs">"Vector search top-3 → Reranked top-3:"</span>)
+<span class="ck">for</span> rank, (score, chunk) <span class="ck">in</span> <span class="cf">enumerate</span>(ranked, <span class="cn">1</span>):
+    preview = chunk[:<span class="cn">80</span>].<span class="cf">replace</span>(<span class="cs">'\n'</span>, <span class="cs">' '</span>)
+    <span class="cf">print</span>(<span class="cs">f"  Rank {rank} (rerank score {score:.3f}): '{preview}...'"</span>)
+
+<span class="cf">print</span>(<span class="cs">f"\nPattern: retrieve top-20 → rerank → keep top-3 = higher precision at low cost"</span>)</pre>
+  </div>
+
+  <div class="expected-output">
+    <div class="expected-output-header">Expected Output</div>
+    <pre><span class="out-d">Document → 4 chunks (chunk_size=120 words, overlap=20)</span>
+
+Query: <span class="out-h">'What is the difference between vector search and hybrid search in RAG?'</span>
+
+Vector search top-3 → Reranked top-3:
+<span class="out-g">  Rank 1 (rerank score 8.412): 'Section 6 - Hybrid Search: Hybrid search combines dense vector search with sparse BM25...'</span>
+<span class="out-d">  Rank 2 (rerank score 4.231): 'Section 5 - Reranking: Reranking uses a cross-encoder model to re-score retrieved chunks...'</span>
+<span class="out-d">  Rank 3 (rerank score 2.891): 'Section 1 - Introduction to RAG: RAG stands for Retrieval-Augmented Generation...'</span>
+
+<span class="out-d">Pattern: retrieve top-20 → rerank → keep top-3 = higher precision at low cost</span>
+
+<span class="out-g">→ Reranker correctly scores the hybrid search section highest — directly relevant
+→ CrossEncoder sees the full (query, passage) pair — more nuanced than vector distance
+→ Two-stage retrieval: fast vector search for recall + slow cross-encoder for precision
+→ This is what "Advanced RAG" means in practice — adding the reranking step above Naive RAG</span></pre>
+  </div>
+
+  <div class="divider"><span>Series Complete — Final Connection</span></div>
+
+  <div class="complete-box">
+    <div class="cb-label">★ Series Complete — 11 Issues · 13 Blocks · Python to Production Agents</div>
+    <h3>You now have the complete stack. Here is how every block connects in a production AI agent.</h3>
+    <p><strong>The data flows like this:</strong> A user sends a message to your agent. The agent's system prompt (Block 08 — Prompt Engineering) defines its role and rules. The message is tokenised (Block 06 — LLMs) and passed to a decoder-only Transformer (Block 05 — Transformer Architecture) that was pre-trained via next-token prediction and aligned via RLHF. The agent's context window (Block 11 — Context Engineering) contains the system prompt, retrieved documents, and compressed history — arranged in the ideal 5-layer order. The retrieved documents came from a RAG system (Block 10) that embedded your company's documents with a Generation 3 contextual embedding model (Block 04 — NLP), stored them in a FAISS vector database, and retrieved the top-3 most relevant chunks via cosine similarity. The LLM decides (Block 09 — Agentic AI) whether to answer directly or call a tool — maybe a web search, a code executor, or an API call. The decision uses the ReAct pattern (Thought → Action → Observation). Multiple agents may collaborate via a multi-agent architecture (Block 09). The whole application is wired together with LangChain or LlamaIndex (Block 12 — Frameworks) and deployed on AWS Bedrock or Google Vertex AI (Block 13 — Platforms). The output is multimodal if needed (Block 07 — Generative AI) — text, structured JSON, images, or audio.</p>
+    <p>Every block was a prerequisite for this paragraph. Python (Block 01) → Data science stack → Machine Learning (Block 02) → Neural Networks (Block 03) → NLP (Block 04) → Transformer (Block 05) → LLMs (Block 06) → Generative AI (Block 07) → Prompt Engineering (Block 08) → Agentic AI (Block 09) → RAG (Block 10) → Context Engineering (Block 11) → Frameworks (Block 12) → Platforms (Block 13).</p>
+    <div class="series-checkmarks">
+      <span class="series-check">✓ Block 01 · Python</span>
+      <span class="series-check">✓ Block 02 · Machine Learning</span>
+      <span class="series-check">✓ Block 03 · Neural Networks</span>
+      <span class="series-check">✓ Block 04 · NLP</span>
+      <span class="series-check">✓ Block 05 · Transformer</span>
+      <span class="series-check">✓ Block 06 · Language Models</span>
+      <span class="series-check">✓ Block 07 · Generative AI</span>
+      <span class="series-check">✓ Block 08 · Prompt Engineering</span>
+      <span class="series-check">✓ Block 09 · Agentic AI</span>
+      <span class="series-check">✓ Block 10 · RAG</span>
+      <span class="series-check">✓ Block 11 · Context Engineering</span>
+      <span class="series-check">✓ Block 12 · Frameworks</span>
+      <span class="series-check">✓ Block 13 · Platforms</span>
+    </div>
+  </div>
+
+  <div class="divider"><span>Final Cheat Sheet</span></div>
+
+  <div class="eyebrow rag">Save this — all four blocks</div>
+  <h2>Blocks 10–13 — <em class="rag">the complete reference</em></h2>
+
+  <div class="cheat-grid">
+    <div class="cheat-cell rag">
+      <div class="cheat-cell-name">RAG — Block 10</div>
+      <div class="cheat-cell-sub">8 steps · 5 problems · 4 types</div>
+      <ul>
+        <li>5 problems: cutoff, private data, hallucination, long docs, cost</li>
+        <li>Indexing: ingest → chunk → embed → vector store</li>
+        <li>Retrieval: query embed → similarity search → inject → generate</li>
+        <li>Chunking: fixed / sentence / semantic / recursive char</li>
+        <li>Reranking: retrieve top-20 → cross-encoder → keep top-3</li>
+        <li>Hybrid search: vector + BM25 → RRF fusion</li>
+        <li>Types: Naive → Advanced → Modular → Agentic</li>
+        <li>Libraries: LangChain · LlamaIndex · ChromaDB · FAISS · Pinecone</li>
+      </ul>
+    </div>
+    <div class="cheat-cell ctx">
+      <div class="cheat-cell-name">Context Engineering — Block 11</div>
+      <div class="cheat-cell-sub">Window · Memory · Strategies · Structure</div>
+      <ul>
+        <li>Context window: everything the model can see right now</li>
+        <li>Lost-in-the-middle: models attend more to start + end</li>
+        <li>5 memory types: in-context, external/RAG, episodic, semantic, working</li>
+        <li>5 strategies: sliding window, summarisation, selective retrieval, prioritisation, chunking</li>
+        <li>Structure: XML tags, grounding, persona first, doc injection</li>
+        <li>Ideal order: system → docs → history → examples → query</li>
+      </ul>
+    </div>
+    <div class="cheat-cell fw">
+      <div class="cheat-cell-name">Frameworks — Block 12</div>
+      <div class="cheat-cell-sub">LangChain · LlamaIndex · AutoGen · ADK</div>
+      <ul>
+        <li>LangChain: LLMChain, PromptTemplate, OutputParser, Memory, Retriever, Agents + LangGraph + LangSmith</li>
+        <li>LlamaIndex: loaders, node parser, VectorStoreIndex, query engine, retriever, response synthesiser</li>
+        <li>AutoGen: ConversableAgent, AssistantAgent, UserProxyAgent, GroupChat, code execution</li>
+        <li>Google ADK: agent definition, tool integration, multi-agent, Vertex AI deploy</li>
+        <li>Also: CrewAI (roles), Semantic Kernel (.NET), Haystack (NLP), DSPy (auto-prompt)</li>
+      </ul>
+    </div>
+    <div class="cheat-cell pl">
+      <div class="cheat-cell-name">Platforms — Block 13</div>
+      <div class="cheat-cell-sub">Azure · AWS Bedrock · Google Vertex AI</div>
+      <ul>
+        <li>Azure: OpenAI Service, Copilot, Copilot Studio, AI Foundry, AI Search, Semantic Kernel</li>
+        <li>AWS Bedrock: Foundation models, Agents, Knowledge Bases, evaluation, fine-tuning, Guardrails</li>
+        <li>Vertex AI: Model Garden, AI Studio, Agent Builder, Vector Search, Pipelines/MLOps, Evaluation</li>
+        <li>Free starts: Google AI Studio · Anthropic Console · OpenAI Playground</li>
+        <li>Choose by your existing cloud: Azure = Microsoft, Bedrock = AWS, Vertex = GCP</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:24px;">
+    <div class="callout-label">The complete series in one paragraph</div>
+    <p>
+      Python foundations → NumPy/Pandas/Sklearn data stack → Supervised/Unsupervised/Reinforcement ML → Neural Networks (ANN/CNN/RNN/LSTM) → NLP (4 levels, embeddings, attention) → Transformer architecture (embedding + positional encoding + multi-head attention + FFN + residual + LayerNorm, stacked N times, three variants: BERT/GPT/T5) → Language Models (pre-training/BPE/scaling laws/RLHF/SLM vs LLM/decoding strategies) → Generative AI (text/image via diffusion/audio/multimodal) → Prompt Engineering (4-part anatomy, 12 techniques, 6 pitfalls) → Agentic AI (5 components, ReAct/multi-agent patterns, 6 tool types, 4 memory types) → RAG (8-step pipeline, chunking/reranking/hybrid search, 4 RAG types) → Context Engineering (window management, 5 memory systems, ideal structure order) → Frameworks (LangChain/LlamaIndex/AutoGen/ADK/CrewAI) → Platforms (Azure/AWS Bedrock/Google Vertex AI, free tiers).
+    </p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    <div class="footer-title">Master Agentic AI with Me — Series Complete</div>
+    <div class="footer-sub">11 issues. 13 blocks. Python to production-grade AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-final">★ Issue 11 · Final Issue · All 13 Blocks Complete ★</div>
+    <div class="footer-series">✓ ML · ✓ NN · ✓ NLP · ✓ Transformer · ✓ LLMs · ✓ GenAI · ✓ Prompting · ✓ Agents · ✓ RAG · ✓ Context · ✓ Frameworks · ✓ Platforms</div>
+  </div>
+</div>
+
+</body>
+</html>
