@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Agentic AI with Me — Issue #06: How Machines Read</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #0d0d0d;
+    --ink2:       #393939;
+    --ink3:       #787878;
+    --paper:      #fdf8f0;
+    --paper2:     #f5ede0;
+    --paper3:     #e8dccb;
+    --accent:     #d97706;
+    --accent2:    #b45309;
+    --lex:        #ea580c;
+    --lex-bg:     #fff7ed;
+    --lex-bd:     rgba(234,88,12,0.25);
+    --syn:        #ca8a04;
+    --syn-bg:     #fefce8;
+    --syn-bd:     rgba(202,138,4,0.25);
+    --sem:        #dc2626;
+    --sem-bg:     #fef2f2;
+    --sem-bd:     rgba(220,38,38,0.25);
+    --prag:       #7c3aed;
+    --prag-bg:    #f5f3ff;
+    --prag-bd:    rgba(124,58,237,0.25);
+    --green:      #0a7c4a;
+    --green-bg:   #edf7f2;
+    --teal:       #0d7377;
+    --teal-bg:    #e4f5f5;
+    --blue:       #1d4ed8;
+    --blue-bg:    #eff6ff;
+    --code-bg:    #0f1117;
+    --code-text:  #e8eaf6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.78; }
+
+  /* ── MASTHEAD ── */
+  .masthead { background: #0d0a00; padding: 13px 0; }
+  .masthead-inner { display: flex; justify-content: space-between; align-items: center; max-width: 780px; margin: 0 auto; padding: 0 24px; }
+  .masthead-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.75); }
+  .masthead-meta  { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); }
+
+  /* ── HERO ── */
+  .hero { background: #0d0a00; padding: 80px 24px 68px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 900px; height: 600px; background: radial-gradient(ellipse 55% 45% at 35% 50%, rgba(217,119,6,0.18) 0%, transparent 60%), radial-gradient(ellipse 45% 40% at 70% 55%, rgba(220,38,38,0.12) 0%, transparent 60%); pointer-events: none; }
+  .issue-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #fbbf24; border: 1px solid rgba(251,191,36,0.35); border-radius: 20px; padding: 5px 16px; margin-bottom: 26px; position: relative; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.1rem, 5vw, 3.7rem); font-weight: 900; color: #fff; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 20px; max-width: 720px; margin-left: auto; margin-right: auto; position: relative; }
+  .hero h1 em { font-style: italic; color: #fbbf24; }
+  .hero-sub { font-size: 15px; color: rgba(255,255,255,0.52); max-width: 500px; margin: 0 auto 38px; line-height: 1.72; position: relative; }
+  .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; position: relative; }
+  .hero-stat { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.38); letter-spacing: 0.07em; text-transform: uppercase; }
+  .hero-stat strong { display: block; font-size: 23px; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: 0; margin-bottom: 3px; }
+  .level-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 28px; position: relative; }
+  .level-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 13px; border-radius: 20px; border: 1px solid; }
+  .level-badge.lex  { color: #fed7aa; border-color: rgba(253,215,170,0.35); }
+  .level-badge.syn  { color: #fde68a; border-color: rgba(253,230,138,0.35); }
+  .level-badge.sem  { color: #fca5a5; border-color: rgba(252,165,165,0.35); }
+  .level-badge.prag { color: #c4b5fd; border-color: rgba(196,181,253,0.35); }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── TOC ── */
+  .toc { background: #fff; border: 1px solid var(--paper3); border-radius: 14px; padding: 30px 34px; margin: 54px 0; box-shadow: 0 2px 16px rgba(217,119,6,0.06); }
+  .toc-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); margin-bottom: 18px; }
+  .toc ol { list-style: none; counter-reset: toc; display: grid; grid-template-columns: 1fr 1fr; gap: 11px 30px; }
+  .toc li { counter-increment: toc; font-size: 13.5px; color: var(--ink2); display: flex; align-items: baseline; gap: 9px; }
+  .toc li::before { content: counter(toc, decimal-leading-zero); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent); flex-shrink: 0; }
+  .toc li a { color: var(--ink2); text-decoration: none; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
+  .toc li a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .divider { display: flex; align-items: center; gap: 16px; margin: 62px 0 52px; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--paper3); }
+  .divider span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
+
+  /* ── TYPOGRAPHY ── */
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+  .eyebrow.accent { color: var(--accent); }
+  .eyebrow.lex  { color: var(--lex); }
+  .eyebrow.syn  { color: var(--syn); }
+  .eyebrow.sem  { color: var(--sem); }
+  .eyebrow.prag { color: var(--prag); }
+  h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 3.2vw, 2.45rem); font-weight: 700; line-height: 1.18; letter-spacing: -0.015em; margin-bottom: 20px; color: var(--ink); }
+  h2 em.accent { font-style: italic; color: var(--accent); }
+  h2 em.lex    { font-style: italic; color: var(--lex); }
+  h2 em.syn    { font-style: italic; color: var(--syn); }
+  h2 em.sem    { font-style: italic; color: var(--sem); }
+  h2 em.prag   { font-style: italic; color: var(--prag); }
+  h3 { font-family: 'Inter', sans-serif; font-size: 1.07rem; font-weight: 600; margin: 34px 0 10px; color: var(--ink); }
+  p  { margin-bottom: 16px; color: var(--ink2); }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); font-weight: 600; }
+  code { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; background: var(--paper2); padding: 1px 6px; border-radius: 4px; color: var(--accent2); }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote { border-left: 3px solid var(--accent); padding: 4px 0 4px 28px; margin: 36px 0; }
+  .pull-quote p { font-family: 'Playfair Display', serif; font-size: 1.22rem; font-style: italic; color: var(--ink); line-height: 1.6; margin: 0; }
+
+  /* ── ANALOGY ── */
+  .analogy { background: #fff; border: 1px solid var(--paper3); border-radius: 12px; padding: 24px 28px; margin: 28px 0; box-shadow: 0 2px 10px rgba(217,119,6,0.05); }
+  .analogy-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+  .analogy-label.accent { color: var(--accent); }
+  .analogy-label.lex    { color: var(--lex); }
+  .analogy-label.syn    { color: var(--syn); }
+  .analogy-label.sem    { color: var(--sem); }
+  .analogy-label.prag   { color: var(--prag); }
+  .analogy p { font-size: 14.5px; color: var(--ink2); margin: 0; }
+
+  /* ── CALLOUT ── */
+  .callout { border-radius: 10px; padding: 20px 24px; margin: 28px 0; border: 1px solid transparent; }
+  .callout-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; margin-bottom: 9px; }
+  .callout p { font-size: 14px; margin: 0; line-height: 1.68; }
+  .callout.orange { background: #fff7ed; border-color: rgba(217,119,6,0.22); }
+  .callout.orange .callout-label { color: var(--accent2); }
+  .callout.lex    { background: var(--lex-bg); border-color: var(--lex-bd); }
+  .callout.lex    .callout-label { color: var(--lex); }
+  .callout.syn    { background: var(--syn-bg); border-color: var(--syn-bd); }
+  .callout.syn    .callout-label { color: var(--syn); }
+  .callout.sem    { background: var(--sem-bg); border-color: var(--sem-bd); }
+  .callout.sem    .callout-label { color: var(--sem); }
+  .callout.prag   { background: var(--prag-bg); border-color: var(--prag-bd); }
+  .callout.prag   .callout-label { color: var(--prag); }
+  .callout.green  { background: var(--green-bg); border-color: rgba(10,124,74,0.22); }
+  .callout.green  .callout-label { color: var(--green); }
+  .callout.teal   { background: var(--teal-bg); border-color: rgba(13,115,119,0.22); }
+  .callout.teal   .callout-label { color: var(--teal); }
+  .callout.blue   { background: var(--blue-bg); border-color: rgba(29,78,216,0.22); }
+  .callout.blue   .callout-label { color: var(--blue); }
+
+  /* ── JARGON ── */
+  .jargon { display: flex; align-items: flex-start; gap: 10px; background: #fff; border: 1px solid var(--paper3); border-radius: 6px; padding: 10px 14px; margin: 8px 0; }
+  .jargon-term { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: var(--accent2); white-space: nowrap; flex-shrink: 0; padding-top: 1px; }
+  .jargon-term.lex  { color: var(--lex); }
+  .jargon-term.syn  { color: var(--syn); }
+  .jargon-term.sem  { color: var(--sem); }
+  .jargon-term.prag { color: var(--prag); }
+  .jargon-def { font-size: 13.5px; color: var(--ink2); line-height: 1.55; }
+
+  /* ── LEVEL HEADER ── */
+  .level-header { border-radius: 14px; padding: 26px 30px; margin-bottom: 28px; }
+  .level-header.lex  { background: var(--lex-bg);  border: 1.5px solid var(--lex-bd);  }
+  .level-header.syn  { background: var(--syn-bg);  border: 1.5px solid var(--syn-bd);  }
+  .level-header.sem  { background: var(--sem-bg);  border: 1.5px solid var(--sem-bd);  }
+  .level-header.prag { background: var(--prag-bg); border: 1.5px solid var(--prag-bd); }
+  .level-num   { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-header.lex  .level-num { color: var(--lex); }
+  .level-header.syn  .level-num { color: var(--syn); }
+  .level-header.sem  .level-num { color: var(--sem); }
+  .level-header.prag .level-num { color: var(--prag); }
+  .level-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 5px; letter-spacing: -0.01em; }
+  .level-sub   { font-size: 14px; color: var(--ink2); line-height: 1.6; }
+  .level-meta  { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+  .level-meta-item { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink3); }
+  .level-meta-item span { color: var(--ink); font-weight: 600; }
+
+  /* ── PIPELINE STRIP ── */
+  .pipeline-strip { background: #fff; border: 1px solid var(--paper3); border-radius: 12px; padding: 22px 26px; margin: 24px 0; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+  .pipeline-strip-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .pipeline-steps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .pipe-step { background: var(--paper2); border: 1px solid var(--paper3); border-radius: 8px; padding: 8px 12px; text-align: center; flex: 1; min-width: 80px; }
+  .pipe-step-num  { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 0.12em; margin-bottom: 4px; }
+  .pipe-step-name { font-weight: 600; font-size: 12.5px; color: var(--ink); }
+  .pipe-step-eg   { font-size: 11px; color: var(--ink3); margin-top: 2px; font-style: italic; }
+  .pipe-arrow { color: var(--paper3); font-size: 18px; flex-shrink: 0; }
+
+  /* ── TEXT TRANSFORM VISUAL ── */
+  .transform-chain { background: #fff; border: 1px solid var(--paper3); border-radius: 12px; padding: 22px 26px; margin: 24px 0; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+  .transform-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .transform-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--paper2); }
+  .transform-row:last-child { border-bottom: none; }
+  .transform-step { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink3); letter-spacing: 0.08em; }
+  .transform-text { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink); background: var(--paper2); padding: 4px 10px; border-radius: 5px; line-height: 1.5; }
+  .transform-text .removed { text-decoration: line-through; color: var(--ink3); }
+  .transform-text .added { color: var(--accent2); font-weight: 600; }
+
+  /* ── NER VISUAL ── */
+  .ner-text { background: #fff; border: 1px solid var(--paper3); border-radius: 12px; padding: 22px 26px; margin: 24px 0; box-shadow: 0 1px 6px rgba(0,0,0,0.04); font-size: 16px; line-height: 2.2; color: var(--ink); }
+  .ner-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .ner-tag { display: inline; border-radius: 4px; padding: 1px 6px; margin: 0 1px; font-weight: 600; font-size: 15px; }
+  .ner-tag.per  { background: #fee2e2; color: #991b1b; }
+  .ner-tag.org  { background: #dbeafe; color: #1e40af; }
+  .ner-tag.loc  { background: #dcfce7; color: #166534; }
+  .ner-tag.date { background: #fef9c3; color: #854d0e; }
+  .ner-legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .ner-legend-item { font-size: 12px; display: flex; align-items: center; gap: 5px; color: var(--ink3); }
+  .ner-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── NLP TASKS GRID ── */
+  .task-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; margin: 24px 0; }
+  .task-card { background: #fff; border: 1px solid var(--paper3); border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 5px rgba(0,0,0,0.04); }
+  .task-card-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+  .task-card-label.understand { color: var(--lex); }
+  .task-card-label.generate   { color: var(--sem); }
+  .task-card-label.extract    { color: var(--prag); }
+  .task-card ul { list-style: none; }
+  .task-card ul li { font-size: 13.5px; color: var(--ink2); padding: 4px 0 4px 14px; position: relative; border-bottom: 1px solid var(--paper2); }
+  .task-card ul li:last-child { border-bottom: none; }
+  .task-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--ink3); }
+  .task-card ul li strong { color: var(--ink); }
+
+  /* ── METRIC TABLE ── */
+  .metric-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+  .metric-table th { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); text-align: left; padding: 0 0 10px; border-bottom: 1px solid var(--paper3); }
+  .metric-table td { padding: 10px 0 9px; border-bottom: 1px solid var(--paper2); vertical-align: top; color: var(--ink2); line-height: 1.55; }
+  .metric-table td:first-child { font-weight: 600; color: var(--ink); padding-right: 18px; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+  .metric-table tr:last-child td { border-bottom: none; }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap { background: var(--code-bg); border-radius: 14px; overflow: hidden; margin: 30px 0; }
+  .code-header { background: rgba(255,255,255,0.04); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .code-header-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dot:nth-child(1) { background: #ff5f57; }
+  .code-dot:nth-child(2) { background: #febc2e; }
+  .code-dot:nth-child(3) { background: #28c840; }
+  pre { padding: 22px 24px; overflow-x: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.8; color: var(--code-text); }
+  .cm { color: #4a5580; }
+  .ck { color: #ce93d8; }
+  .cs { color: #a5d6a7; }
+  .cn { color: #ffcc80; }
+  .cf { color: #90caf9; }
+
+  /* ── EXPECTED OUTPUT ── */
+  .expected-output { background: #1a1f2e; border: 1px solid rgba(251,191,36,0.2); border-radius: 10px; margin: -10px 0 30px; overflow: hidden; }
+  .expected-output-header { background: rgba(251,191,36,0.07); padding: 8px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #fbbf24; border-bottom: 1px solid rgba(251,191,36,0.15); }
+  .expected-output pre { padding: 16px 20px; font-size: 12px; line-height: 1.75; color: #c5cae9; background: transparent; }
+  .out-h { color: #90caf9; }
+  .out-n { color: #ffcc80; }
+  .out-g { color: #a5d6a7; }
+  .out-d { color: #80deea; }
+
+  /* ── AGENT BOX ── */
+  .agent-box { background: #0d0a00; border-radius: 14px; padding: 32px 34px; margin: 46px 0; position: relative; overflow: hidden; }
+  .agent-box::before { content: ''; position: absolute; top: -40px; left: -40px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(217,119,6,0.2) 0%, transparent 65%); pointer-events: none; }
+  .agent-box::after  { content: ''; position: absolute; bottom: -40px; right: -40px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 65%); pointer-events: none; }
+  .agent-box-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #fbbf24; margin-bottom: 14px; position: relative; }
+  .agent-box h3 { color: #fff; margin: 0 0 12px; font-size: 1.12rem; position: relative; }
+  .agent-box p  { color: rgba(255,255,255,0.62); font-size: 14px; margin-bottom: 12px; position: relative; }
+  .agent-box p:last-child { margin-bottom: 0; }
+
+  /* ── CHEAT GRID ── */
+  .cheat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin: 20px 0; }
+  .cheat-cell { background: #fff; border: 1px solid var(--paper3); border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border-top: 3px solid var(--accent); }
+  .cheat-cell.lex  { border-top-color: var(--lex); }
+  .cheat-cell.syn  { border-top-color: var(--syn); }
+  .cheat-cell.sem  { border-top-color: var(--sem); }
+  .cheat-cell.prag { border-top-color: var(--prag); }
+  .cheat-cell-name { font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+  .cheat-cell-sub  { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink3); margin-bottom: 9px; letter-spacing: 0.08em; }
+  .cheat-cell ul   { list-style: none; font-size: 13px; color: var(--ink2); }
+  .cheat-cell ul li { padding: 3px 0 3px 14px; position: relative; }
+  .cheat-cell ul li::before { content: '·'; position: absolute; left: 0; color: var(--ink3); }
+
+  /* ── FOOTER ── */
+  .footer { background: #0d0a00; padding: 56px 24px; margin-top: 80px; text-align: center; }
+  .footer-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .footer-sub   { font-size: 13px; color: rgba(255,255,255,0.38); margin-bottom: 10px; }
+  .footer-next  { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #fbbf24; margin-top: 20px; }
+
+  @media(max-width:620px) {
+    .toc ol, .task-grid, .cheat-grid { grid-template-columns: 1fr; }
+    .hero-stats, .level-meta { gap: 22px; }
+    .masthead-inner { flex-direction: column; gap: 4px; }
+    .pipeline-steps { gap: 4px; }
+    .pipe-step { min-width: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title">Master Agentic AI with Me · Issue #06</div>
+    <div class="masthead-meta">NLP Part 1 · Block 04 · How Machines Read</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="issue-tag">Issue 06 · Block 04 NLP Part 1 of 2</div>
+  <h1>Teaching Machines<br>to <em>Read</em> Like Humans</h1>
+  <p class="hero-sub">Before an AI can understand "I went to the bank near the river", it must first learn what a word is, how sentences are structured, what words mean, and what the speaker actually intended.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>28 min</strong>read</div>
+    <div class="hero-stat"><strong>4</strong>NLP levels</div>
+    <div class="hero-stat"><strong>5</strong>code cells</div>
+    <div class="hero-stat"><strong>12</strong>NLP tasks</div>
+  </div>
+  <div class="level-badges">
+    <span class="level-badge lex">Lexical</span>
+    <span class="level-badge syn">Syntactic</span>
+    <span class="level-badge sem">Semantic</span>
+    <span class="level-badge prag">Pragmatic</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-label">In this issue</div>
+    <ol>
+      <li><a href="#why-nlp">Why NLP is harder than it looks</a></li>
+      <li><a href="#preprocessing">Text preprocessing pipeline</a></li>
+      <li><a href="#four-levels">The four levels of NLP analysis</a></li>
+      <li><a href="#lexical">Level 1 — Lexical analysis</a></li>
+      <li><a href="#syntactic">Level 2 — Syntactic analysis</a></li>
+      <li><a href="#semantic">Level 3 — Semantic analysis</a></li>
+      <li><a href="#pragmatic">Level 4 — Pragmatic analysis</a></li>
+      <li><a href="#nlp-tasks">12 NLP tasks you can build</a></li>
+      <li><a href="#code">Full Python implementation</a></li>
+      <li><a href="#agent-connection">Connection to AI Agents</a></li>
+    </ol>
+  </div>
+
+  <div class="eyebrow accent">From the editor</div>
+  <p>Welcome to Issue 06 — Block 04. We've gone from gradient descent to neural networks. Now we turn those networks toward the hardest data type in existence: human language.</p>
+  <p>Language is not like images or tabular data. An image has a fixed spatial structure. A table has fixed columns. Language is fluid, ambiguous, context-dependent, and endlessly creative. "The deal is done" means something completely different in a business negotiation versus a magical realism novel. "Can you pass the salt?" is technically a question about ability but functionally a request. "This is fine" is often the opposite of fine.</p>
+  <p>NLP is the field that teaches machines to navigate all of this. And since every AI agent you'll ever build — whether it processes documents, answers questions, routes requests, or generates responses — works with language, NLP is the invisible foundation of everything in your roadmap from here forward.</p>
+  <p>This issue covers <strong>how machines read</strong>: cleaning raw text, the four layers of language understanding, and the twelve real tasks you can build with them.</p>
+  <p>Issue 07 covers <strong>how machines represent language as numbers</strong> — embeddings, Word2Vec, and the Attention mechanism that changed everything in 2017.</p>
+
+  <div class="divider"><span>Part 1 · Why NLP is Hard</span></div>
+
+  <div id="why-nlp">
+    <div class="eyebrow accent">The problem first</div>
+    <h2>Why language is the <em class="accent">hardest data type</em> in machine learning</h2>
+
+    <p>Every other data type we've covered had a fixed structure. A 28×28 image is always 784 numbers. A customer record with 10 features is always 10 numbers. Neural networks love fixed structure — you know exactly what you're getting.</p>
+
+    <p>Language has none of this. Sentences are different lengths. Words can mean different things in different contexts. The same idea can be expressed in thousands of different ways. Grammar rules have exceptions to their exceptions. And meaning isn't in individual words — it's in the relationships between them.</p>
+
+    <div class="analogy">
+      <div class="analogy-label accent">Four sentences, same meaning</div>
+      <p>"The cat sat on the mat." / "On the mat sat the cat." / "The mat had a cat sitting on it." / "A cat was seated upon the mat." — Any NLP system must recognise these as semantically equivalent despite having completely different word orders and structures. A pixel-based system would never confuse four different images this way. Language does this constantly.</p>
+    </div>
+
+    <p>The core challenges every NLP system must solve: <strong>Ambiguity</strong> (bank = financial or river?), <strong>Context dependency</strong> (pronouns — "John told Mike that he was wrong" — who is he?), <strong>Variable length</strong> (text can be 3 words or 300,000 words), <strong>Compositionality</strong> (meaning of a sentence ≠ sum of its word meanings), and <strong>World knowledge</strong> ("Paris is the capital of France" is a fact the model must somehow know).</p>
+
+    <div class="callout orange">
+      <div class="callout-label">The NLP pipeline — always in this order</div>
+      <p>Every NLP system — from spam filters to GPT-4 — follows the same pipeline. Raw text goes in. It gets cleaned and preprocessed. It gets converted into numbers. A model processes those numbers. An output comes out. This issue covers steps 1–2 (cleaning + understanding). Issue 07 covers step 3 (text → numbers) and the neural models built on top.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 2 · Text Preprocessing</span></div>
+
+  <div id="preprocessing">
+    <div class="eyebrow accent">Always step one</div>
+    <h2>Text Preprocessing — <em class="accent">turning raw mess into clean input</em></h2>
+
+    <p>Raw text from the real world is filthy. User reviews have typos, HTML tags, inconsistent capitalisation, emojis, and slang. News articles have publication dates, author bylines, and navigation text mixed with the actual content. Social media posts have hashtags, @mentions, and URLs. Before any model touches text, you clean it.</p>
+
+    <p>Think of preprocessing as standardising your data — the same reason you scale numerical features before training a neural network. You're making the data consistent so the model doesn't have to learn that "Running", "running", and "RUNNING" are the same thing.</p>
+
+    <div class="pipeline-strip">
+      <div class="pipeline-strip-label">The standard preprocessing pipeline — in order</div>
+      <div class="pipeline-steps">
+        <div class="pipe-step">
+          <div class="pipe-step-num">01</div>
+          <div class="pipe-step-name">Lowercase</div>
+          <div class="pipe-step-eg">CAT → cat</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-step-num">02</div>
+          <div class="pipe-step-name">Clean Noise</div>
+          <div class="pipe-step-eg">HTML, URLs</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-step-num">03</div>
+          <div class="pipe-step-name">Tokenise</div>
+          <div class="pipe-step-eg">Split words</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-step-num">04</div>
+          <div class="pipe-step-name">Stop Words</div>
+          <div class="pipe-step-eg">Remove "the"</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-step-num">05</div>
+          <div class="pipe-step-name">Lemmatise</div>
+          <div class="pipe-step-eg">running→run</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="transform-chain">
+      <div class="transform-label">Text transformation — one sentence through the full pipeline</div>
+      <div class="transform-row">
+        <div class="transform-step">Raw text</div>
+        <div class="transform-text">"The CATS were Running quickly! Check http://example.com for details."</div>
+      </div>
+      <div class="transform-row">
+        <div class="transform-step">Lowercase</div>
+        <div class="transform-text">"the cats were running quickly! check http://example.com for details."</div>
+      </div>
+      <div class="transform-row">
+        <div class="transform-step">Clean noise</div>
+        <div class="transform-text">"the cats were running quickly check for details"</div>
+      </div>
+      <div class="transform-row">
+        <div class="transform-step">Tokenise</div>
+        <div class="transform-text">["the", "cats", "were", "running", "quickly", "check", "for", "details"]</div>
+      </div>
+      <div class="transform-row">
+        <div class="transform-step">Stop words removed</div>
+        <div class="transform-text">["cats", "running", "quickly", "check", "details"]</div>
+      </div>
+      <div class="transform-row">
+        <div class="transform-step">Lemmatised</div>
+        <div class="transform-text">["cat", "run", "quickly", "check", "detail"]</div>
+      </div>
+    </div>
+
+    <h3>Stemming vs Lemmatisation — the important difference</h3>
+
+    <div class="jargon">
+      <span class="jargon-term">Stemming</span>
+      <span class="jargon-def">Crudely chop off word endings using rules. "Running" → "run". "Better" → "better". "Studies" → "studi". Fast and simple, but produces non-words ("studi" is not a word). Good enough for simple text classification tasks where you just need to group similar words, not for anything requiring real language understanding.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term">Lemmatisation</span>
+      <span class="jargon-def">Return the proper dictionary root form (the lemma) using linguistic knowledge. "Running" → "run". "Better" → "good". "Mice" → "mouse". Always produces real words. Slower than stemming but more accurate. Requires knowing the part of speech — "better" as an adjective lemmatises to "good", as a verb to "better". Use this when output quality matters.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term">Tokenisation</span>
+      <span class="jargon-def">Splitting text into individual units called tokens. The most basic tokenisation splits on whitespace and punctuation — producing words. But modern LLMs use <strong>subword tokenisation</strong> (BPE, WordPiece) where "unhappiness" becomes ["un", "happi", "ness"] — each piece a token. This handles rare words, misspellings, and multiple languages with a fixed vocabulary. Covered in detail in the next NLP issue.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term">Stop Words</span>
+      <span class="jargon-def">High-frequency words that carry little semantic meaning: "the", "a", "is", "are", "in", "on", "and", "or", "not". Removing them reduces noise and vocabulary size for classical NLP methods. But modern neural networks don't remove stop words — they can learn context from them. "The President" vs "A President" — the article matters.</span>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">When to preprocess — and when not to</div>
+      <p>Classical NLP (Bag of Words, TF-IDF, traditional ML classifiers) → always preprocess. The preprocessing removes noise that these simple models can't handle. Modern deep learning and LLMs → often skip preprocessing. BERT and GPT-4 are trained on raw text including punctuation, stop words, and capitalisation — they use all of it. Removing stop words before feeding text to a Transformer will actually hurt performance.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 3 · The Four Levels</span></div>
+
+  <div id="four-levels">
+    <div class="eyebrow accent">How NLP understands language</div>
+    <h2>Four levels — <em class="accent">from letters to intent</em></h2>
+
+    <p>NLP doesn't understand language in one shot. It builds understanding in layers — each level answering a more complex question about the text, each depending on the one below it.</p>
+
+    <div class="analogy">
+      <div class="analogy-label accent">The reading analogy</div>
+      <p>When you read "Elon Musk said Tesla would miss its quarterly targets, sending the stock down 8%", you do four things automatically: you identify the words (lexical). You parse that "Elon Musk said" is the main clause and "sending the stock down 8%" is a participial phrase (syntactic). You understand that Elon Musk is a person, Tesla is a company, and "stock down 8%" means a price drop (semantic). You infer that this is bad news for Tesla investors (pragmatic). NLP systems replicate each of these layers explicitly.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 4 · Level 1 — Lexical</span></div>
+
+  <div id="lexical">
+    <div class="level-header lex">
+      <div class="level-num">Level 1 of 4</div>
+      <div class="level-title">Lexical Analysis — What Are the Words?</div>
+      <div class="level-sub">The first layer of NLP. Identify and classify individual words, their forms, and basic properties. Everything else depends on getting this right.</div>
+      <div class="level-meta">
+        <div class="level-meta-item">Question: <span>What words exist in this text?</span></div>
+        <div class="level-meta-item">Library: <span>spaCy · NLTK</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow lex">Level 1 · Lexical Analysis</div>
+    <h2>Lexical — <em class="lex">the alphabet of NLP</em></h2>
+
+    <p>Lexical analysis is NLP's first pass at text. Before you can understand meaning, you need to know what units of language you're working with. This level breaks text into its components and labels their basic properties.</p>
+
+    <h3>Tokenisation — the first cut</h3>
+
+    <p>Every NLP pipeline starts with tokenisation. You can't process "I love NLP" as a string — you need the individual units. Word tokenisation gives you ["I", "love", "NLP"]. Sentence tokenisation splits a paragraph into sentences. Subword tokenisation (used in LLMs) breaks words into pieces.</p>
+
+    <div class="jargon">
+      <span class="jargon-term lex">POS Tagging</span>
+      <span class="jargon-def">Part-of-Speech tagging labels every word with its grammatical role: noun (NN), verb (VB), adjective (JJ), adverb (RB), determiner (DT), etc. "The quick brown fox jumps" → [DT, JJ, JJ, NN, VBZ]. Why it matters: the same word can be different parts of speech. "Time flies like an arrow" — is "flies" a noun (insects) or a verb (to fly)? POS tagging resolves this using context. Used as input to parsers, named entity recognisers, and sentiment systems.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term lex">Morphological Analysis</span>
+      <span class="jargon-def">Studying the internal structure of words — prefixes, suffixes, roots, and how they combine to create meaning. "Unhappiness" = "un" (negation prefix) + "happy" (root) + "ness" (state suffix). This matters for languages with complex word forms (German, Finnish, Turkish) and for handling words the model has never seen — if you understand "un" means negation and "happi" means joyful, you can infer "unhappiness" even without training data for that exact word.</span>
+    </div>
+
+    <h3>Named Entity Recognition (NER) — finding proper nouns that matter</h3>
+
+    <p>NER identifies and classifies named entities in text — real-world objects like people, organisations, locations, dates, and monetary values. It's one of the most used NLP capabilities in production systems.</p>
+
+    <div class="ner-text">
+      <div class="ner-label">NER in action — entities highlighted by type</div>
+      <span class="ner-tag per">Sundar Pichai</span> announced that <span class="ner-tag org">Google</span> would invest $<span class="ner-tag date">1 billion</span> in <span class="ner-tag loc">India</span> by <span class="ner-tag date">2025</span>, with headquarters expansion in <span class="ner-tag loc">Bengaluru</span> and <span class="ner-tag loc">Hyderabad</span>.
+      <div class="ner-legend">
+        <span class="ner-legend-item"><div class="ner-dot" style="background:#fee2e2;border:1px solid #fca5a5;"></div>PERSON</span>
+        <span class="ner-legend-item"><div class="ner-dot" style="background:#dbeafe;border:1px solid #93c5fd;"></div>ORGANISATION</span>
+        <span class="ner-legend-item"><div class="ner-dot" style="background:#dcfce7;border:1px solid #86efac;"></div>LOCATION</span>
+        <span class="ner-legend-item"><div class="ner-dot" style="background:#fef9c3;border:1px solid #fde047;"></div>DATE / NUMBER</span>
+      </div>
+    </div>
+
+    <div class="callout lex">
+      <div class="callout-label">NER in production AI systems</div>
+      <p>Every AI agent that processes documents uses NER. When an agent reads a legal contract, NER extracts the parties involved, dates, monetary amounts, and jurisdictions. When an agent processes customer emails, NER extracts product names, order numbers, and locations. In RAG pipelines, NER enriches document metadata so retrieval can filter by "documents mentioning Company X" or "documents from Q3 2024."</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 5 · Level 2 — Syntactic</span></div>
+
+  <div id="syntactic">
+    <div class="level-header syn">
+      <div class="level-num">Level 2 of 4</div>
+      <div class="level-title">Syntactic Analysis — How Do Words Relate?</div>
+      <div class="level-sub">Parse the grammatical structure of sentences. Understand which words modify which, what the subject and object are, and whether the sentence follows valid grammatical rules.</div>
+      <div class="level-meta">
+        <div class="level-meta-item">Question: <span>What is the structure of this sentence?</span></div>
+        <div class="level-meta-item">Library: <span>spaCy · NLTK</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow syn">Level 2 · Syntactic Analysis</div>
+    <h2>Syntactic — <em class="syn">grammar as a map of meaning</em></h2>
+
+    <p>Knowing what words exist isn't enough. "Dog bites man" and "Man bites dog" use identical words but mean opposite things. The relationships between words — who is doing what to whom — is syntax. Syntactic analysis maps those relationships.</p>
+
+    <div class="jargon">
+      <span class="jargon-term syn">Parsing</span>
+      <span class="jargon-def">Analysing the grammatical structure of a sentence and representing it as a tree. There are two main types: Constituency parsing and Dependency parsing. Parsing reveals the skeletal structure of a sentence — what is the subject, what is the verb, what is the object, and how they relate. Used in machine translation (structure differs between languages), question answering (identifying the question's subject), and information extraction.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term syn">Dependency Parsing</span>
+      <span class="jargon-def">Draws directed arrows between words showing which word depends on which. In "The big dog bit the small cat" — "dog" is the subject of "bit", "cat" is the object of "bit", "big" modifies "dog", "small" modifies "cat". Each arrow is labelled with the relationship type (nsubj = nominal subject, dobj = direct object, amod = adjectival modifier). Modern NLP uses dependency parsing for information extraction and relation detection.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term syn">Constituency Parsing</span>
+      <span class="jargon-def">Breaks a sentence into nested phrase groups. "The quick fox" is a Noun Phrase (NP). "jumped over the fence" is a Verb Phrase (VP). NPs and VPs combine into sentences (S). The result is a hierarchical tree that shows how phrases group together. "The quick fox jumped over the fence" → S[NP[The quick fox] VP[jumped PP[over NP[the fence]]]]. More linguistically motivated than dependency parsing.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term syn">Context-Free Grammar (CFG)</span>
+      <span class="jargon-def">A formal rule system that defines how valid sentences are structured. Rules like: S → NP VP (a sentence is a noun phrase followed by a verb phrase), NP → DT NN (a noun phrase is a determiner followed by a noun), VP → VBD NP (a verb phrase is a past-tense verb followed by a noun phrase). CFGs are the mathematical backbone of constituency parsers. The "context-free" means the rules apply regardless of surrounding context — which is both their strength (simplicity) and limitation (real language is context-sensitive).</span>
+    </div>
+
+    <div class="callout syn">
+      <div class="callout-label">Does syntactic analysis still matter in the LLM era?</div>
+      <p>Transformers like BERT implicitly learn syntactic structure from data without explicit parsing. But syntax still matters in production for specific tasks: extracting who did what to whom in legal documents (dependency parsing), validating that generated SQL follows correct grammar (CFG), understanding negation scope ("The patient does not have a fever" — which entity is being negated?), and rule-based information extraction where you need precision guarantees that neural models don't provide.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 6 · Level 3 — Semantic</span></div>
+
+  <div id="semantic">
+    <div class="level-header sem">
+      <div class="level-num">Level 3 of 4</div>
+      <div class="level-title">Semantic Analysis — What Does It Mean?</div>
+      <div class="level-sub">Move beyond structure into meaning. Extract the actual content: what entities exist, what relationships hold between them, what opinion is being expressed, and what the text is actually about.</div>
+      <div class="level-meta">
+        <div class="level-meta-item">Question: <span>What is the meaning of this text?</span></div>
+        <div class="level-meta-item">Library: <span>spaCy · HuggingFace Transformers</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow sem">Level 3 · Semantic Analysis</div>
+    <h2>Semantic — <em class="sem">understanding actual meaning</em></h2>
+
+    <p>Syntax tells you that "dog" is the subject and "bites" is the verb. Semantics tells you what biting means, who the dog is, and whether this is literally or figuratively true. This is the layer where NLP gets genuinely hard — and genuinely powerful.</p>
+
+    <h3>Word Sense Disambiguation — one word, multiple meanings</h3>
+
+    <p>English is full of words with multiple meanings. "Bank" can be a financial institution, a river bank, or to tilt an aircraft. "Light" can mean illumination, low weight, or pale colour. The same word in different contexts means fundamentally different things, and any model must resolve this to understand text correctly.</p>
+
+    <div class="analogy">
+      <div class="analogy-label sem">The disambiguation problem</div>
+      <p>"I went to the bank" — financial institution or river bank? Without context, impossible to know. "I went to the bank to deposit my cheque" → financial. "I went to the bank to fish" → river. "I sat on the bank and watched the water flow" → river (water flowing = strong context signal). Models learn to use surrounding words as signals to select the correct sense. This is word sense disambiguation — and it's one of the oldest, hardest problems in NLP.</p>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term sem">Semantic Similarity</span>
+      <span class="jargon-def">A measure of how similar two pieces of text are in meaning — not in exact words, but in what they're about. "The car broke down" and "The vehicle stopped working" are semantically very similar despite sharing no content words. Computed by comparing embedding vectors (cosine similarity). Powers plagiarism detection, FAQ matching, duplicate question detection, and the retrieval step in RAG pipelines — find documents that mean the same thing as the user's query.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term sem">Sentiment Analysis</span>
+      <span class="jargon-def">Classify text as positive, negative, or neutral — or on a continuous scale. "This product is amazing" → positive. "Terrible experience, never again" → negative. More advanced: aspect-based sentiment analysis, which identifies sentiment toward specific entities. "The food was great but the service was horrible" → food: positive, service: negative. Used in brand monitoring, customer feedback analysis, financial news sentiment, and product review mining.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term sem">Coreference Resolution</span>
+      <span class="jargon-def">Identify when different expressions in a text refer to the same real-world entity. "John told Mike that he was wrong" — the pronoun "he" must be linked to either John or Mike. "The President signed the bill. She later addressed Congress" — "She" refers to "The President". This is crucial for understanding who did what in long documents. Without coreference resolution, extracting information about specific people or organisations from multi-sentence text is unreliable.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term sem">Relation Extraction</span>
+      <span class="jargon-def">Identify structured relationships between entities in text. "Apple was founded by Steve Jobs in 1976 in Cupertino" → (Apple, founded_by, Steve Jobs), (Apple, founded_in, 1976), (Apple, founded_at, Cupertino). These structured triples are used to build knowledge graphs — large networks of entities and their relationships. Google's Knowledge Graph (the box that appears with facts when you search) is built from relation extraction at massive scale.</span>
+    </div>
+
+    <div class="callout sem">
+      <div class="callout-label">Why semantic analysis is the heart of AI agents</div>
+      <p>When an AI agent receives "Book me a flight to Delhi for next Tuesday, I prefer window seats and no layovers", it must perform semantic analysis: extract entities (Delhi, next Tuesday), understand attributes (window seat, no layovers), resolve "next Tuesday" relative to today's date (coreference-like temporal reasoning), and understand that "book" means perform a transaction, not write a novel. Every agent instruction goes through semantic analysis before any action is taken.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 7 · Level 4 — Pragmatic</span></div>
+
+  <div id="pragmatic">
+    <div class="level-header prag">
+      <div class="level-num">Level 4 of 4</div>
+      <div class="level-title">Pragmatic Analysis — What Is the Intent?</div>
+      <div class="level-sub">The final layer. Understand what the speaker actually means in context — beyond the literal words. This is where language understanding meets real human communication.</div>
+      <div class="level-meta">
+        <div class="level-meta-item">Question: <span>What does the speaker actually want or mean?</span></div>
+        <div class="level-meta-item">Use for: <span>Chatbots · Intent detection · Dialogue systems</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow prag">Level 4 · Pragmatic Analysis</div>
+    <h2>Pragmatic — <em class="prag">what language actually does</em></h2>
+
+    <p>This is where NLP gets closest to how humans actually use language. Semantics tells you what a sentence means literally. Pragmatics tells you what the speaker <em>means by it</em> — which is often completely different.</p>
+
+    <p>"Can you pass the salt?" is literally a question about physical ability (yes, anyone can physically pass salt). But pragmatically, it's a polite request. No human says "Yes, I can" and then doesn't pass it. But a naive NLP system that only does semantic analysis would make exactly that mistake.</p>
+
+    <div class="jargon">
+      <span class="jargon-term prag">Intent Detection</span>
+      <span class="jargon-def">Classify what action or goal a user has in mind when they write something. "What's the weather like in Chennai?" → intent: weather_query. "Book a table for two at 8pm" → intent: restaurant_reservation. "Cancel my subscription" → intent: cancellation. Intent detection is the core component of every chatbot and voice assistant — it determines which workflow to trigger. Trained as a classification task on labelled (utterance, intent) pairs.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term prag">Discourse Analysis</span>
+      <span class="jargon-def">Understanding meaning that spans multiple sentences — how sentences connect and build on each other. "The car was expensive. But John bought it anyway." — the "but" signals contrast, and the second sentence only makes sense in the context of the first. Discourse analysis tracks how ideas flow across a conversation or document: is this sentence adding to the previous point? Contradicting it? Providing evidence for it? Crucial for summarisation and dialogue management.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term prag">Speech Acts</span>
+      <span class="jargon-def">The theory that utterances perform actions. A promise (I will do X), a question (requesting information), a command (telling someone to do X), an assertion (claiming something is true), a declaration (pronouncing something into being — "You are fired"). John Austin and John Searle's speech act theory from linguistics has been applied to NLP for dialogue management: every turn in a conversation is one of these act types, and the system must track them to respond appropriately.</span>
+    </div>
+
+    <div class="jargon">
+      <span class="jargon-term prag">Context Understanding</span>
+      <span class="jargon-def">Using the surrounding conversational or document context to resolve ambiguities that can't be resolved from a single sentence. "Can I have it in blue?" only makes sense if the context established what "it" is. "What about tomorrow?" only makes sense relative to a previously mentioned date. In multi-turn dialogue systems, context is typically maintained in a <strong>dialogue state</strong> — a structured summary of what has been established so far. Modern LLMs handle this via their context window.</span>
+    </div>
+
+    <div class="pull-quote>
+      <p>Every chatbot interaction, every voice assistant command, every AI agent receiving instructions — all of it is pragmatic analysis in action. What does this user actually want?</p>
+    </div>
+
+    <div class="callout prag">
+      <div class="callout-label">Pragmatics is what makes LLMs feel intelligent</div>
+      <p>When you ask Claude "Can you help me write an email to apologise to my boss for missing the deadline?", Claude doesn't just answer "yes" (semantic response to a yes/no question). It immediately understands the pragmatic intent — a request for help — and starts writing the email. This ability to interpret language at the pragmatic level, to understand intent and context, is the primary reason conversational LLMs feel so much more natural than earlier chatbots that only did intent classification from a fixed menu of options.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 8 · NLP Tasks You Can Build</span></div>
+
+  <div id="nlp-tasks">
+    <div class="eyebrow accent">From theory to production</div>
+    <h2>Twelve NLP tasks — <em class="accent">what you can actually build</em></h2>
+
+    <p>The four levels of analysis aren't just academic — they directly power the NLP tasks that appear in production systems. Every task below maps to one or more of the analysis levels above.</p>
+
+    <div class="task-grid">
+      <div class="task-card">
+        <div class="task-card-label understand">Text Understanding</div>
+        <ul>
+          <li><strong>Text Classification</strong> — assign a label to a document. Spam/not spam, topic category, language detection. Built on Lexical + Semantic.</li>
+          <li><strong>Sentiment Analysis</strong> — positive/negative/neutral or aspect-level. Review mining, brand monitoring. Semantic level.</li>
+          <li><strong>Spam Detection</strong> — classify emails or messages as spam. Text classification specialisation.</li>
+          <li><strong>Topic Modelling</strong> — unsupervised discovery of recurring themes across a corpus. LDA, NMF algorithms.</li>
+        </ul>
+      </div>
+      <div class="task-card">
+        <div class="task-card-label generate">Text Generation</div>
+        <ul>
+          <li><strong>Machine Translation</strong> — translate between languages. English → French, Hindi → English. Requires all four levels.</li>
+          <li><strong>Text Summarisation</strong> — extractive (select important sentences) or abstractive (rewrite in fewer words). Semantic + discourse.</li>
+          <li><strong>Question Answering</strong> — given a document and a question, extract or generate the answer. RAG is QA at scale.</li>
+          <li><strong>Chatbot / Dialogue</strong> — maintain coherent multi-turn conversation. Pragmatic analysis core.</li>
+        </ul>
+      </div>
+      <div class="task-card">
+        <div class="task-card-label extract">Information Extraction</div>
+        <ul>
+          <li><strong>Named Entity Recognition</strong> — find and classify entities: people, organisations, dates, locations, monetary values.</li>
+          <li><strong>Relation Extraction</strong> — extract structured relationships between entities. Builds knowledge graphs.</li>
+          <li><strong>Event Detection</strong> — identify when specific events happen in text. "Apple launched the iPhone 16 on September 9."</li>
+          <li><strong>Keyword Extraction</strong> — identify the most important terms in a document. TF-IDF, RAKE, or neural approaches.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-label">Which tasks will you actually use when building agents</div>
+      <p><strong>Intent Detection</strong> — routing user requests to the right agent or tool. <strong>Named Entity Recognition</strong> — extracting structured information from user messages and documents. <strong>Semantic Similarity</strong> — matching user queries to relevant documents in RAG. <strong>Sentiment Analysis</strong> — understanding customer feedback, escalation detection. <strong>Text Classification</strong> — labelling incoming data for routing, filtering, or prioritisation. <strong>Summarisation</strong> — compressing long context to fit in the agent's context window.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 9 · Python Implementation</span></div>
+
+  <div id="code">
+    <div class="eyebrow accent">Run this in Google Colab</div>
+    <h2>The complete code — <em class="accent">every line explained</em></h2>
+
+    <!-- CELL 1 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 1 — Setup and Text Preprocessing Pipeline</div>
+      </div>
+      <pre><span class="cm"># ── Install required libraries ─────────────────────────────────</span>
+<span class="cm"># Run this cell first, then restart runtime if asked</span>
+<span class="ck">import</span> subprocess
+subprocess.<span class="cf">run</span>([<span class="cs">"pip"</span>, <span class="cs">"install"</span>, <span class="cs">"nltk"</span>, <span class="cs">"spacy"</span>, <span class="cs">"-q"</span>])
+subprocess.<span class="cf">run</span>([<span class="cs">"python"</span>, <span class="cs">"-m"</span>, <span class="cs">"spacy"</span>, <span class="cs">"download"</span>, <span class="cs">"en_core_web_sm"</span>, <span class="cs">"-q"</span>])
+<span class="cm"># en_core_web_sm: spaCy's small English model — includes tokeniser, POS tagger, NER</span>
+
+<span class="ck">import</span> nltk
+nltk.<span class="cf">download</span>(<span class="cs">'punkt'</span>,      quiet=<span class="ck">True</span>)   <span class="cm"># tokeniser data</span>
+nltk.<span class="cf">download</span>(<span class="cs">'stopwords'</span>, quiet=<span class="ck">True</span>)   <span class="cm"># stop word lists</span>
+nltk.<span class="cf">download</span>(<span class="cs">'wordnet'</span>,   quiet=<span class="ck">True</span>)   <span class="cm"># WordNet lexical database — needed for lemmatisation</span>
+nltk.<span class="cf">download</span>(<span class="cs">'averaged_perceptron_tagger'</span>, quiet=<span class="ck">True</span>)  <span class="cm"># POS tagger model</span>
+
+<span class="ck">import</span> re                               <span class="cm"># re: regular expressions — for pattern-based text cleaning</span>
+<span class="ck">from</span> nltk.tokenize <span class="ck">import</span> word_tokenize, sent_tokenize
+<span class="cm"># word_tokenize: split text into individual word/punctuation tokens</span>
+<span class="cm"># sent_tokenize: split text into sentences</span>
+<span class="ck">from</span> nltk.corpus <span class="ck">import</span> stopwords
+<span class="cm"># stopwords: list of common English stop words ("the", "a", "is", "in", ...)</span>
+<span class="ck">from</span> nltk.stem <span class="ck">import</span> PorterStemmer, WordNetLemmatizer
+<span class="cm"># PorterStemmer: rule-based stemmer (crude but fast)</span>
+<span class="cm"># WordNetLemmatizer: proper lemmatiser using WordNet dictionary</span>
+
+<span class="cf">print</span>(<span class="cs">"✅ Libraries ready"</span>)
+
+<span class="cm"># ── The full preprocessing pipeline ───────────────────────────</span>
+raw_text = <span class="cs">"The CATS were Running quickly! Check https://example.com for more details. It's Amazing!!!"</span>
+
+<span class="cm"># Step 1: Lowercase ─────────────────────────────────────────────</span>
+text = raw_text.<span class="cf">lower</span>()
+<span class="cm"># .lower(): converts every character to lowercase</span>
+<span class="cm"># "CATS" → "cats", "Running" → "running", "Amazing" → "amazing"</span>
+<span class="cf">print</span>(<span class="cs">f"1. Lowercased:  {text}"</span>)
+
+<span class="cm"># Step 2: Remove URLs and punctuation ───────────────────────────</span>
+text = re.<span class="cf">sub</span>(r<span class="cs">'http\S+'</span>, <span class="cs">''</span>, text)
+<span class="cm"># re.sub(pattern, replacement, string): replace pattern matches with replacement</span>
+<span class="cm"># r'http\S+': raw string, matches "http" followed by any non-whitespace characters (\S+)</span>
+<span class="cm"># replaces URLs with empty string (removes them)</span>
+text = re.<span class="cf">sub</span>(r<span class="cs">'[^a-z\s]'</span>, <span class="cs">''</span>, text)
+<span class="cm"># [^a-z\s]: any character that is NOT a lowercase letter or whitespace</span>
+<span class="cm"># removes punctuation, numbers, special characters, apostrophes</span>
+text = text.<span class="cf">strip</span>()              <span class="cm"># .strip(): remove leading and trailing whitespace</span>
+<span class="cf">print</span>(<span class="cs">f"2. Cleaned:     {text}"</span>)
+
+<span class="cm"># Step 3: Tokenise ─────────────────────────────────────────────</span>
+tokens = <span class="cf">word_tokenize</span>(text)
+<span class="cm"># word_tokenize: uses NLTK's punkt tokeniser</span>
+<span class="cm"># handles contractions and edge cases better than simple .split()</span>
+<span class="cf">print</span>(<span class="cs">f"3. Tokenised:   {tokens}"</span>)
+
+<span class="cm"># Step 4: Remove stop words ─────────────────────────────────────</span>
+stop_words = <span class="cf">set</span>(stopwords.<span class="cf">words</span>(<span class="cs">'english'</span>))
+<span class="cm"># set(): convert list to set for O(1) lookup — much faster than list membership check</span>
+filtered = [w <span class="ck">for</span> w <span class="ck">in</span> tokens <span class="ck">if</span> w <span class="ck">not</span> <span class="ck">in</span> stop_words]
+<span class="cm"># list comprehension: keep word only if it's NOT in the stop words set</span>
+<span class="cf">print</span>(<span class="cs">f"4. No stopwords: {filtered}"</span>)
+
+<span class="cm"># Step 5: Stem vs Lemmatise ─────────────────────────────────────</span>
+stemmer    = <span class="cf">PorterStemmer</span>()
+lemmatizer = <span class="cf">WordNetLemmatizer</span>()
+
+stemmed    = [stemmer.<span class="cf">stem</span>(w)        <span class="ck">for</span> w <span class="ck">in</span> filtered]
+lemmatized = [lemmatizer.<span class="cf">lemmatize</span>(w) <span class="ck">for</span> w <span class="ck">in</span> filtered]
+<span class="cm"># .stem(): rule-based cutting — may produce non-words</span>
+<span class="cm"># .lemmatize(): proper dictionary form — always a real word</span>
+
+<span class="cf">print</span>(<span class="cs">f"5a. Stemmed:     {stemmed}"</span>)
+<span class="cf">print</span>(<span class="cs">f"5b. Lemmatized:  {lemmatized}"</span>)
+<span class="cf">print</span>(<span class="cs">f"\nVocabulary size: {len(set(lemmatized))} unique tokens"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>✅ Libraries ready
+
+<span class="out-h">1. Lowercased:</span>  <span class="out-d">the cats were running quickly! check https://example.com for more details. it's amazing!!!</span>
+<span class="out-h">2. Cleaned:</span>     <span class="out-d">the cats were running quickly check  for more details its amazing</span>
+<span class="out-h">3. Tokenised:</span>   <span class="out-d">['the', 'cats', 'were', 'running', 'quickly', 'check', 'for', 'more', 'details', 'its', 'amazing']</span>
+<span class="out-h">4. No stopwords:</span> <span class="out-d">['cats', 'running', 'quickly', 'check', 'details', 'amazing']</span>
+<span class="out-h">5a. Stemmed:</span>     <span class="out-d">['cat', 'run', 'quickli', 'check', 'detail', 'amaz']</span>
+<span class="out-h">5b. Lemmatized:</span>  <span class="out-d">['cat', 'running', 'quickly', 'check', 'detail', 'amazing']</span>
+
+<span class="out-h">Vocabulary size:</span> <span class="out-n">6</span> unique tokens
+
+<span class="out-g">→ Stemmer turns "quickly" → "quickli" (not a real word) and "amazing" → "amaz"
+→ Lemmatizer returns "quickly" → "quickly" (correct), "amazing" → "amazing" (correct)
+→ For "running", lemmatizer needs POS tag (verb) to return "run" — without it, keeps as-is
+→ Stop word removal reduced 11 tokens to 6 — 45% reduction in vocabulary</span></pre>
+    </div>
+
+    <!-- CELL 2 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 2 — POS Tagging and NER with spaCy</div>
+      </div>
+      <pre><span class="ck">import</span> spacy
+nlp = spacy.<span class="cf">load</span>(<span class="cs">"en_core_web_sm"</span>)
+<span class="cm"># spacy.load: load the small English model with tokeniser, tagger, parser, NER</span>
+<span class="cm"># This model has ~12MB — trained on web text and news</span>
+
+text = <span class="cs">"Sundar Pichai announced that Google would invest $1 billion in India by 2025, with expansion in Bengaluru."</span>
+
+doc = <span class="cf">nlp</span>(text)
+<span class="cm"># nlp(text): run the full spaCy pipeline on the text</span>
+<span class="cm"># creates a Doc object containing tokens, POS tags, dependencies, and named entities</span>
+
+<span class="cm"># ── POS Tagging ────────────────────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"=== POS Tags ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"{'Token':<span class="cn">15</span>} {'POS':<span class="cn">8</span>} {'Fine-grained tag':<span class="cn">12</span>} {'Meaning'"</span>})
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">60</span>)
+<span class="ck">for</span> token <span class="ck">in</span> doc:
+    <span class="ck">if</span> token.text.<span class="cf">strip</span>():    <span class="cm"># skip empty tokens (whitespace)</span>
+        <span class="cf">print</span>(<span class="cs">f"{token.text:<span class="cn">15</span>} {token.pos_:<span class="cn">8</span>} {token.tag_:<span class="cn">12</span>} {spacy.explain(token.tag_)}"</span>)
+        <span class="cm"># token.pos_: coarse-grained POS (NOUN, VERB, PROPN, etc.)</span>
+        <span class="cm"># token.tag_: fine-grained Penn Treebank tag (NNP, VBD, etc.)</span>
+        <span class="cm"># spacy.explain(): human-readable description of what the tag means</span>
+
+<span class="cm"># ── Named Entity Recognition ───────────────────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== Named Entities ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"{'Entity':<span class="cn">20</span>} {'Label':<span class="cn">10</span>} {'Meaning'"</span>})
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">55</span>)
+<span class="ck">for</span> ent <span class="ck">in</span> doc.ents:
+    <span class="cf">print</span>(<span class="cs">f"{ent.text:<span class="cn">20</span>} {ent.label_:<span class="cn">10</span>} {spacy.explain(ent.label_)}"</span>)
+    <span class="cm"># doc.ents: tuple of all named entities found in the document</span>
+    <span class="cm"># ent.text: the actual text of the entity span</span>
+    <span class="cm"># ent.label_: the entity type (PERSON, ORG, GPE, MONEY, DATE, etc.)</span>
+    <span class="cm"># spacy.explain(): human description of what the label type means</span>
+
+<span class="cm"># ── Sentence tokenisation ─────────────────────────────────────</span>
+multi_text = <span class="cs">"Python is great. NLP is fascinating. Agents are the future."</span>
+doc2 = <span class="cf">nlp</span>(multi_text)
+sents = [sent.text <span class="ck">for</span> sent <span class="ck">in</span> doc2.sents]
+<span class="cm"># doc.sents: generator of sentence Span objects</span>
+<span class="cm"># spaCy uses the dependency parse to detect sentence boundaries — more accurate than rule-based</span>
+<span class="cf">print</span>(<span class="cs">f"\n\n=== Sentence Tokenisation ===\n{sents}"</span>)</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>=== POS Tags ===
+
+<span class="out-h">Token           POS      Fine-grained  Meaning</span>
+------------------------------------------------------------
+<span class="out-d">Sundar          PROPN    NNP           noun, proper singular
+Pichai          PROPN    NNP           noun, proper singular
+announced       VERB     VBD           verb, past tense
+that            SCONJ    IN            conjunction, subordinating or preposition
+Google          PROPN    NNP           noun, proper singular
+would           AUX      MD            verb, modal auxiliary
+invest          VERB     VB            verb, base form
+$               SYM      $             symbol, currency
+1               NUM      CD            cardinal number
+billion         NUM      CD            cardinal number
+in              ADP      IN            conjunction, subordinating or preposition
+India           PROPN    NNP           noun, proper singular
+by              ADP      IN            conjunction, subordinating or preposition
+2025            NUM      CD            cardinal number</span>
+
+=== Named Entities ===
+
+<span class="out-h">Entity               Label      Meaning</span>
+-------------------------------------------------------
+<span class="out-d">Sundar Pichai        PERSON     People, including fictional
+Google               ORG        Companies, agencies, institutions, etc.
+$1 billion           MONEY      Monetary values, including unit
+India                GPE        Countries, cities, states
+2025                 DATE       Absolute or relative dates or periods
+Bengaluru            GPE        Countries, cities, states</span>
+
+=== Sentence Tokenisation ===
+<span class="out-d">['Python is great.', 'NLP is fascinating.', 'Agents are the future.']</span>
+
+<span class="out-g">→ spaCy correctly identifies "Sundar Pichai" as one PERSON entity (multi-word)
+→ "$1 billion" grouped as one MONEY entity — spaCy understands currency spans
+→ POS tagger correctly labels "invest" as VB (base form) after modal "would"
+→ Sentence tokeniser splits on periods correctly — 3 sentences from 3 statements</span></pre>
+    </div>
+
+    <!-- CELL 3 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 3 — Dependency Parsing</div>
+      </div>
+      <pre><span class="cm"># ── Dependency parsing — see how words relate ────────────────</span>
+sentence = <span class="cs">"The big dog bit the small cat in the park."</span>
+doc3 = <span class="cf">nlp</span>(sentence)
+
+<span class="cf">print</span>(<span class="cs">"=== Dependency Parse ===\n"</span>)
+<span class="cf">print</span>(<span class="cs">f"{'Token':<span class="cn">10</span>} {'Head':<span class="cn">10</span>} {'Relation':<span class="cn">12</span>} {'Meaning'"</span>})
+<span class="cf">print</span>(<span class="cs">"-"</span> * <span class="cn">58</span>)
+<span class="ck">for</span> token <span class="ck">in</span> doc3:
+    <span class="cf">print</span>(<span class="cs">f"{token.text:<span class="cn">10</span>} {token.head.text:<span class="cn">10</span>} {token.dep_:<span class="cn">12</span>} {spacy.explain(token.dep_)}"</span>)
+    <span class="cm"># token.head: the word this token depends on (the governor)</span>
+    <span class="cm"># token.dep_: the type of dependency relationship</span>
+    <span class="cm"># nsubj = nominal subject, dobj = direct object, amod = adjectival modifier</span>
+    <span class="cm"># det = determiner, prep = prepositional modifier, pobj = object of preposition</span>
+
+<span class="cm"># ── Extract subject-verb-object triplets ─────────────────────</span>
+<span class="cf">print</span>(<span class="cs">"\n\n=== Subject-Verb-Object Extraction ===\n"</span>)
+<span class="ck">for</span> token <span class="ck">in</span> doc3:
+    <span class="ck">if</span> token.dep_ == <span class="cs">"nsubj"</span>:        <span class="cm"># find the subject of the sentence</span>
+        verb = token.head             <span class="cm"># the verb is the subject's head</span>
+        subject = token
+        obj = <span class="ck">None</span>
+        <span class="ck">for</span> child <span class="ck">in</span> verb.children:  <span class="cm"># children: all tokens that depend on this verb</span>
+            <span class="ck">if</span> child.dep_ == <span class="cs">"dobj"</span>:  <span class="cm"># dobj = direct object</span>
+                obj = child
+        <span class="ck">if</span> obj:
+            <span class="cf">print</span>(<span class="cs">f"Subject: '{subject.text}' → Verb: '{verb.text}' → Object: '{obj.text}'"</span>)
+            <span class="cf">print</span>(<span class="cs">f"Triplet: ({subject.text}, {verb.text}, {obj.text})"</span>)
+            <span class="cm"># this triplet could go directly into a knowledge graph</span></pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>=== Dependency Parse ===
+
+<span class="out-h">Token      Head       Relation     Meaning</span>
+----------------------------------------------------------
+<span class="out-d">The        dog        det          determiner
+big        dog        amod         adjectival modifier
+dog        bit        nsubj        nominal subject
+bit        bit        ROOT         root
+the        cat        det          determiner
+small      cat        amod         adjectival modifier
+cat        bit        dobj         direct object
+in         bit        prep         prepositional modifier
+the        park       det          determiner
+park       in         pobj         object of preposition</span>
+
+=== Subject-Verb-Object Extraction ===
+
+<span class="out-d">Subject: 'dog' → Verb: 'bit' → Object: 'cat'</span>
+<span class="out-d">Triplet: (dog, bit, cat)</span>
+
+<span class="out-g">→ ROOT is always the main verb — "bit" is the backbone of this sentence
+→ "dog" is nsubj of "bit" — the subject of the action
+→ "cat" is dobj of "bit" — who received the action  
+→ "big" and "small" are amod (adjectival modifier) — they modify nouns, not the verb
+→ The triplet (dog, bit, cat) is exactly the format used to build knowledge graphs</span></pre>
+    </div>
+
+    <!-- CELL 4 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 4 — Sentiment Analysis and Text Classification</div>
+      </div>
+      <pre><span class="ck">from</span> transformers <span class="ck">import</span> pipeline
+<span class="cm"># transformers: HuggingFace library — pre-trained models for all NLP tasks</span>
+<span class="cm"># pipeline(): high-level API — one line to load and use a pre-trained model</span>
+
+<span class="cm"># ── Load a pre-trained sentiment analysis model ───────────────</span>
+sentiment_pipeline = <span class="cf">pipeline</span>(
+    <span class="cs">"sentiment-analysis"</span>,
+    <span class="cm"># tells HuggingFace which task to set up the model for</span>
+    model=<span class="cs">"distilbert-base-uncased-finetuned-sst-2-english"</span>
+    <span class="cm"># DistilBERT: smaller, faster BERT — 40% fewer params, 97% of BERT performance</span>
+    <span class="cm"># fine-tuned on SST-2: Stanford Sentiment Treebank, movie reviews dataset</span>
+)
+<span class="cf">print</span>(<span class="cs">"✅ Sentiment model loaded\n"</span>)
+
+<span class="cm"># ── Test on diverse sentences ─────────────────────────────────</span>
+sentences = [
+    <span class="cs">"This product is absolutely incredible! Best purchase I've ever made."</span>,
+    <span class="cs">"Terrible experience. The service was awful and I waited 2 hours."</span>,
+    <span class="cs">"The package arrived on time."</span>,              <span class="cm"># neutral-ish</span>
+    <span class="cs">"I don't hate this product."</span>,                <span class="cm"># negation — tricky</span>
+    <span class="cs">"The food was great but the prices are insane."</span>, <span class="cm"># mixed sentiment</span>
+]
+
+<span class="cf">print</span>(<span class="cs">"=== Sentiment Analysis Results ===\n"</span>)
+results = sentiment_pipeline(sentences)
+<span class="cm"># pass all sentences at once — processed as a batch (faster than one-by-one)</span>
+
+<span class="ck">for</span> sentence, result <span class="ck">in</span> <span class="cf">zip</span>(sentences, results):
+    label = result[<span class="cs">'label'</span>]    <span class="cm"># 'POSITIVE' or 'NEGATIVE'</span>
+    score = result[<span class="cs">'score'</span>]    <span class="cm"># confidence from 0.0 to 1.0</span>
+    icon  = <span class="cs">"✅"</span> <span class="ck">if</span> label == <span class="cs">"POSITIVE"</span> <span class="ck">else</span> <span class="cs">"❌"</span>
+    <span class="cf">print</span>(<span class="cs">f"{icon} {label} ({score:.3f})"</span>)
+    <span class="cf">print</span>(<span class="cs">f"   '{sentence[:65]}...'"</span> <span class="ck">if</span> <span class="cf">len</span>(sentence) > <span class="cn">65</span> <span class="ck">else</span> <span class="cs">f"   '{sentence}'"</span>)
+    <span class="cf">print</span>()</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>✅ Sentiment model loaded
+
+=== Sentiment Analysis Results ===
+
+<span class="out-g">✅ POSITIVE (0.999)</span>
+   <span class="out-d">'This product is absolutely incredible! Best purchase I've ever made.'</span>
+
+<span class="out-h">❌ NEGATIVE (0.998)</span>
+   <span class="out-d">'Terrible experience. The service was awful and I waited 2 hours.'</span>
+
+<span class="out-g">✅ POSITIVE (0.751)</span>
+   <span class="out-d">'The package arrived on time.'</span>
+
+<span class="out-g">✅ POSITIVE (0.863)</span>
+   <span class="out-d">'I don't hate this product.'</span>
+
+<span class="out-h">❌ NEGATIVE (0.693)</span>
+   <span class="out-d">'The food was great but the prices are insane.'</span>
+
+<span class="out-g">→ Extreme sentiment (score > 0.99): model is very confident — clear signal words
+→ Negation handled correctly: "don't hate" → POSITIVE (double negation)
+→ Mixed sentence: model picks the dominant sentiment, can't split "great" vs "insane"
+→ For mixed sentiment, use aspect-based sentiment analysis instead of sentence-level</span></pre>
+    </div>
+
+    <!-- CELL 5 -->
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <div class="code-header-label">Cell 5 — Intent Detection and Zero-Shot Classification</div>
+      </div>
+      <pre><span class="cm"># ── Zero-shot classification — classify without training data</span>
+classifier = <span class="cf">pipeline</span>(
+    <span class="cs">"zero-shot-classification"</span>,
+    model=<span class="cs">"facebook/bart-large-mnli"</span>
+    <span class="cm"># BART: Facebook's sequence-to-sequence model</span>
+    <span class="cm"># fine-tuned on MNLI: Multi-Genre Natural Language Inference dataset</span>
+    <span class="cm"># zero-shot: classify into ANY category you define — no training needed</span>
+)
+<span class="cf">print</span>(<span class="cs">"✅ Zero-shot model loaded\n"</span>)
+
+<span class="cm"># ── Define user intents for an AI agent ──────────────────────</span>
+agent_intents = [
+    <span class="cs">"book_flight"</span>,
+    <span class="cs">"cancel_order"</span>,
+    <span class="cs">"check_weather"</span>,
+    <span class="cs">"customer_complaint"</span>,
+    <span class="cs">"technical_support"</span>,
+    <span class="cs">"general_question"</span>,
+]
+<span class="cm"># these are the intents our agent handles — defined by us, no labelled data needed</span>
+
+<span class="cm"># ── Test user messages ────────────────────────────────────────</span>
+user_messages = [
+    <span class="cs">"I need to fly to Mumbai next Friday, morning preferred"</span>,
+    <span class="cs">"My laptop keeps crashing when I open Chrome"</span>,
+    <span class="cs">"This is ridiculous, my order has been wrong three times now"</span>,
+    <span class="cs">"What's the temperature in Delhi today?"</span>,
+]
+
+<span class="cf">print</span>(<span class="cs">"=== Intent Detection for AI Agent ===\n"</span>)
+<span class="ck">for</span> message <span class="ck">in</span> user_messages:
+    result = <span class="cf">classifier</span>(
+        message,
+        candidate_labels=agent_intents,   <span class="cm"># the intents to score against</span>
+        multi_label=<span class="ck">False</span>                 <span class="cm"># False: pick one best intent (not multiple)</span>
+    )
+    top_intent = result[<span class="cs">'labels'</span>][<span class="cn">0</span>]      <span class="cm"># labels sorted by score, highest first</span>
+    top_score  = result[<span class="cs">'scores'</span>][<span class="cn">0</span>]
+    second_intent = result[<span class="cs">'labels'</span>][<span class="cn">1</span>]  <span class="cm"># second best intent (for confidence check)</span>
+    second_score  = result[<span class="cs">'scores'</span>][<span class="cn">1</span>]
+    <span class="cf">print</span>(<span class="cs">f"Message: '{message}'"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  → Intent: {top_intent} ({top_score:.3f})"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  → Runner-up: {second_intent} ({second_score:.3f})"</span>)
+    <span class="cf">print</span>()</pre>
+    </div>
+
+    <div class="expected-output">
+      <div class="expected-output-header">Expected Output</div>
+      <pre>✅ Zero-shot model loaded
+
+=== Intent Detection for AI Agent ===
+
+<span class="out-d">Message: 'I need to fly to Mumbai next Friday, morning preferred'</span>
+  → Intent: <span class="out-g">book_flight (0.892)</span>
+  → Runner-up: <span class="out-n">check_weather (0.061)</span>
+
+<span class="out-d">Message: 'My laptop keeps crashing when I open Chrome'</span>
+  → Intent: <span class="out-g">technical_support (0.934)</span>
+  → Runner-up: <span class="out-n">general_question (0.038)</span>
+
+<span class="out-d">Message: 'This is ridiculous, my order has been wrong three times now'</span>
+  → Intent: <span class="out-g">customer_complaint (0.978)</span>
+  → Runner-up: <span class="out-n">cancel_order (0.014)</span>
+
+<span class="out-d">Message: 'What's the temperature in Delhi today?'</span>
+  → Intent: <span class="out-g">check_weather (0.961)</span>
+  → Runner-up: <span class="out-n">general_question (0.026)</span>
+
+<span class="out-g">→ Zero-shot classification needs NO training data for these intents
+→ Works by measuring semantic similarity between message and intent label
+→ "book_flight" scores high for Mumbai/Friday message — model understands travel intent
+→ In production: route each classified intent to the right agent or tool</span></pre>
+    </div>
+  </div>
+
+  <div class="divider"><span>Part 10 · The Agentic AI Connection</span></div>
+
+  <div id="agent-connection">
+    <div class="agent-box">
+      <div class="agent-box-label">Why this entire issue matters for AI Agents</div>
+      <h3>NLP is the interface between humans and every agent you'll ever build</h3>
+      <p>Every AI agent starts with a human instruction in natural language. Before any tool is called, any API is hit, any code is executed — that instruction must be understood. The preprocessing pipeline cleans the input. Lexical analysis identifies the entities. Semantic analysis extracts the intent and the parameters. Pragmatic analysis resolves what the user actually wants versus what they literally typed.</p>
+      <p>NER in agents: when a user says "Schedule a meeting with Sarah from finance for next Thursday at 2pm", an agent must extract the person (Sarah), the department (finance), the date (next Thursday = a specific date resolved from today), and the time (2pm). That's NER + temporal resolution — two NLP tasks running before a single calendar API is called.</p>
+      <p>Intent detection in agents: every multi-tool agent uses intent classification to decide which tool or workflow to trigger. Zero-shot classification (Cell 5) means you can define new intents at any time without retraining — just add a new label. This is why modern agent frameworks let you describe tools in plain English — the LLM does zero-shot classification over the tool descriptions to pick the right one.</p>
+      <p>Semantic similarity in agents: when an agent retrieves documents from a vector database (RAG), it computes semantic similarity between the user's query and stored document embeddings. That similarity measure — cosine distance between embedding vectors — is the practical implementation of everything the Semantic Analysis level is about. Same concept, different implementation. Issue 07 builds exactly this.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>Cheat Sheet</span></div>
+
+  <div class="eyebrow accent">Save this</div>
+  <h2>Block 04 Part 1 — <em class="accent">the complete reference</em></h2>
+
+  <div class="cheat-grid">
+    <div class="cheat-cell lex">
+      <div class="cheat-cell-name">Level 1 · Lexical Analysis</div>
+      <div class="cheat-cell-sub">What are the words?</div>
+      <ul>
+        <li>Tokenisation — split into words/sentences</li>
+        <li>POS Tagging — noun, verb, adjective labels</li>
+        <li>Morphological analysis — word structure</li>
+        <li>Named Entity Recognition — people, orgs, places</li>
+        <li>Library: spaCy · NLTK</li>
+      </ul>
+    </div>
+    <div class="cheat-cell syn">
+      <div class="cheat-cell-name">Level 2 · Syntactic Analysis</div>
+      <div class="cheat-cell-sub">How do words relate structurally?</div>
+      <ul>
+        <li>Parsing — grammatical structure as a tree</li>
+        <li>Dependency parsing — subject/verb/object</li>
+        <li>Constituency parsing — nested phrase groups</li>
+        <li>CFG — formal grammar rule system</li>
+        <li>Library: spaCy · NLTK</li>
+      </ul>
+    </div>
+    <div class="cheat-cell sem">
+      <div class="cheat-cell-name">Level 3 · Semantic Analysis</div>
+      <div class="cheat-cell-sub">What does it mean?</div>
+      <ul>
+        <li>Word sense disambiguation — bank = which bank?</li>
+        <li>Semantic similarity — same meaning, different words</li>
+        <li>Sentiment analysis — positive/negative/neutral</li>
+        <li>Coreference resolution — who is "he"?</li>
+        <li>Relation extraction → knowledge graphs</li>
+      </ul>
+    </div>
+    <div class="cheat-cell prag">
+      <div class="cheat-cell-name">Level 4 · Pragmatic Analysis</div>
+      <div class="cheat-cell-sub">What is the intent?</div>
+      <ul>
+        <li>Intent detection — what does the user want?</li>
+        <li>Discourse analysis — meaning across sentences</li>
+        <li>Context understanding — resolve ambiguity</li>
+        <li>Speech acts — question, command, promise</li>
+        <li>Core of chatbots and dialogue systems</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:28px;">
+    <div class="callout-label">Preprocessing — always-on rules</div>
+    <p>
+      Classical NLP → always preprocess (lowercase, clean noise, tokenise, remove stop words, lemmatise).
+      Modern LLMs → skip preprocessing, feed raw text.
+      Always lemmatise over stemming when output quality matters.
+      When removing stop words: never for LLMs, always for TF-IDF/BoW.
+      NER before any entity-dependent logic. Intent detection before any tool-calling logic.
+    </p>
+  </div>
+
+  <div class="divider"><span>That's Issue #06</span></div>
+
+  <p>You now understand how machines read: the full preprocessing pipeline, all four layers of language analysis, and the twelve tasks you can build on top. That's the understanding side of NLP.</p>
+  <p>Issue 07 lands next: <strong>How Machines Represent Language.</strong> Text → numbers. One-Hot Encoding → Bag of Words → TF-IDF → Word2Vec → GloVe → FastText → Contextual Embeddings → the Attention Mechanism that made Transformers possible. That's the bridge from this issue directly into Block 05.</p>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    <div class="footer-title">Master Agentic AI with Me</div>
+    <div class="footer-sub">From Python to production-grade AI Agents. No fluff. No textbooks. Real engineer perspective.</div>
+    <div class="footer-next">Issue 06 of 07 (NLP) · Block 04 Part 1 · Next: How Machines Represent Language →</div>
+  </div>
+</div>
+
+</body>
+</html>
