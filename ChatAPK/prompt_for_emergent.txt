@@ -1,0 +1,393 @@
+=============================================================
+PROJECT: PRIVATE 2-PERSON SECURE CHAT & VIDEO CALLING APP
+=============================================================
+
+Build me a complete, fully working, production-ready mobile 
+application for Android. I need the final APK I can sideload 
+on my Android phone. Read every section carefully before 
+writing a single line of code.
+
+-------------------------------------------------------------
+SECTION 1 — WHO THIS APP IS FOR
+-------------------------------------------------------------
+
+This app is for exactly 2 people only — me and one other 
+person. There is no public registration. There are no other 
+users. The app must be built around this constraint — it is 
+not a scalable chat platform, it is a private, locked-down 
+communication tool for 2 fixed users.
+
+-------------------------------------------------------------
+SECTION 2 — TECH STACK (DO NOT DEVIATE FROM THIS)
+-------------------------------------------------------------
+
+Frontend:
+- React Native with Expo SDK (latest stable)
+- Target: Android APK via EAS Build (free tier)
+- React Navigation v6 for screen routing
+- Zustand for global state management
+- Expo SecureStore for storing sensitive data on device
+- TweetNaCl (tweetnacl + tweetnacl-util npm packages) for 
+  end-to-end encryption
+
+Backend:
+- Node.js with Express.js
+- Deployed on Railway (free tier)
+- Must include railway.json and Procfile for deployment
+
+Database + Realtime + Storage + Auth:
+- Supabase (free tier)
+- Postgres database for messages, users, files, call signals
+- Supabase Realtime for live message subscriptions
+- Supabase Storage for encrypted file/image uploads
+- Supabase Row Level Security (RLS) on all tables
+- Supabase Auth NOT used — we use custom JWT auth instead
+
+Video & Voice Calls:
+- 100ms.live React Native SDK (@100mslive/react-native-hms)
+- Room tokens generated server-side via 100ms API
+- Free tier: 10,000 minutes/month
+
+Encryption:
+- TweetNaCl.js (box encryption — asymmetric, E2EE)
+- Each user's keypair generated on first login
+- Private key stored ONLY on device via Expo SecureStore
+- Public keys stored in Supabase DB
+- Messages and files encrypted before leaving the device
+- Server and DB admin can NEVER read message content
+
+-------------------------------------------------------------
+SECTION 3 — AUTHENTICATION (INVITE CODE SYSTEM)
+-------------------------------------------------------------
+
+- No email, no phone number, no biometrics
+- There are exactly 2 hardcoded invite codes:
+    User A code: "PHANTOM-ALPHA-001"
+    User B code: "PHANTOM-BETA-002"
+- These codes are stored as bcrypt hashes in Railway 
+  environment variables (never in code)
+- On app open, user sees a single text input asking for 
+  their invite code
+- User types their code → app sends it to backend → backend 
+  verifies against hashed codes → issues a signed JWT with 
+  user identity (user_a or user_b) and expiry of 30 days
+- JWT stored in Expo SecureStore on device
+- On subsequent app opens, JWT is read from SecureStore and 
+  validated silently — user goes straight to chat
+- If JWT expired or invalid → back to invite code screen
+- No logout button needed (but add one hidden in settings 
+  that clears SecureStore and returns to code screen)
+
+-------------------------------------------------------------
+SECTION 4 — END-TO-END ENCRYPTION IMPLEMENTATION
+-------------------------------------------------------------
+
+Key Generation:
+- On first successful login, generate a TweetNaCl keypair 
+  (nacl.box.keyPair())
+- Store private key in Expo SecureStore (never sent anywhere)
+- POST public key to Supabase users table via backend API
+- On subsequent logins, load private key from SecureStore
+
+Key Exchange:
+- After login, fetch the OTHER user's public key from 
+  Supabase users table
+- Store it in Zustand state for use during encryption
+
+Encrypting a Message:
+- Generate a random nonce: nacl.randomBytes(nacl.box.nonceLength)
+- Encrypt: nacl.box(message, nonce, recipientPublicKey, myPrivateKey)
+- Store: base64-encoded ciphertext + base64-encoded nonce in DB
+- NEVER store plaintext in DB
+
+Decrypting a Message:
+- On receive, decode ciphertext and nonce from base64
+- Decrypt: nacl.box.open(ciphertext, nonce, senderPublicKey, myPrivateKey)
+- Decryption happens entirely on device
+- If decryption fails, show "Unable to decrypt message"
+
+File Encryption:
+- Read file as ArrayBuffer
+- Encrypt raw bytes using same nacl.box method
+- Upload encrypted bytes to Supabase Storage
+- Store the signed URL + nonce in the files table in DB
+
+-------------------------------------------------------------
+SECTION 5 — SUPABASE DATABASE SCHEMA
+-------------------------------------------------------------
+
+Create these exact tables with these exact columns.
+Also provide the complete SQL file I can run in Supabase 
+SQL editor.
+
+Table: users
+- id: uuid, primary key, default gen_random_uuid()
+- user_identity: text, unique, not null (values: 'user_a' or 'user_b')
+- public_key: text, not null (base64 encoded nacl public key)
+- created_at: timestamptz, default now()
+- last_seen: timestamptz
+
+Table: messages
+- id: uuid, primary key, default gen_random_uuid()
+- sender_identity: text, not null
+- recipient_identity: text, not null
+- encrypted_content: text, not null (base64 encoded ciphertext)
+- nonce: text, not null (base64 encoded nonce)
+- file_id: uuid, nullable, references files(id)
+- is_delivered: boolean, default false
+- created_at: timestamptz, default now()
+
+Table: files
+- id: uuid, primary key, default gen_random_uuid()
+- sender_identity: text, not null
+- recipient_identity: text, not null
+- encrypted_url: text, not null (Supabase Storage signed URL)
+- file_name: text, not null
+- file_type: text, not null (image/pdf/video/doc)
+- file_size_bytes: bigint
+- nonce: text, not null
+- created_at: timestamptz, default now()
+
+Table: call_signals
+- id: uuid, primary key, default gen_random_uuid()
+- caller_identity: text, not null
+- callee_identity: text, not null
+- room_id: text, not null
+- status: text, not null (values: 'ringing', 'accepted', 
+  'rejected', 'ended')
+- call_type: text, not null (values: 'video', 'voice')
+- created_at: timestamptz, default now()
+
+Row Level Security Rules:
+- users table: a user can only read/update their own row, 
+  but CAN read the other user's public_key column only
+- messages table: a user can only read rows where their 
+  identity is sender OR recipient
+- files table: same as messages
+- call_signals table: same as messages
+- All RLS must use the JWT user_identity claim for checks
+- Include all RLS SQL in the migration file
+
+Supabase Storage:
+- Create a private bucket called "encrypted-files"
+- Only authenticated users (valid JWT) can upload/download
+- Signed URLs expire after 2 hours
+
+-------------------------------------------------------------
+SECTION 6 — BACKEND API (NODE.JS ON RAILWAY)
+-------------------------------------------------------------
+
+Endpoints:
+
+POST /auth/verify-code
+- Body: { invite_code: string }
+- Verify invite code against bcrypt hashed env vars
+- On success: create or fetch user record in Supabase, 
+  return signed JWT ({ user_identity, exp: 30 days })
+- On fail: return 401
+
+POST /auth/register-public-key
+- Protected route (requires valid JWT in Authorization header)
+- Body: { public_key: string }
+- Upsert public key into users table in Supabase
+
+GET /auth/get-peer-key
+- Protected route
+- Returns the OTHER user's public key from Supabase
+- If user_identity is user_a, return user_b's key and vice versa
+
+POST /calls/create-token
+- Protected route
+- Body: { room_id: string, call_type: string }
+- Generate 100ms room token using 100ms Management API
+- Return the room token to the app
+- Use 100ms API credentials from env vars
+
+GET /health
+- Returns { status: "ok", timestamp: Date.now() }
+- No auth required
+
+Environment Variables needed (document all of these):
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+- JWT_SECRET (random 64 char string)
+- USER_A_CODE_HASH (bcrypt hash of "PHANTOM-ALPHA-001")
+- USER_B_CODE_HASH (bcrypt hash of "PHANTOM-BETA-002")
+- HMS_APP_ACCESS_KEY (from 100ms dashboard)
+- HMS_APP_SECRET (from 100ms dashboard)
+- HMS_TEMPLATE_ID (from 100ms dashboard)
+- PORT (Railway sets this automatically)
+
+-------------------------------------------------------------
+SECTION 7 — MOBILE APP SCREENS
+-------------------------------------------------------------
+
+Screen 1: Invite Code Screen
+- Clean dark background
+- App name "Phantom" centered at top with a lock icon
+- Single text input: "Enter your access code"
+- Input should be password-type (obscured)
+- "Enter" button below
+- Loading spinner while verifying
+- Error message if code is wrong: "Invalid code. Try again."
+- On success: navigate to Chat Screen
+- No other UI elements. Minimalist.
+
+Screen 2: Chat Screen (Main Screen)
+- Top bar: "Phantom" on left, video call icon + voice call 
+  icon on right, small green dot showing other user is online
+- Message list: scrollable, newest at bottom
+- My messages: right-aligned, dark blue bubble
+- Their messages: left-aligned, dark grey bubble
+- Each message shows: decrypted text, timestamp (HH:MM), 
+  delivery tick (single grey = sent, double blue = delivered)
+- Below message list: input bar with:
+    - Paperclip icon (attach file/image)
+    - Text input (placeholder: "Message...")
+    - Send button (arrow icon, active only when text present)
+- Images in chat show as inline thumbnail (tap to view full)
+- Files show as a card with file icon, name, size, download button
+- Realtime: new messages appear instantly via Supabase Realtime
+- On app open: load last 50 messages from DB, decrypt all locally
+- Pagination: pull up to load older messages (50 at a time)
+
+Screen 3: Call Screen
+- Full screen dark background
+- Video call: show remote video full screen, local video 
+  small in top-right corner (picture-in-picture style)
+- Voice call: show a large avatar/icon in center instead of video
+- Bottom control bar with:
+    - Mute/unmute microphone button
+    - Turn camera on/off button (hidden for voice calls)
+    - End call button (red, center)
+    - Speaker toggle button
+- Top bar: show call duration timer (MM:SS) and call type label
+- Incoming call: show a separate incoming call overlay on 
+  Chat Screen with caller name, accept (green) and reject 
+  (red) buttons
+- Call signaling via Supabase Realtime (watch call_signals table)
+
+Screen 4: Image Viewer Screen
+- Full screen image viewer
+- Pinch to zoom
+- Swipe down to close
+- Download button in top right corner
+
+Screen 5: Settings Screen (accessible via hidden tap — 
+tap app name 5 times on chat screen)
+- Show current user identity (user_a or user_b)
+- "Clear all data & logout" button (clears SecureStore, 
+  returns to invite code screen)
+- App version number
+
+-------------------------------------------------------------
+SECTION 8 — UI DESIGN RULES
+-------------------------------------------------------------
+
+- Dark theme throughout. Background: #0A0A0A
+- Primary accent color: #6C63FF (purple)
+- Message bubble mine: #1E3A5F
+- Message bubble theirs: #1E1E1E
+- Text color: #FFFFFF primary, #888888 secondary
+- Font: System default (San Francisco on iOS, Roboto on Android)
+- All icons from @expo/vector-icons (Ionicons set)
+- No white backgrounds anywhere
+- Rounded corners on all cards and bubbles (borderRadius: 16)
+- Smooth animations on screen transitions 
+  (React Navigation default slide)
+- Loading states on every async action (spinner or skeleton)
+- Empty state on chat screen if no messages yet: 
+  show lock icon and text "Messages are end-to-end encrypted"
+
+-------------------------------------------------------------
+SECTION 9 — ADDITIONAL TECHNICAL REQUIREMENTS
+-------------------------------------------------------------
+
+Error Handling:
+- Every API call must have try/catch
+- Network errors must show a toast: "Connection error. 
+  Retrying..."
+- Auto-retry failed Supabase Realtime connections
+- If decryption fails for a message, show 
+  "[Unable to decrypt]" in bubble instead of crashing
+
+Performance:
+- Message list must use FlatList with proper keyExtractor
+- Images must be lazy loaded
+- Encrypted file upload must show a progress bar
+
+Security:
+- Never log any message content, private keys, or JWT to console
+- Clear sensitive data from memory after use
+- All Supabase queries must go through RLS-protected calls
+- Backend must validate JWT on every protected route using 
+  the same JWT_SECRET
+
+Permissions (Android):
+- Camera permission for video calls
+- Microphone permission for voice and video calls
+- Storage/media permission for file picking and saving
+- Request permissions gracefully with explanation before 
+  requesting
+
+App Config (app.json / app.config.js):
+- App name: "Phantom"
+- Bundle ID: com.phantom.securechat
+- Version: 1.0.0
+- Icon: use a simple lock icon (generate programmatically 
+  or use a placeholder)
+- Splash screen: dark background with "Phantom" text
+- Android permissions declared in app.json
+
+-------------------------------------------------------------
+SECTION 10 — DELIVERABLES (I NEED ALL OF THESE)
+-------------------------------------------------------------
+
+1. Complete React Native + Expo app source code
+   (every file, no placeholders, no "implement this yourself")
+
+2. Complete Node.js + Express backend source code
+   (every file, production ready)
+
+3. One complete SQL migration file
+   (all tables + all RLS policies, ready to paste into 
+   Supabase SQL editor and run)
+
+4. railway.json and Procfile for Railway deployment
+
+5. .env.example listing every single environment variable 
+   with descriptions
+
+6. A clear step-by-step setup guide covering:
+   Step 1: Create free Supabase project
+   Step 2: Run SQL migration in Supabase
+   Step 3: Create free Railway account and deploy backend
+   Step 4: Set all environment variables on Railway
+   Step 5: Create free 100ms account, create room template 
+           called "private-call", copy API credentials
+   Step 6: Update app's .env with all service URLs and keys
+   Step 7: Build APK using EAS Build free tier 
+           (exact commands to run)
+   Step 8: How to sideload APK on Android phone
+
+7. The built APK file OR the EAS Build link to download it
+
+-------------------------------------------------------------
+SECTION 11 — CONSTRAINTS (STRICT — DO NOT VIOLATE)
+-------------------------------------------------------------
+
+- Total cost: ₹0 / $0. Use only free tiers of all services.
+- No Google Play Store. APK sideload only.
+- No paid libraries or SDKs.
+- App must work on Android 10 (API 29) and above.
+- No placeholder code. Every function must be fully 
+  implemented and working.
+- No "TODO" comments in final code.
+- The other person needs zero technical knowledge — 
+  they just install the APK and type their invite code.
+- App must work on a standard Indian mobile data connection 
+  (handle slow networks gracefully).
+
+=============================================================
+END OF PROMPT
+=============================================================
