@@ -115,5 +115,44 @@ The Name and Role fields associated with Cancellation Requested By should not be
 **Description:**
 Log in as a Case Manager, open an ex-US Treatment Case record and verify the fields displayed on the Treatment Case page layout.
 
+
+
+
+
+
+
+
+**Objective:**
+
+Verify the Name and Role field configurations associated with Cancellation Requested By, Field History Tracking settings, profile-level access and Treatment Case page-layout behavior.
+
+**Requirement ID:** KKCOMM-15313
+
+**Pre-requisite:**
+
+User should have System Administrator access to Salesforce Setup.
+
+User should have access to Object Manager, page-layout configuration and Field Level Security configuration.
+
+The functionality associated with KKCOMM-15313 should be deployed to the test environment.
+
+User should have access to a Case Manager account and an ex-US Treatment Case record.
+
+**Expected result:**
+
+The Name and Role fields associated with Cancellation Requested By should be configured as defined in the user story. Field History Tracking should be disabled for both fields, profile-level access should be configured as specified in the user story, and both fields should not be displayed on the Treatment Case page layout.
+
+**Verification points:**
+
+Name field data type and description.
+
+Role field data type and description.
+
+Field History Tracking configuration for both fields.
+
+Profile-level access configuration for both fields.
+
+Treatment Case page-layout visibility for both fields.
+
 **Expected Result:**
 The Name and Role fields associated with Cancellation Requested By should not be displayed on the Treatment Case page layout.
