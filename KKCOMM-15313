@@ -1,0 +1,119 @@
+**Requirement ID:** KKCOMM-15313
+
+**Test Case:** FRM-14706 - Request to Destroy - Field Configuration
+
+**Step 1**
+
+**Description:**
+Log in as a System Administrator, record the URL and User Name, and navigate to Setup.
+
+**Expected Result:**
+Setup should be displayed successfully.
+
+---
+
+**Step 2**
+
+**Description:**
+Navigate to Object Manager > Treatment Case > Fields & Relationships. Verify the availability of the Name field associated with Cancellation Requested By (KK_Cancellation_Requested_By__c). Open the field and verify the Data Type and Description under Field Information.
+
+**Expected Result:**
+The Name field should be available and configured as a lookup to store the contact who requested final product destruction.
+
+The Description should be displayed as:
+
+"[Confidential] - Stores a lookup to the contact who requested a final product destruction".
+
+---
+
+**Step 3**
+
+**Description:**
+Navigate back to Fields & Relationships. Verify the availability of the Role field associated with Cancellation Requested By (KK_Cancellation_Requested_By_Role__c). Open the field and verify the Data Type and Description under Field Information.
+
+**Expected Result:**
+The Role field should be available and configured as a free-text field.
+
+The Description should be displayed as:
+
+"[Confidential] - Stores the role of the contact who requested a final product destruction".
+
+---
+
+**Step 4**
+
+**Description:**
+Navigate back to Fields & Relationships and click Set History Tracking. Verify the Field History Tracking settings for the Name and Role fields associated with Cancellation Requested By.
+
+**Expected Result:**
+Field History Tracking should be disabled for both fields.
+
+---
+
+**Step 5**
+
+**Description:**
+Navigate back to Fields & Relationships. Open the Name field associated with Cancellation Requested By and click Set Field-Level Security. Verify the profile-level access.
+
+**Expected Result:**
+Profile-level access for the Name field should be configured as follows:
+
+- System Admin: Read, Edit
+- System Admin Support: Read, Edit
+- System Admin Deployments: Read
+- Case Managers: Read, Edit
+- Logistics: N/A
+- Site Quality: Read
+- System Support: Read
+- Read Only Case Manager: Read
+- Read Only Logistics: N/A
+- Accession: N/A
+- Integration: N/A
+- HCP: N/A
+- HCP Restricted: N/A
+- Referring Physician: N/A
+
+---
+
+**Step 6**
+
+**Description:**
+Navigate back to Fields & Relationships. Open the Role field associated with Cancellation Requested By and click Set Field-Level Security. Verify the profile-level access.
+
+**Expected Result:**
+Profile-level access for the Role field should be configured as follows:
+
+- System Admin: Read, Edit
+- System Admin Support: Read, Edit
+- System Admin Deployments: Read
+- Case Managers: Read, Edit
+- Logistics: N/A
+- Site Quality: Read
+- System Support: Read
+- Read Only Case Manager: Read
+- Read Only Logistics: N/A
+- Accession: N/A
+- Integration: N/A
+- HCP: N/A
+- HCP Restricted: N/A
+- Referring Physician: N/A
+
+---
+
+**Step 7**
+
+**Description:**
+Navigate to Object Manager > Treatment Case > Page Layouts. Open Care Program Enrollee Layout and verify the fields placed on the page layout.
+
+**Expected Result:**
+The Name and Role fields associated with Cancellation Requested By should not be displayed on the Treatment Case page layout.
+
+---
+
+**Step 8**
+
+**Description:**
+Log in as a Case Manager, open an ex-US Treatment Case record and verify the fields displayed on the Treatment Case page layout.
+
+**Expected Result:**
+The Name and Role fields associated with Cancellation Requested By should not be displayed on the Treatment Case page layout.
